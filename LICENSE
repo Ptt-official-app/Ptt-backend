@@ -25,22 +25,3 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-著作權所有 (c) 2020 PTT APP 開發團隊。保留一切權利。
-
-在符合以下條件的情況下，再散佈以及使用這份原始碼和二進位碼形式，無論是否經改做皆
-是被允許的：
-
-   * 對於本原始碼的再散佈必須保留上述著作權宣告、此列表之限制以及下述免責聲明。
-   * 以二進位形式的再散佈必須重現以上著作權宣告，此列表之限制以及下述免責聲明於
-文件中及/或其他附於附於發行版之媒介方式。
-   * 未獲事前取得書面授權，不得使用PTT或者是本軟體貢獻者之名稱來為本軟體之衍生物
-做任何表示認可或推廣。
-
-此軟體由著作權所有者和貢獻者按現況（AS IS)提供，不提供任何明示或暗示的保固，包括
-但不限於針對特定目的的適銷性和適用性的暗示擔保。著作權所有者或貢獻者在任何情況下
-無論成因或任何責任主義、無論慈則認為合約關係、無過錯責任或是侵權行為（包括疏忽或
-其他原因等）而起，對於任何直接、間接、意外性、特殊、專有或是後果性的損害（包括但
-不限於替代商品或服務的購買以及無法使用、資料或是營業中斷帶來的損失等），不負任何
-責任，即使在該種使用已獲事前告知可能會造成此類損害的情形下亦然。
