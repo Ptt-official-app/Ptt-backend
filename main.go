@@ -105,3 +105,7 @@ func getClass(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 
 }
+
+func supportGuest() bool {
+	return false
+}

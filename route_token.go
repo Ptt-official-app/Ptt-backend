@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/PichuChen/go-bbs"
 	"github.com/PichuChen/go-bbs/crypt"
-	"github.com/dgrijalva/jwt-go"
+
 	"log"
 	"net/http"
 	"strings"
@@ -43,7 +43,6 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 	log.Println("found user:", *userec)
 	err = verifyPassword(userec, password)
 	if err != nil {
-
 		// TODO: add delay, warning, notify user
 
 		m := map[string]string{
@@ -51,6 +50,7 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 			"error_description": err.Error(),
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
+		w.WriteHeader(http.StatusUnauthorized)
 		w.Write(b)
 		return
 	}
@@ -103,30 +103,4 @@ func getTokenFromRequest(r *http.Request) string {
 		return ""
 	}
 	return s[1]
-}
-
-func newAccessTokenWithUsername(username string) string {
-	claims := &jwt.StandardClaims{
-		ExpiresAt: int64(globalConfig.AccessTokenExpiresAt.Seconds()),
-		// Issuer:    "test",
-		Subject: username,
-	}
-
-	// TODO: Setting me in config
-	// openssl ecparam -name prime256v1 -genkey -noout -out pkey
-	privateKey := globalConfig.AccessTokenPrivateKey
-
-	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))
-	if err != nil {
-		logger.Criticalf("parse private key failed: %v", err)
-		return ""
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
-	ss, err := token.SignedString(key)
-	if err != nil {
-		logger.Errorf("sign token failed: %v", err)
-		return ""
-	}
-	return ss
 }
