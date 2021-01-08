@@ -106,6 +106,8 @@ func getClass(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// return a boolean value to indicate support guest account
+// and using guset permission when permission insufficient
 func supportGuest() bool {
 	return false
 }
