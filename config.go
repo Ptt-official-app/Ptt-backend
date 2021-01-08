@@ -9,6 +9,7 @@ type GlobalConfig struct {
 	BBSHome               string
 	ListenPort            int16
 	AccessTokenPrivateKey string
+	AccessTokenPublicKey  string
 	AccessTokenExpiresAt  time.Duration
 }
 
@@ -54,6 +55,12 @@ func applyConfig(config *toml.Tree) {
 		logger.Debugf("read config security.access_token_private_key")
 		globalConfig.AccessTokenPrivateKey = s
 	}
+	s, ok = config.Get("security.access_token_public_key").(string)
+	if ok {
+		logger.Debugf("read config security.access_token_public_key")
+		globalConfig.AccessTokenPublicKey = s
+	}
+
 	s, ok = config.Get("security.access_token_expires_at").(string)
 	if ok {
 		var err error
