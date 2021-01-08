@@ -1,8 +1,8 @@
 package main
 
 import (
-	// "github.com/PichuChen/go-bbs"
-	// "github.com/PichuChen/go-bbs/crypt"
+	"github.com/PichuChen/go-bbs"
+
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -90,7 +90,75 @@ func getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
 	w.Write(responseByte)
 }
 func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
-	w.WriteHeader(http.StatusNotImplemented)
+	token := getTokenFromRequest(r)
+	err := checkTokenPermission(token,
+		[]permission{PermissionReadUserInformation},
+		map[string]string{
+			"user_id": userId,
+		})
+
+	if err != nil {
+		// TODO: record unauthorized access
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	path, err := bbs.GetUserFavoritePath(globalConfig.BBSHome, userId)
+	if err != nil {
+		logger.Warningf("favorite get path error: %v", err)
+		// TODO: return error message
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	logger.Debugf("favorite path: %v", path)
+
+	rootFavFolder, err := bbs.OpenFavFile(path)
+	logger.Debugf("file items length: %v", len(rootFavFolder.Folder.FavItems))
+	// dataMap := map[string]interface{}{}
+
+	dataItems := parseFavoriteFolderItem(rootFavFolder.Folder)
+
+	responseMap := map[string]interface{}{
+		"data": map[string]interface{}{
+			"items": dataItems,
+		},
+	}
+
+	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
+
+	w.Write(responseByte)
+}
+
+func parseFavoriteFolderItem(f *bbs.FavFolder) []interface{} {
+	dataItems := []interface{}{}
+	for _, item := range f.FavItems {
+		logger.Debugf("fav type: %v", item.FavType)
+
+		switch item.Item.(type) {
+		case *bbs.FavBoardItem:
+			bid := item.Item.(*bbs.FavBoardItem).BoardId - 1
+			dataItems = append(dataItems, map[string]interface{}{
+				"type":     "board",
+				"_bid":     fmt.Sprintf("%v", bid),
+				"board_id": boardHeader[bid].BrdName,
+			})
+
+		case *bbs.FavFolderItem:
+			dataItems = append(dataItems, map[string]interface{}{
+				"type":  "folder",
+				"title": item.Item.(*bbs.FavFolderItem).Title,
+				"items": parseFavoriteFolderItem(item.Item.(*bbs.FavFolderItem).ThisFolder),
+			})
+
+		case *bbs.FavLineItem:
+			dataItems = append(dataItems, map[string]interface{}{
+				"type": "line",
+			})
+		default:
+			logger.Warningf("parseFavoriteFolderItem unknown favItem type")
+		}
+	}
+	return dataItems
 }
 
 func parseUserPath(path string) (userId string, item string, err error) {

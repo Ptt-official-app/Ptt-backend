@@ -58,7 +58,11 @@ func loadBoardFile() {
 		logger.Errorf("get board header error: %v", err)
 		return
 	}
-	logger.Debugf("userrec: %v", userRecs)
+	// logger.Debugf("userrec: %v", userRecs)
+	for index, board := range boardHeader {
+		logger.Debugf("loaded %d %v", index, board.BrdName)
+
+	}
 }
 
 func routeClass(w http.ResponseWriter, r *http.Request) {
