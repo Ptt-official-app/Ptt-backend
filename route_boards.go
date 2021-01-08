@@ -11,8 +11,9 @@ import (
 )
 
 func routeBoards(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check IP Flowspeed
+	logger.Debugf("routeBoards: %v", r)
 
+	// TODO: Check IP Flowspeed
 	if r.Method == "GET" {
 		getBoards(w, r)
 		return
@@ -21,6 +22,7 @@ func routeBoards(w http.ResponseWriter, r *http.Request) {
 }
 
 func getBoards(w http.ResponseWriter, r *http.Request) {
+	logger.Debugf("getBoards: %v", r)
 
 	// TODO: Check JWT
 
