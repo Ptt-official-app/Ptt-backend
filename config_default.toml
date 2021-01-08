@@ -1,9 +1,15 @@
-
-
 [bbs]
 # bbs 的家目錄
 home= "/home/bbs"
 
+[websocket]
+# WebSocket to Telnet Proxy
+
+
+listen_port=8082
+enable_tls= false
+tls_key_file= ""
+tls_cert_file= ""
 
 [networking]
 listen_port=8081
