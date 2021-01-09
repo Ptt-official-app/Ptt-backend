@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// routeClasses is the handler for `/v1/classes`
 func routeClasses(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 
@@ -21,6 +22,8 @@ func routeClasses(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// getClasses HandleFunc handles path start with `/v1/classes`
+// and pass requests to next handle function
 func getClasses(w http.ResponseWriter, r *http.Request) {
 	logger.Debugf("getClasses: %v", r)
 	classId, item, err := parseClassPath(r.URL.Path)
@@ -40,10 +43,16 @@ func getClasses(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// getClassesWithoutClassId handles path don't contain item after class id
+// eg: `/v1/classes`, it will redirect Client to `/v1/classes/1` which is
+// root class by default.
 func getClassesWithoutClassId(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/v1/classes/1", 301)
 }
 
+// getClassesList handle path with class id and will return boards and classes
+// under this class.
+// TODO: What should we return when target class not found?
 func getClassesList(w http.ResponseWriter, r *http.Request, classId string) {
 	logger.Debugf("getClassesList: %v", r)
 
