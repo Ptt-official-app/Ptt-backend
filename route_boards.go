@@ -40,6 +40,9 @@ func getBoards(w http.ResponseWriter, r *http.Request) {
 			getBoardArticlesFile(w, r, boardId, filename)
 		}
 		return
+	} else if item == "treasures" {
+		getBoardTreasures(w, r, boardId)
+		return
 	}
 
 	// 404
@@ -158,7 +161,7 @@ func shouldShowOnUserLevel(b *bbs.BoardHeader, u string) bool {
 func parseBoardPath(path string) (boardId string, item string, filename string, err error) {
 	pathSegment := strings.Split(path, "/")
 
-	if len(pathSegment) == 6 {
+	if len(pathSegment) >= 6 {
 		// /{{version}}/boards/{{class_id}}/{{item}}/{{filename}}
 		boardId = pathSegment[3]
 		item = pathSegment[4]
