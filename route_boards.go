@@ -24,7 +24,7 @@ func routeBoards(w http.ResponseWriter, r *http.Request) {
 // getBoards is the handler for `/v1/boards` with GET method
 func getBoards(w http.ResponseWriter, r *http.Request) {
 	logger.Debugf("getBoards: %v", r)
-	boardId, item, err := parseBoardPath(r.URL.Path)
+	boardId, item, filename, err := parseBoardPath(r.URL.Path)
 	if boardId == "" {
 		getBoardList(w, r)
 		return
@@ -34,9 +34,16 @@ func getBoards(w http.ResponseWriter, r *http.Request) {
 		getBoardInformation(w, r, boardId)
 		return
 	} else if item == "articles" {
-		getBoardArticles(w, r, boardId)
+		if filename == "" {
+			getBoardArticles(w, r, boardId)
+		} else {
+			getBoardArticlesFile(w, r, boardId, filename)
+		}
 		return
 	}
+
+	// 404
+	w.WriteHeader(http.StatusNotFound)
 
 	logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
 }
@@ -148,20 +155,31 @@ func shouldShowOnUserLevel(b *bbs.BoardHeader, u string) bool {
 
 // parseBoardPath covert url path from /v1/boards/SYSOP/article to
 // {SYSOP, article) or /v1/boards to {,}
-func parseBoardPath(path string) (boardId string, item string, err error) {
+func parseBoardPath(path string) (boardId string, item string, filename string, err error) {
 	pathSegment := strings.Split(path, "/")
-	if len(pathSegment) == 5 {
-		// /{{version}}/boards/{{board_id}}/{{item}}
-		return pathSegment[3], pathSegment[4], nil
+
+	if len(pathSegment) == 6 {
+		// /{{version}}/boards/{{class_id}}/{{item}}/{{filename}}
+		boardId = pathSegment[3]
+		item = pathSegment[4]
+		filename = pathSegment[5]
+		return
+	} else if len(pathSegment) == 5 {
+		// /{{version}}/boards/{{class_id}}/{{item}}
+		boardId = pathSegment[3]
+		item = pathSegment[4]
+		return
 	} else if len(pathSegment) == 4 {
-		// /{{version}}/boards/{{board_id}}
-		return pathSegment[3], "", nil
+		// /{{version}}/boards/{{class_id}}
+		boardId = pathSegment[3]
+		return
 	} else if len(pathSegment) == 3 {
 		// /{{version}}/boards
-		return "", "", nil
+		// Should not be reach...
+		return
 	}
 	logger.Warningf("parseBoardPath got malform path: %v", path)
-	return "", "", nil
+	return
 
 }
 
