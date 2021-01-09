@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// routeBoards is the handler for `/v1/boards`
 func routeBoards(w http.ResponseWriter, r *http.Request) {
 	logger.Debugf("routeBoards: %v", r)
 
@@ -22,6 +23,7 @@ func routeBoards(w http.ResponseWriter, r *http.Request) {
 
 }
 
+// getBoards is the handler for `/v1/boards` with GET method
 func getBoards(w http.ResponseWriter, r *http.Request) {
 	logger.Debugf("getBoards: %v", r)
 	boardId, item, err := parseBoardPath(r.URL.Path)
