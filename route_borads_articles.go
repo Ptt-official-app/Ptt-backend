@@ -30,7 +30,7 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 		return
 	}
 
-	filepath, err := bbs.GetBoardArticleDirectoryath(globalConfig.BBSHome, boardId)
+	filepath, err := bbs.GetBoardArticleDirectoryPath(globalConfig.BBSHome, boardId)
 	logger.Debugf("open DIR file: %v", filepath)
 
 	var fileHeaders []*bbs.FileHeader
