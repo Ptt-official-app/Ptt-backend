@@ -1,11 +1,9 @@
 package main
 
 import (
-	"encoding/json"
-	// "fmt"
 	"github.com/PichuChen/go-bbs"
-	// "github.com/PichuChen/go-bbs/crypt"
-	// "github.com/dgrijalva/jwt-go"
+
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -34,6 +32,10 @@ func getBoards(w http.ResponseWriter, r *http.Request) {
 	// get single board
 	if item == "information" {
 		getBoardInformation(w, r, boardId)
+		return
+	} else if item == "articles" {
+		getBoardArticles(w, r, boardId)
+		return
 	}
 
 	logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
