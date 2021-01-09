@@ -32,6 +32,7 @@ func getBoards(w http.ResponseWriter, r *http.Request) {
 	// get single board
 	if item == "information" {
 		getBoardInformation(w, r, boardId)
+		return
 	}
 
 	logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
