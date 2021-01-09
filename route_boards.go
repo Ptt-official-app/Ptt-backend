@@ -32,7 +32,6 @@ func getBoards(w http.ResponseWriter, r *http.Request) {
 	// get single board
 	if item == "information" {
 		getBoardInformation(w, r, boardId)
-		return
 	}
 
 	logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
@@ -116,14 +115,24 @@ func getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string)
 
 }
 
+// marshal generate board or class metadata object,
+// b is input header
 func marshalBoardHeader(b *bbs.BoardHeader) map[string]interface{} {
-	return map[string]interface{}{
-		"id":             b.BrdName,
-		"type":           "board",
+	ret := map[string]interface{}{
 		"title":          b.Title,
 		"number_of_user": "0",
 		"moderators":     strings.Split(b.BM, "/"), // TODO, set BM Split Token
 	}
+	if b.IsGroudBoard() {
+		// class
+		// Assign ID from foreach loop
+		ret["type"] = "class"
+	} else {
+		// board
+		ret["id"] = b.BrdName
+		ret["type"] = "board"
+	}
+	return ret
 
 }
 
@@ -153,7 +162,6 @@ func parseBoardPath(path string) (boardId string, item string, err error) {
 }
 
 func findBoardHeaderById(boardId string) (*bbs.BoardHeader, error) {
-
 	for _, it := range boardHeader {
 		if boardId == it.BrdName {
 			return it, nil
