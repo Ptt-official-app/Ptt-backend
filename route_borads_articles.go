@@ -3,9 +3,12 @@ package main
 import (
 	"github.com/PichuChen/go-bbs"
 
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"os"
 	// "strings"
 )
 
@@ -68,8 +71,41 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 
 func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string, filename string) {
 	logger.Debugf("getBoardArticlesFile: %v", r)
-	// boardId, item, filename,
 
+	token := getTokenFromRequest(r)
+	err := checkTokenPermission(token,
+		[]permission{PermissionReadBoardInformation},
+		map[string]string{
+			"board_id": boardId,
+		})
+
+	if err != nil {
+		// TODO: record unauthorized access
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	path, err := bbs.GetBoardArticlePath(globalConfig.BBSHome, boardId, filename)
+	file, err := os.Open(path)
+	if err != nil {
+		logger.Errorf("open file %v error: %v", path, err)
+	}
+	defer file.Close()
+	buf, err := ioutil.ReadAll(file)
+	if err != nil {
+		logger.Errorf("read file %v error: %v", path, err)
+	}
+
+	bufStr := base64.StdEncoding.EncodeToString(buf)
+
+	responseMap := map[string]interface{}{
+		"data": map[string]interface{}{
+			"raw": bufStr,
+		},
+	}
+
+	b, _ := json.MarshalIndent(responseMap, "", "  ")
+	w.Write(b)
 }
 
 func getArticleURL(boardId string, filename string) string {
