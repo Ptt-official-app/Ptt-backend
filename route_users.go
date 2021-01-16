@@ -66,16 +66,16 @@ func getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
 	// TODO: Check Etag or Not-Modified for cache
 
 	dataMap := map[string]interface{}{
-		"user_id":              userrec.UserId,
-		"nickname":             userrec.Nickname,
-		"realname":             userrec.RealName,
-		"number_of_login_days": fmt.Sprintf("%d", userrec.NumLoginDays),
-		"number_of_posts":      fmt.Sprintf("%d", userrec.NumPosts),
+		"user_id":              userrec.UserId(),
+		"nickname":             userrec.Nickname(),
+		"realname":             userrec.RealName(),
+		"number_of_login_days": fmt.Sprintf("%d", userrec.NumLoginDays()),
+		"number_of_posts":      fmt.Sprintf("%d", userrec.NumPosts()),
 		// "number_of_badposts":   fmt.Sprintf("%d", userrec.NumLoginDays),
-		"money":           fmt.Sprintf("%d", userrec.Money),
-		"last_login_time": userrec.LastLogin.Format(time.RFC3339),
-		"last_login_ipv4": userrec.LastHost,
-		"last_login_ip":   userrec.LastHost,
+		"money":           fmt.Sprintf("%d", userrec.Money()),
+		"last_login_time": userrec.LastLogin().Format(time.RFC3339),
+		"last_login_ipv4": userrec.LastHost(),
+		"last_login_ip":   userrec.LastHost(),
 		// "last_login_country": fmt.Sprintf("%d", userrec.NumLoginDays),
 		"chess_status": map[string]interface{}{},
 		"plan":         map[string]interface{}{},
@@ -103,20 +103,11 @@ func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 		return
 	}
 
-	path, err := bbs.GetUserFavoritePath(globalConfig.BBSHome, userId)
-	if err != nil {
-		logger.Warningf("favorite get path error: %v", err)
-		// TODO: return error message
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	logger.Debugf("favorite path: %v", path)
-
-	rootFavFolder, err := bbs.OpenFavFile(path)
-	logger.Debugf("file items length: %v", len(rootFavFolder.Folder.FavItems))
+	recs, err := db.ReadUserFavoriteRecords(userId)
+	logger.Debugf("file items length: %v", len(recs))
 	// dataMap := map[string]interface{}{}
 
-	dataItems := parseFavoriteFolderItem(rootFavFolder.Folder)
+	dataItems := parseFavoriteFolderItem(recs)
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
@@ -129,28 +120,26 @@ func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 	w.Write(responseByte)
 }
 
-func parseFavoriteFolderItem(f *bbs.FavFolder) []interface{} {
+func parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
-	for _, item := range f.FavItems {
-		logger.Debugf("fav type: %v", item.FavType)
+	for _, item := range recs {
+		logger.Debugf("fav type: %v", item.Type())
 
-		switch item.Item.(type) {
-		case *bbs.FavBoardItem:
-			bid := item.Item.(*bbs.FavBoardItem).BoardId - 1
+		switch item.Type() {
+		case bbs.FavoriteTypeBoard:
 			dataItems = append(dataItems, map[string]interface{}{
 				"type":     "board",
-				"_bid":     fmt.Sprintf("%v", bid),
-				"board_id": boardHeader[bid].BrdName,
+				"board_id": item.BoardId(),
 			})
 
-		case *bbs.FavFolderItem:
+		case bbs.FavoriteTypeFolder:
 			dataItems = append(dataItems, map[string]interface{}{
 				"type":  "folder",
-				"title": item.Item.(*bbs.FavFolderItem).Title,
-				"items": parseFavoriteFolderItem(item.Item.(*bbs.FavFolderItem).ThisFolder),
+				"title": item.Title(),
+				"items": parseFavoriteFolderItem(item.Records()),
 			})
 
-		case *bbs.FavLineItem:
+		case bbs.FavoriteTypeLine:
 			dataItems = append(dataItems, map[string]interface{}{
 				"type": "line",
 			})

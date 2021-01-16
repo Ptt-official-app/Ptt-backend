@@ -1,46 +1,61 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/PichuChen/go-bbs"
+
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
 )
 
+type MockUserRecord struct {
+	userId string
+}
+
+func NewMockUserRecord(userId string) *MockUserRecord { return &MockUserRecord{userId: userId} }
+func (u *MockUserRecord) UserId() string              { return u.userId }
+
+// HashedPassword return user hashed password, it only for debug,
+// If you want to check is user password correct, please use
+// VerifyPassword insteaded.
+func (u *MockUserRecord) HashedPassword() string { return "" }
+
+// VerifyPassword will check user's password is OK. it will return null
+// when OK and error when there are something wrong
+func (u *MockUserRecord) VerifyPassword(password string) error { return nil }
+
+// Nickname return a string for user's nickname, this string may change
+// depend on user's mood, return empty string if this bbs system do not support
+func (u *MockUserRecord) Nickname() string { return "" }
+
+// RealName return a string for user's real name, this string may not be changed
+// return empty string if this bbs system do not support
+func (u *MockUserRecord) RealName() string { return "" }
+
+// NumLoginDays return how many days this have been login since account created.
+func (u *MockUserRecord) NumLoginDays() int { return 0 }
+
+// NumPosts return how many posts this user has posted.
+func (u *MockUserRecord) NumPosts() int { return 0 }
+
+// Money return the money this user have.
+func (u *MockUserRecord) Money() int { return 0 }
+
+// LastLogin return last login time of user
+func (u *MockUserRecord) LastLogin() time.Time { return time.Now() }
+
+// LastHost return last login host of user, it is IPv4 address usually, but it
+// could be domain name or IPv6 address.
+func (u *MockUserRecord) LastHost() string { return "" }
+
 func TestGetUserInformation(t *testing.T) {
 
-	expected := bbs.Userec{
-		Version:       4194,
-		UserId:        "SYSOP",
-		RealName:      "CodingMan",
-		Nickname:      "神",
-		Password:      "bhwvOJtfT1TAI",
-		UserFlag:      0x02000A60,
-		UserLevel:     0x20000407,
-		NumLoginDays:  2,
-		NumPosts:      0,
-		FirstLogin:    time.Date(2020, 9, 21, 9, 41, 28, 0, time.UTC),
-		LastLogin:     time.Date(2020, 9, 22, 6, 28, 14, 0, time.UTC),
-		LastHost:      "59.124.167.226",
-		Money:         0,
-		Address:       "新竹縣子虛鄉烏有村543號",
-		Over18:        true,
-		Pager:         1,
-		Invisible:     false,
-		Career:        "全景軟體",
-		LastSeen:      time.Date(2020, 9, 21, 9, 41, 28, 0, time.UTC),
-		TimeSetAngel:  time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
-		TimePlayAngel: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
-		LastSong:      time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
+	expected := NewMockUserRecord("SYSOP")
 
-		TimeRemoveBadPost: time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
-		TimeViolateLaw:    time.Date(1970, 1, 1, 0, 0, 0, 0, time.UTC),
-	}
-
-	userRecs = []*bbs.Userec{
-		&expected,
+	userRecs = []bbs.UserRecord{
+		expected,
 	}
 
 	req, err := http.NewRequest("GET", "/v1/users/SYSOP/information", nil)
@@ -48,7 +63,7 @@ func TestGetUserInformation(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	token := newAccessTokenWithUsername(expected.UserId)
+	token := newAccessTokenWithUsername(expected.UserId())
 	t.Logf("testing token: %v", token)
 	req.Header.Add("Authorization", "bearer "+token)
 
@@ -66,9 +81,9 @@ func TestGetUserInformation(t *testing.T) {
 	json.Unmarshal(rr.Body.Bytes(), &responsedMap)
 	t.Logf("got response %v", rr.Body.String())
 	responsedData := responsedMap["data"].(map[string]interface{})
-	if responsedData["user_id"] != expected.UserId {
+	if responsedData["user_id"] != expected.UserId() {
 		t.Errorf("handler returned unexpected body, user_id not match: got %v want userId %v",
-			rr.Body.String(), expected.UserId)
+			rr.Body.String(), expected.UserId())
 
 	}
 

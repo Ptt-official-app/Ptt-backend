@@ -71,7 +71,7 @@ func getBoardList(w http.ResponseWriter, r *http.Request) {
 	dataList := []interface{}{}
 	for _, b := range boardHeader {
 		// TODO: Show Board by user level
-		if b.IsGroudBoard() {
+		if b.IsClass() {
 			continue
 		}
 		if !shouldShowOnUserLevel(b, userId) {
@@ -131,26 +131,26 @@ func getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string)
 
 // marshal generate board or class metadata object,
 // b is input header
-func marshalBoardHeader(b *bbs.BoardHeader) map[string]interface{} {
+func marshalBoardHeader(b bbs.BoardRecord) map[string]interface{} {
 	ret := map[string]interface{}{
-		"title":          b.Title,
+		"title":          b.Title(),
 		"number_of_user": "0",
-		"moderators":     strings.Split(b.BM, "/"), // TODO, set BM Split Token
+		"moderators":     b.BM(),
 	}
-	if b.IsGroudBoard() {
+	if b.IsClass() {
 		// class
 		// Assign ID from foreach loop
 		ret["type"] = "class"
 	} else {
 		// board
-		ret["id"] = b.BrdName
+		ret["id"] = b.BoardId()
 		ret["type"] = "board"
 	}
 	return ret
 
 }
 
-func shouldShowOnUserLevel(b *bbs.BoardHeader, u string) bool {
+func shouldShowOnUserLevel(b bbs.BoardRecord, u string) bool {
 	// TODO: Get user Level
 	return true
 
@@ -186,9 +186,9 @@ func parseBoardPath(path string) (boardId string, item string, filename string, 
 
 }
 
-func findBoardHeaderById(boardId string) (*bbs.BoardHeader, error) {
+func findBoardHeaderById(boardId string) (bbs.BoardRecord, error) {
 	for _, it := range boardHeader {
-		if boardId == it.BrdName {
+		if boardId == it.BoardId() {
 			return it, nil
 		}
 	}

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/PichuChen/go-bbs"
-	"github.com/PichuChen/go-bbs/crypt"
 
 	"log"
 	"net/http"
@@ -40,7 +39,7 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	log.Println("found user:", *userec)
+	log.Println("found user:", userec)
 	err = verifyPassword(userec, password)
 	if err != nil {
 		// TODO: add delay, warning, notify user
@@ -68,10 +67,10 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func findUserecById(userid string) (*bbs.Userec, error) {
+func findUserecById(userid string) (bbs.UserRecord, error) {
 
 	for _, it := range userRecs {
-		if userid == it.UserId {
+		if userid == it.UserId() {
 			return it, nil
 		}
 	}
@@ -79,20 +78,9 @@ func findUserecById(userid string) (*bbs.Userec, error) {
 
 }
 
-func verifyPassword(userec *bbs.Userec, password string) error {
-	res, err := crypt.Fcrypt([]byte(password), []byte(userec.Password[:2]))
-	if err != nil {
-		logger.Criticalf("crypt.Fcrypt error: %v", err)
-		return err
-
-	}
-	str := strings.Trim(string(res), "\x00")
-
-	if str != userec.Password {
-		return fmt.Errorf("password incorrect")
-	}
-	return nil
-
+func verifyPassword(userec bbs.UserRecord, password string) error {
+	log.Println("password", userec.HashedPassword())
+	return userec.VerifyPassword(password)
 }
 
 func getTokenFromRequest(r *http.Request) string {

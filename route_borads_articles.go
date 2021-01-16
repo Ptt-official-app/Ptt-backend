@@ -6,10 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"os"
-	// "strings"
 )
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
@@ -30,11 +27,8 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 		return
 	}
 
-	filepath, err := bbs.GetBoardArticleDirectoryPath(globalConfig.BBSHome, boardId)
-	logger.Debugf("open DIR file: %v", filepath)
-
-	var fileHeaders []*bbs.FileHeader
-	fileHeaders, err = bbs.OpenFileHeaderFile(filepath)
+	var fileHeaders []bbs.ArticleRecord
+	fileHeaders, err = db.ReadBoardArticleRecordsFile(boardId)
 	if err != nil {
 		logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
@@ -43,16 +37,16 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 	items := []interface{}{}
 	for _, f := range fileHeaders {
 		m := map[string]interface{}{
-			"filename": f.Filename,
+			"filename": f.Filename(),
 			// Bug(pichu): f.Modified time will be 0 when file is vote
-			"modified_time":   f.Modified,
-			"recommend_count": f.Recommend,
-			"post_date":       f.Date,
-			"title":           f.Title,
-			"money":           fmt.Sprintf("%v", f.Money),
-			"owner":           f.Owner,
+			"modified_time":   f.Modified(),
+			"recommend_count": f.Recommend(),
+			"post_date":       f.Date(),
+			"title":           f.Title(),
+			"money":           fmt.Sprintf("%v", f.Money()),
+			"owner":           f.Owner(),
 			// "aid": ""
-			"url": getArticleURL(boardId, f.Filename),
+			"url": getArticleURL(boardId, f.Filename()),
 		}
 		items = append(items, m)
 	}
@@ -85,15 +79,9 @@ func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string
 		return
 	}
 
-	path, err := bbs.GetBoardArticlePath(globalConfig.BBSHome, boardId, filename)
-	file, err := os.Open(path)
+	buf, err := db.ReadBoardArticleFile(boardId, filename)
 	if err != nil {
-		logger.Errorf("open file %v error: %v", path, err)
-	}
-	defer file.Close()
-	buf, err := ioutil.ReadAll(file)
-	if err != nil {
-		logger.Errorf("read file %v error: %v", path, err)
+		logger.Errorf("read file %v/%v error: %v", boardId, filename, err)
 	}
 
 	bufStr := base64.StdEncoding.EncodeToString(buf)

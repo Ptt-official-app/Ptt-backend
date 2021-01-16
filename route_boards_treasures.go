@@ -38,11 +38,8 @@ func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
 		return
 	}
 
-	filepath, err := bbs.GetBoardTreasuresDirectoryPath(globalConfig.BBSHome, boardId, treasuresId)
-	logger.Debugf("open DIR file: %v", filepath)
-
-	var fileHeaders []*bbs.FileHeader
-	fileHeaders, err = bbs.OpenFileHeaderFile(filepath)
+	var fileHeaders []bbs.ArticleRecord
+	fileHeaders, err = db.ReadBoardTreasureRecordsFile(boardId, treasuresId)
 	if err != nil {
 		logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
@@ -51,16 +48,16 @@ func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
 	items := []interface{}{}
 	for _, f := range fileHeaders {
 		m := map[string]interface{}{
-			"filename": f.Filename,
+			"filename": f.Filename(),
 			// Bug(pichu): f.Modified time will be 0 when file is vote
-			"modified_time":   f.Modified,
-			"recommend_count": f.Recommend,
-			"post_date":       f.Date,
-			"title":           f.Title,
-			"money":           fmt.Sprintf("%v", f.Money),
-			"owner":           f.Owner,
+			"modified_time":   f.Modified(),
+			"recommend_count": f.Recommend(),
+			"post_date":       f.Date(),
+			"title":           f.Title(),
+			"money":           fmt.Sprintf("%v", f.Money()),
+			"owner":           f.Owner(),
 			// "aid": ""
-			"url": getArticleURL(boardId, f.Filename),
+			"url": getArticleURL(boardId, f.Filename()),
 		}
 		items = append(items, m)
 	}

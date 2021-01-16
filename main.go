@@ -4,17 +4,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/PichuChen/go-bbs"
+	_ "github.com/PichuChen/go-bbs/pttbbs"
 	"net/http"
 	"strings"
 )
 
-var userRecs []*bbs.Userec
-var boardHeader []*bbs.BoardHeader
+var userRecs []bbs.UserRecord
+var boardHeader []bbs.BoardRecord
+
+var db *bbs.DB
 
 func main() {
 	logger.Informationalf("server start")
 
 	loadDefaultConfig()
+	var err error
+	db, err = bbs.Open("pttbbs", globalConfig.BBSHome)
+	if err != nil {
+		logger.Errorf("open bbs db error: %v", err)
+		return
+	}
 
 	loadPasswdsFile()
 	loadBoardFile()
@@ -23,44 +32,30 @@ func main() {
 	buildRoute(r)
 
 	logger.Informationalf("listen port on %v", globalConfig.ListenPort)
-	err := http.ListenAndServe(fmt.Sprintf(":%v", globalConfig.ListenPort), r)
+	err = http.ListenAndServe(fmt.Sprintf(":%v", globalConfig.ListenPort), r)
 	if err != nil {
 		logger.Errorf("listen serve error: %v", err)
 	}
 }
 
 func loadPasswdsFile() {
-	path, err := bbs.GetPasswdsPath(globalConfig.BBSHome)
-	if err != nil {
-		logger.Errorf("open file error: %v", err)
-		return
-	}
-	logger.Debugf("path: %v", path)
-
-	userRecs, err = bbs.OpenUserecFile(path)
+	var err error
+	userRecs, err = db.ReadUserRecords()
 	if err != nil {
 		logger.Errorf("get user rec error: %v", err)
 		return
 	}
-	logger.Debugf("userrec: %v", userRecs)
 }
 
 func loadBoardFile() {
-	path, err := bbs.GetBoardPath(globalConfig.BBSHome)
-	if err != nil {
-		logger.Errorf("open file error: %v", err)
-		return
-	}
-	logger.Debugf("path: %v", path)
-
-	boardHeader, err = bbs.OpenBoardHeaderFile(path)
+	var err error
+	boardHeader, err = db.ReadBoardRecords()
 	if err != nil {
 		logger.Errorf("get board header error: %v", err)
 		return
 	}
-	// logger.Debugf("userrec: %v", userRecs)
 	for index, board := range boardHeader {
-		logger.Debugf("loaded %d %v", index, board.BrdName)
+		logger.Debugf("loaded %d %v", index, board.BoardId())
 
 	}
 }

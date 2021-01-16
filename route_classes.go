@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -71,24 +70,18 @@ func getClassesList(w http.ResponseWriter, r *http.Request, classId string) {
 	}
 
 	dataList := []interface{}{}
-	targetClassId, err := strconv.Atoi(classId)
-	if err != nil {
-		logger.Warningf("parse class id error: %v", err)
-		targetClassId = 1
-		// TODO: Return error to client
-	}
 	for bid, b := range boardHeader {
 		// TODO: Show Board by user level
 		if !shouldShowOnUserLevel(b, userId) {
 			continue
 		}
-		if int(b.Gid) != targetClassId {
+		if b.ClassId() != classId {
 			continue
 		}
 		jb, _ := json.Marshal(b)
 		logger.Debugf("marshal class board: %v", string(jb))
 		m := marshalBoardHeader(b)
-		if b.IsGroudBoard() {
+		if b.IsClass() {
 			m["id"] = fmt.Sprintf("%v", bid+1)
 		}
 		dataList = append(dataList, m)
