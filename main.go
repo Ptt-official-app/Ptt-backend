@@ -3,16 +3,19 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PichuChen/go-bbs"
-	_ "github.com/PichuChen/go-bbs/pttbbs"
 	"net/http"
 	"strings"
+
+	"github.com/PichuChen/go-bbs"
+	_ "github.com/PichuChen/go-bbs/pttbbs"
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 var userRecs []bbs.UserRecord
 var boardHeader []bbs.BoardRecord
 
 var db *bbs.DB
+var logger = logging.NewLogger()
 
 func main() {
 	logger.Informationalf("server start")
