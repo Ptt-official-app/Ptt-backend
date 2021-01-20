@@ -1,4 +1,4 @@
-PTT APP 後端
+# PTT APP 後端
 
 這個專案主要的開發語言是 Golang 以及中文。
 
@@ -23,7 +23,7 @@ PTT APP 後端
 另一方面是 Golang 原生支援 UTF-8 編碼，因此可以透過此次大改版逐步將 Big5-UAO
 編碼的資料進行轉換。
 
-# 整體架構部分
+## 整體架構部分
 
 目前整體而言會以 HTTP 的 [RESTful API](https://zh.wikipedia.org/wiki/%E8%A1%A8%E7%8E%B0%E5%B1%82%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2) 作為對外設計的介面，未來也許會支援相容VT100
 （也就是傳統可以用PCMAN登入的BBS介面）的SSH連線方式。
@@ -77,7 +77,7 @@ PTT APP 後端
 
 ```
 
-# 資料夾結構
+## 資料夾結構
 
 主要的程式碼包含程式進入點會放在根目錄
 
@@ -130,6 +130,9 @@ ASCII 圖片產圖引擎
 但是如果能夠多比對其他欄位輸出更多錯誤訊息會對未來的開發者更有幫助。
 
 
+## 文件檔案部分
 
+* [RESTful API 文件](https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit?usp=sharing)
+* [go-bbs Package](https://github.com/PichuChen/go-bbs)
 
 
