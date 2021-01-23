@@ -12,35 +12,32 @@ import (
 
 func routeUsers(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
-
 	if r.Method == "GET" {
 		getUsers(w, r)
 		return
 	}
-
 }
 
 func getUsers(w http.ResponseWriter, r *http.Request) {
-	userId, item, err := parseUserPath(r.URL.Path)
+	userID, item, err := parseUserPath(r.URL.Path)
 
-	if item == "information" {
-		getUserInformation(w, r, userId)
-		return
-	} else if item == "favorites" {
-		getUserFavorites(w, r, userId)
-		return
+	switch item {
+	case "information":
+		getUserInformation(w, r, userID)
+	case "favorites":
+		getUserFavorites(w, r, userID)
+	default:
+		logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userID, item, err)
+		w.WriteHeader(http.StatusNotFound)
 	}
-	// else
-	logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
-	w.WriteHeader(http.StatusNotFound)
 }
 
-func getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
+func getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
 	token := getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadUserInformation},
 		map[string]string{
-			"user_id": userId,
+			"user_id": userID,
 		})
 
 	if err != nil {
@@ -49,17 +46,25 @@ func getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
 		return
 	}
 
-	userrec, err := findUserecById(userId)
+	userrec, err := findUserecByID(userID)
 	if err != nil {
 		// TODO: record error
-
 		w.WriteHeader(http.StatusInternalServerError)
+
 		m := map[string]string{
 			"error":             "find_userrec_error",
-			"error_description": "get userrec for " + userId + " failed",
+			"error_description": "get userrec for " + userID + " failed",
 		}
-		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		b, err := json.MarshalIndent(m, "", "  ")
+
+		if err != nil {
+			logger.Errorf("failed to marshal response data: %s\n", err)
+		}
+
+		if _, err := w.Write(b); err != nil {
+			logger.Errorf("failed to write response: %s\n", err)
+		}
+
 		return
 	}
 
@@ -85,16 +90,22 @@ func getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
 		"data": dataMap,
 	}
 
-	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
+	responseByte, err := json.MarshalIndent(responseMap, "", "  ")
 
-	w.Write(responseByte)
+	if err != nil {
+		logger.Errorf("failed to marshal response data: %s\n", err)
+	}
+
+	if _, err := w.Write(responseByte); err != nil {
+		logger.Errorf("failed to write response: %s\n", err)
+	}
 }
-func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
+func getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadUserInformation},
 		map[string]string{
-			"user_id": userId,
+			"user_id": userID,
 		})
 
 	if err != nil {
@@ -103,9 +114,12 @@ func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 		return
 	}
 
-	recs, err := db.ReadUserFavoriteRecords(userId)
+	recs, err := db.ReadUserFavoriteRecords(userID)
+	if err != nil {
+		return
+	}
+
 	logger.Debugf("file items length: %v", len(recs))
-	// dataMap := map[string]interface{}{}
 
 	dataItems := parseFavoriteFolderItem(recs)
 
@@ -115,13 +129,19 @@ func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 		},
 	}
 
-	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
+	responseByte, err := json.MarshalIndent(responseMap, "", "  ")
+	if err != nil {
+		logger.Errorf("failed to marshal response data: %s\n", err)
+	}
 
-	w.Write(responseByte)
+	if _, err := w.Write(responseByte); err != nil {
+		logger.Errorf("failed to write response: %s\n", err)
+	}
 }
 
 func parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
+
 	for _, item := range recs {
 		logger.Debugf("fav type: %v", item.Type())
 
@@ -147,10 +167,11 @@ func parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 			logger.Warningf("parseFavoriteFolderItem unknown favItem type")
 		}
 	}
+
 	return dataItems
 }
 
-func parseUserPath(path string) (userId string, item string, err error) {
+func parseUserPath(path string) (userID string, item string, err error) {
 	pathSegment := strings.Split(path, "/")
 	// /{{version}}/users/{{user_id}}/{{item}}
 	if len(pathSegment) == 4 {
@@ -159,5 +180,4 @@ func parseUserPath(path string) (userId string, item string, err error) {
 	}
 
 	return pathSegment[3], pathSegment[4], nil
-
 }

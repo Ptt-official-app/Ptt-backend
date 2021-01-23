@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/PichuChen/go-bbs"
-
 	// "encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -11,17 +9,19 @@ import (
 	// "os"
 )
 
-func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
+func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardID string) {
 	logger.Debugf("getBoardTreasures: %v", r)
 	token := getTokenFromRequest(r)
-	_, treasuresId, filename, err := parseBoardTreasurePath(r.URL.Path)
+	_, treasuresID, filename, err := parseBoardTreasurePath(r.URL.Path)
+
 	if err != nil {
-		logger.Warningf("parseBoardTreasurePath error: %v", err)
 		// TODO return 400?
+		logger.Warningf("parseBoardTreasurePath error: %v", err)
 	}
+
 	if filename != "" {
 		// get file
-		getBoardTreasuresFile(w, r, boardId, treasuresId, filename)
+		getBoardTreasuresFile(w, r, boardID, treasuresID, filename)
 		return
 	}
 
@@ -29,8 +29,8 @@ func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
 	err = checkTokenPermission(token,
 		[]permission{PermissionReadTreasureInformation},
 		map[string]string{
-			"board_id":    boardId,
-			"treasure_id": strings.Join(treasuresId, ","),
+			"board_id":    boardID,
+			"treasure_id": strings.Join(treasuresID, ","),
 		})
 	if err != nil {
 		// TODO: record unauthorized access
@@ -38,14 +38,15 @@ func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
 		return
 	}
 
-	var fileHeaders []bbs.ArticleRecord
-	fileHeaders, err = db.ReadBoardTreasureRecordsFile(boardId, treasuresId)
+	fileHeaders, err := db.ReadBoardTreasureRecordsFile(boardID, treasuresID)
+
 	if err != nil {
-		logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
+		logger.Warningf("open directory file error: %v", err)
 	}
 
 	items := []interface{}{}
+
 	for _, f := range fileHeaders {
 		m := map[string]interface{}{
 			"filename": f.Filename(),
@@ -57,10 +58,11 @@ func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
 			"money":           fmt.Sprintf("%v", f.Money()),
 			"owner":           f.Owner(),
 			// "aid": ""
-			"url": getArticleURL(boardId, f.Filename()),
+			"url": getArticleURL(boardID, f.Filename()),
 		}
 		items = append(items, m)
 	}
+
 	logger.Debugf("fh: %v", fileHeaders)
 
 	responseMap := map[string]interface{}{
@@ -69,44 +71,52 @@ func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
 		},
 	}
 
-	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	b, err := json.MarshalIndent(responseMap, "", "  ")
+	if err != nil {
+		logger.Errorf("failed to marshal response data: %s\n", err)
+		return
+	}
 
+	if _, err := w.Write(b); err != nil {
+		logger.Errorf("failed to write response: %s\n", err)
+	}
 }
 
-func getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardId string, treasuresId []string, filename string) {
-	logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresId: %v, filename: %v", r, boardId, treasuresId, filename)
+func getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardID string, treasuresID []string, filename string) {
+	logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresID: %v, filename: %v", r, boardID, treasuresID, filename)
 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // parseBoardTreasurePath parse covert url path from /v1/boards/SYSOP/article to
 // {SYSOP, article) or /v1/boards to {,}
-func parseBoardTreasurePath(path string) (boardId string, treasuresId []string, filename string, err error) {
+func parseBoardTreasurePath(path string) (boardID string, treasuresID []string, filename string, err error) {
 	pathSegment := strings.Split(path, "/")
 
 	if len(pathSegment) == 6 {
 		// /{{version}}/boards/{{board_id}}/treasures/articles
-		boardId = pathSegment[3]
-		treasuresId = []string{}
+		boardID = pathSegment[3]
+		treasuresID = []string{}
 		filename = ""
+
 		return
 	} else if len(pathSegment) >= 7 {
 		// /{{version}}/boards/{{board_id}}/treasures/{{treasures_id ... }}/articles
 		// or
 		// /{{version}}/boards/{{board_id}}/treasures/{{treasures_id ... }}/articles/{{filename}}
-		boardId = pathSegment[3]
+		boardID = pathSegment[3]
 		if pathSegment[len(pathSegment)-1] == "articles" {
-			treasuresId = pathSegment[5 : len(pathSegment)-1]
+			treasuresID = pathSegment[5 : len(pathSegment)-1]
 			filename = ""
 		} else {
-			treasuresId = pathSegment[5 : len(pathSegment)-2]
+			treasuresID = pathSegment[5 : len(pathSegment)-2]
 			filename = pathSegment[len(pathSegment)-1]
 		}
+
 		return
 	}
 	// should not be reached
-	logger.Warningf("parseBoardTreasurePath got malform path: %v", path)
-	return
+	logger.Warningf("parseBoardTreasurePath got malformed path: %v", path)
 
+	return
 }

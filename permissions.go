@@ -16,7 +16,7 @@ const (
 	PermissionReadFavorite            permission = "READ_FAVORITE"
 )
 
-func checkTokenPermission(token string, permissionId []permission, userInfo map[string]string) error {
+func checkTokenPermission(token string, permissionID []permission, userInfo map[string]string) error {
 	return nil
 }
 
@@ -39,17 +39,21 @@ func newAccessTokenWithUsername(username string) string {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
 	ss, err := token.SignedString(key)
+
 	if err != nil {
 		logger.Errorf("sign token failed: %v", err)
 		return ""
 	}
+
 	return ss
 }
 
-func getUserIdFromToken(token string) (string, error) {
-	logger.Debugf("getUserIdFromToken token: %v", token)
+func getUserIDFromToken(token string) (string, error) {
+	logger.Debugf("getUserIDFromToken token: %v", token)
+
 	pem := globalConfig.AccessTokenPublicKey
 	key, err := jwt.ParseECPublicKeyFromPEM([]byte(pem))
+
 	if err != nil {
 		logger.Criticalf("parse public key failed: %v", err)
 		return "", err
@@ -69,13 +73,13 @@ func getUserIdFromToken(token string) (string, error) {
 		return "", nil
 	}
 
-	// logger.Debugf("getUserIdFromToken jwtToken: %v %v", jwtToken, err)
+	// logger.Debugf("getUserIDFromToken jwtToken: %v %v", jwtToken, err)
 	if claim, ok := jwtToken.Claims.(*jwt.StandardClaims); ok && jwtToken.Valid {
 		logger.Debugf("subject: %v %v", claim, jwtToken.Valid)
 		return claim.Subject, nil
-		// return "", nil
 	}
-	logger.Debugf("subject: %v", jwtToken.Valid)
-	return "", fmt.Errorf("token not valid")
 
+	logger.Debugf("subject: %v", jwtToken.Valid)
+
+	return "", fmt.Errorf("token not valid")
 }

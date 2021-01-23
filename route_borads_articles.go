@@ -1,8 +1,6 @@
 package main
 
 import (
-	"github.com/PichuChen/go-bbs"
-
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -11,14 +9,14 @@ import (
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
 // article list to client
-func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
+func getBoardArticles(w http.ResponseWriter, r *http.Request, boardID string) {
 	logger.Debugf("getBoardArticles: %v", r)
 	token := getTokenFromRequest(r)
 	// Check permission for board
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadBoardInformation},
 		map[string]string{
-			"board_id": boardId,
+			"board_id": boardID,
 		})
 
 	if err != nil {
@@ -27,14 +25,15 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 		return
 	}
 
-	var fileHeaders []bbs.ArticleRecord
-	fileHeaders, err = db.ReadBoardArticleRecordsFile(boardId)
+	fileHeaders, err := db.ReadBoardArticleRecordsFile(boardID)
+
 	if err != nil {
-		logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
+		logger.Warningf("open directory file error: %v", err)
 	}
 
 	items := []interface{}{}
+
 	for _, f := range fileHeaders {
 		m := map[string]interface{}{
 			"filename": f.Filename(),
@@ -46,10 +45,11 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 			"money":           fmt.Sprintf("%v", f.Money()),
 			"owner":           f.Owner(),
 			// "aid": ""
-			"url": getArticleURL(boardId, f.Filename()),
+			"url": getArticleURL(boardID, f.Filename()),
 		}
 		items = append(items, m)
 	}
+
 	logger.Debugf("fh: %v", fileHeaders)
 
 	responseMap := map[string]interface{}{
@@ -58,19 +58,24 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 		},
 	}
 
-	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	b, err := json.MarshalIndent(responseMap, "", "  ")
+	if err != nil {
+		logger.Errorf("failed to marshal response data: %s\n", err)
+	}
 
+	if _, err := w.Write(b); err != nil {
+		logger.Errorf("failed to write response: %s\n", err)
+	}
 }
 
-func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string, filename string) {
+func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardID string, filename string) {
 	logger.Debugf("getBoardArticlesFile: %v", r)
 
 	token := getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadBoardInformation},
 		map[string]string{
-			"board_id": boardId,
+			"board_id": boardID,
 		})
 
 	if err != nil {
@@ -79,9 +84,9 @@ func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string
 		return
 	}
 
-	buf, err := db.ReadBoardArticleFile(boardId, filename)
+	buf, err := db.ReadBoardArticleFile(boardID, filename)
 	if err != nil {
-		logger.Errorf("read file %v/%v error: %v", boardId, filename, err)
+		logger.Errorf("read file %v/%v error: %v", boardID, filename, err)
 	}
 
 	bufStr := base64.StdEncoding.EncodeToString(buf)
@@ -92,10 +97,16 @@ func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string
 		},
 	}
 
-	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	b, err := json.MarshalIndent(responseMap, "", "  ")
+	if err != nil {
+		logger.Errorf("failed to marshal response map: %s\n", err)
+	}
+
+	if _, err := w.Write(b); err != nil {
+		logger.Errorf("failed to write response: %s\n", err)
+	}
 }
 
-func getArticleURL(boardId string, filename string) string {
-	return fmt.Sprintf("https://ptt-app-dev-codingman.pichuchen.tw/bbs/%s/%s.html", boardId, filename)
+func getArticleURL(boardID string, filename string) string {
+	return fmt.Sprintf("https://ptt-app-dev-codingman.pichuchen.tw/bbs/%s/%s.html", boardID, filename)
 }

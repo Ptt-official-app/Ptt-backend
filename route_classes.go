@@ -13,77 +13,85 @@ import (
 // routeClasses is the handler for `/v1/classes`
 func routeClasses(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
-
 	if r.Method == "GET" {
 		getClasses(w, r)
 		return
 	}
-
 }
 
 // getClasses HandleFunc handles path start with `/v1/classes`
 // and pass requests to next handle function
 func getClasses(w http.ResponseWriter, r *http.Request) {
 	logger.Debugf("getClasses: %v", r)
-	classId, item, err := parseClassPath(r.URL.Path)
-	logger.Noticef("query class: %v item: %v err: %v", classId, item, err)
-	if classId == "" {
-		getClassesWithoutClassId(w, r)
+	classID, item, err := parseClassPath(r.URL.Path)
+	logger.Noticef("query class: %v item: %v err: %v", classID, item, err)
+
+	if classID == "" {
+		getClassesWithoutClassID(w, r)
 		return
 	}
-	getClassesList(w, r, classId)
-	return
 
-	// // get single board
-	// if item == "information" {
-	// 	getBoardInformation(w, r, boardId)
-	// 	return
-	// }
+	getClassesList(w, r, classID)
 
+	// get single board
+	if item == "information" {
+		// 	getBoardInformation(w, r, boardId)
+		return
+	}
 }
 
-// getClassesWithoutClassId handles path don't contain item after class id
+// getClassesWithoutClassID handles path don't contain item after class id
 // eg: `/v1/classes`, it will redirect Client to `/v1/classes/1` which is
 // root class by default.
-func getClassesWithoutClassId(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/v1/classes/1", 301)
+func getClassesWithoutClassID(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/v1/classes/1", http.StatusMovedPermanently)
 }
 
 // getClassesList handle path with class id and will return boards and classes
 // under this class.
 // TODO: What should we return when target class not found?
-func getClassesList(w http.ResponseWriter, r *http.Request, classId string) {
+func getClassesList(w http.ResponseWriter, r *http.Request, classID string) {
 	logger.Debugf("getClassesList: %v", r)
 
 	token := getTokenFromRequest(r)
-	userId, err := getUserIdFromToken(token)
+	userID, err := getUserIDFromToken(token)
+
 	if err != nil {
 		// user permission error
 		// Support Guest?
 		if !supportGuest() {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"error":"token_invalid"}`))
+
+			if _, err := w.Write([]byte(`{"error":"token_invalid"}`)); err != nil {
+				logger.Errorf("failed to write response: %s\n", err)
+			}
+
 			return
-		} else {
-			userId = "guest" // TODO: use const variable
 		}
+
+		userID = "guest" // TODO: use const variable
 	}
 
 	dataList := []interface{}{}
+
 	for bid, b := range boardHeader {
 		// TODO: Show Board by user level
-		if !shouldShowOnUserLevel(b, userId) {
+		if !shouldShowOnUserLevel(b, userID) {
 			continue
 		}
-		if b.ClassId() != classId {
+
+		if b.ClassId() != classID {
 			continue
 		}
+
 		jb, _ := json.Marshal(b)
 		logger.Debugf("marshal class board: %v", string(jb))
+
 		m := marshalBoardHeader(b)
 		if b.IsClass() {
 			m["id"] = fmt.Sprintf("%v", bid+1)
 		}
+
 		dataList = append(dataList, m)
 	}
 
@@ -91,14 +99,19 @@ func getClassesList(w http.ResponseWriter, r *http.Request, classId string) {
 		"data": dataList,
 	}
 
-	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	b, err := json.MarshalIndent(responseMap, "", "  ")
+	if err != nil {
+		logger.Errorf("failed to marshal response data: %s\n", err)
+	}
 
+	if _, err := w.Write(b); err != nil {
+		logger.Errorf("failed to write response: %s\n", err)
+	}
 }
 
 // parseClassPath covert url path from /v1/classes/1/information to
 // {1, information) or /v1/classes to {,}
-func parseClassPath(path string) (classId string, item string, err error) {
+func parseClassPath(path string) (classID string, item string, err error) {
 	pathSegment := strings.Split(path, "/")
 	if len(pathSegment) == 5 {
 		// /{{version}}/classes/{{class_id}}/{{item}}
@@ -110,7 +123,8 @@ func parseClassPath(path string) (classId string, item string, err error) {
 		// /{{version}}/classes
 		return "", "", nil
 	}
-	logger.Warningf("parseClassPath got malform path: %v", path)
-	return "", "", nil
 
+	logger.Warningf("parseClassPath got malformed path: %v", path)
+
+	return "", "", nil
 }

@@ -3,54 +3,65 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PichuChen/go-bbs"
-
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/PichuChen/go-bbs"
 )
 
 func routeToken(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
-
-	if r.Method == "POST" {
+	if r.Method == http.MethodPost {
 		postToken(w, r)
 		return
 	}
-
 }
 
 func postToken(w http.ResponseWriter, r *http.Request) {
-
-	r.ParseForm()
+	if err := r.ParseForm(); err != nil {
+		log.Println("failed to parse form data")
+	}
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	userec, err := findUserecById(username)
+	userec, err := findUserecByID(username)
 	if err != nil {
 		m := map[string]string{
 			"error":             "grant_error",
 			"error_description": err.Error(),
 		}
-		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
-		return
+		b, err := json.MarshalIndent(m, "", "  ")
 
+		if err != nil {
+			logger.Errorf("failed to marshal response data: %s\n", err)
+		}
+
+		if _, err := w.Write(b); err != nil {
+			logger.Errorf("failed to write response: %s\n", err)
+		}
+
+		return
 	}
 
 	log.Println("found user:", userec)
 	err = verifyPassword(userec, password)
+
 	if err != nil {
 		// TODO: add delay, warning, notify user
-
 		m := map[string]string{
 			"error":             "grant_error",
 			"error_description": err.Error(),
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
+
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write(b)
+
+		if _, err := w.Write(b); err != nil {
+			logger.Errorf("failed to write response: %s\n", err)
+		}
+
 		return
 	}
 
@@ -61,21 +72,24 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 		"token_type":   "bearer",
 	}
 
-	b, _ := json.MarshalIndent(m, "", "  ")
+	b, err := json.MarshalIndent(m, "", "  ")
+	if err != nil {
+		logger.Errorf("failed to marshal response data: %s\n", err)
+	}
 
-	w.Write(b)
-
+	if _, err := w.Write(b); err != nil {
+		logger.Errorf("failed to write response: %s\n", err)
+	}
 }
 
-func findUserecById(userid string) (bbs.UserRecord, error) {
-
+func findUserecByID(userid string) (bbs.UserRecord, error) {
 	for _, it := range userRecs {
 		if userid == it.UserId() {
 			return it, nil
 		}
 	}
-	return nil, fmt.Errorf("user record not found")
 
+	return nil, fmt.Errorf("user record not found")
 }
 
 func verifyPassword(userec bbs.UserRecord, password string) error {
@@ -86,9 +100,11 @@ func verifyPassword(userec bbs.UserRecord, password string) error {
 func getTokenFromRequest(r *http.Request) string {
 	a := r.Header.Get("Authorization")
 	s := strings.Split(a, " ")
+
 	if len(s) < 2 {
 		logger.Warningf("getTokenFromRequest error: len(s) < 2, got: %v", len(s))
 		return ""
 	}
+
 	return s[1]
 }

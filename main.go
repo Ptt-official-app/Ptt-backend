@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/PichuChen/go-bbs"
-	_ "github.com/PichuChen/go-bbs/pttbbs"
 	"net/http"
 	"strings"
+
+	"github.com/PichuChen/go-bbs"
+	_ "github.com/PichuChen/go-bbs/pttbbs"
 )
 
 var userRecs []bbs.UserRecord
@@ -18,7 +19,9 @@ func main() {
 	logger.Informationalf("server start")
 
 	loadDefaultConfig()
+
 	var err error
+
 	db, err = bbs.Open("pttbbs", globalConfig.BBSHome)
 	if err != nil {
 		logger.Errorf("open bbs db error: %v", err)
@@ -32,7 +35,9 @@ func main() {
 	buildRoute(r)
 
 	logger.Informationalf("listen port on %v", globalConfig.ListenPort)
+
 	err = http.ListenAndServe(fmt.Sprintf(":%v", globalConfig.ListenPort), r)
+
 	if err != nil {
 		logger.Errorf("listen serve error: %v", err)
 	}
@@ -40,7 +45,9 @@ func main() {
 
 func loadPasswdsFile() {
 	var err error
+
 	userRecs, err = db.ReadUserRecords()
+
 	if err != nil {
 		logger.Errorf("get user rec error: %v", err)
 		return
@@ -49,34 +56,35 @@ func loadPasswdsFile() {
 
 func loadBoardFile() {
 	var err error
+
 	boardHeader, err = db.ReadBoardRecords()
+
 	if err != nil {
 		logger.Errorf("get board header error: %v", err)
 		return
 	}
+
 	for index, board := range boardHeader {
 		logger.Debugf("loaded %d %v", index, board.BoardId())
-
 	}
 }
 
 func routeClass(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "GET" {
+	if r.Method == http.MethodGet {
 		getClass(w, r)
 		return
 	}
-
 }
 
 func getClass(w http.ResponseWriter, r *http.Request) {
-
 	seg := strings.Split(r.URL.Path, "/")
 
-	classId := "0"
+	classID := "0"
 	if len(seg) > 2 {
-		classId = seg[3]
+		classID = seg[3]
 	}
-	logger.Informationalf("user get class: %v", classId)
+
+	logger.Informationalf("user get class: %v", classID)
 
 	list := []interface{}{}
 
@@ -97,8 +105,9 @@ func getClass(w http.ResponseWriter, r *http.Request) {
 	}
 	b, _ := json.MarshalIndent(m, "", "  ")
 
-	w.Write(b)
-
+	if _, err := w.Write(b); err != nil {
+		return
+	}
 }
 
 // return a boolean value to indicate support guest account
