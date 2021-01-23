@@ -1,0 +1,20 @@
+# https://github.com/golangci/golangci-lint#config-file
+run:
+  deadline: 5m
+  print-resources-usage: true
+
+linters:
+  enable-all: true
+  disable:
+    - godox
+    - gomnd
+    - gochecknoglobals
+    - interfacer
+    - staticcheck
+    - dupl
+
+linters-settings:
+  govet:
+    check-shadowing: false
+  lll:
+    line-length: 150
