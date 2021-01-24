@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/PichuChen/go-bbs"
 
 	"encoding/json"
@@ -69,7 +71,7 @@ func getBoardList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dataList := []interface{}{}
-	for _, b := range boardHeader {
+	for _, b := range boardRepo.GetBoards(context.Background()) {
 		// TODO: Show Board by user level
 		if b.IsClass() {
 			continue
@@ -187,7 +189,7 @@ func parseBoardPath(path string) (boardId string, item string, filename string, 
 }
 
 func findBoardHeaderById(boardId string) (bbs.BoardRecord, error) {
-	for _, it := range boardHeader {
+	for _, it := range boardRepo.GetBoards(context.Background()) {
 		if boardId == it.BoardId() {
 			return it, nil
 		}

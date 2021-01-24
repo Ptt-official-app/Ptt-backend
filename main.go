@@ -10,10 +10,11 @@ import (
 	_ "github.com/PichuChen/go-bbs/pttbbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
+	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 )
 
-var userRecs []bbs.UserRecord
-var boardHeader []bbs.BoardRecord
+var userRepo repository.UserRepository
+var boardRepo repository.BoardRepository
 
 var db *bbs.DB
 var logger = logging.NewLogger()
@@ -36,8 +37,17 @@ func main() {
 		return
 	}
 
-	loadPasswdsFile()
-	loadBoardFile()
+	boardRepo, err = repository.NewBoardRepository(db)
+	if err != nil {
+		logger.Errorf("failed to create board repository: %s\n", err)
+		return
+	}
+
+	userRepo, err = repository.NewUserRepository(db)
+	if err != nil {
+		logger.Errorf("failed to create user repository: %s\n", err)
+		return
+	}
 
 	r := http.NewServeMux()
 	buildRoute(r)
@@ -46,28 +56,6 @@ func main() {
 	err = http.ListenAndServe(fmt.Sprintf(":%v", globalConfig.ListenPort), r)
 	if err != nil {
 		logger.Errorf("listen serve error: %v", err)
-	}
-}
-
-func loadPasswdsFile() {
-	var err error
-	userRecs, err = db.ReadUserRecords()
-	if err != nil {
-		logger.Errorf("get user rec error: %v", err)
-		return
-	}
-}
-
-func loadBoardFile() {
-	var err error
-	boardHeader, err = db.ReadBoardRecords()
-	if err != nil {
-		logger.Errorf("get board header error: %v", err)
-		return
-	}
-	for index, board := range boardHeader {
-		logger.Debugf("loaded %d %v", index, board.BoardId())
-
 	}
 }
 

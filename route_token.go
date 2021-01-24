@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/PichuChen/go-bbs"
@@ -69,7 +70,7 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 
 func findUserecById(userid string) (bbs.UserRecord, error) {
 
-	for _, it := range userRecs {
+	for _, it := range userRepo.GetUsers(context.Background()) {
 		if userid == it.UserId() {
 			return it, nil
 		}

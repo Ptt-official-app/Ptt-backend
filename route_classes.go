@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	// "github.com/PichuChen/go-bbs"
 	// "github.com/PichuChen/go-bbs/crypt"
 	// "log"
@@ -70,7 +71,7 @@ func getClassesList(w http.ResponseWriter, r *http.Request, classId string) {
 	}
 
 	dataList := []interface{}{}
-	for bid, b := range boardHeader {
+	for bid, b := range boardRepo.GetBoards(context.Background()) {
 		// TODO: Show Board by user level
 		if !shouldShowOnUserLevel(b, userId) {
 			continue

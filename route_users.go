@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/PichuChen/go-bbs"
 
 	"encoding/json"
@@ -103,7 +105,7 @@ func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 		return
 	}
 
-	recs, err := db.ReadUserFavoriteRecords(userId)
+	recs, err := userRepo.GetUserFavoriteRecords(context.Background(), userId)
 	logger.Debugf("file items length: %v", len(recs))
 	// dataMap := map[string]interface{}{}
 

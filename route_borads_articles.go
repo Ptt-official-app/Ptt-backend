@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/PichuChen/go-bbs"
 
 	"encoding/base64"
@@ -28,7 +30,7 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 	}
 
 	var fileHeaders []bbs.ArticleRecord
-	fileHeaders, err = db.ReadBoardArticleRecordsFile(boardId)
+	fileHeaders, err = boardRepo.GetBoardArticleRecords(context.Background(), boardId)
 	if err != nil {
 		logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
@@ -79,7 +81,7 @@ func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string
 		return
 	}
 
-	buf, err := db.ReadBoardArticleFile(boardId, filename)
+	buf, err := boardRepo.GetBoardArticle(context.Background(), boardId, filename)
 	if err != nil {
 		logger.Errorf("read file %v/%v error: %v", boardId, filename, err)
 	}
