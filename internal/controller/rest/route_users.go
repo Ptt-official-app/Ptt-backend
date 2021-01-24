@@ -3,37 +3,29 @@ package rest
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
-	"time"
-
-	"github.com/PichuChen/go-bbs"
 )
 
 func (rest *restHandler) routeUsers(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
-
-	if r.Method == "GET" {
+	switch r.Method {
+	case http.MethodGet:
 		rest.getUsers(w, r)
-		return
 	}
-
 }
 
 func (rest *restHandler) getUsers(w http.ResponseWriter, r *http.Request) {
 	userId, item, err := parseUserPath(r.URL.Path)
-
-	if item == "information" {
+	switch item {
+	case "information":
 		rest.getUserInformation(w, r, userId)
-		return
-	} else if item == "favorites" {
+	case "favorites":
 		rest.getUserFavorites(w, r, userId)
-		return
+	default:
+		rest.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
+		w.WriteHeader(http.StatusNotFound)
 	}
-	// else
-	rest.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
-	w.WriteHeader(http.StatusNotFound)
 }
 
 func (rest *restHandler) getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
@@ -50,46 +42,27 @@ func (rest *restHandler) getUserInformation(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	userrec, err := rest.findUserecById(userId)
+	dataMap, err := rest.userUsecase.GetUserInformation(context.Background(), userId)
 	if err != nil {
 		// TODO: record error
-
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_userrec_error",
-			"error_description": "get userrec for " + userId + " failed",
+			"error_description": err.Error(),
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.Write(b)
 		return
 	}
 
-	// TODO: Check Etag or Not-Modified for cache
-
-	dataMap := map[string]interface{}{
-		"user_id":              userrec.UserId(),
-		"nickname":             userrec.Nickname(),
-		"realname":             userrec.RealName(),
-		"number_of_login_days": fmt.Sprintf("%d", userrec.NumLoginDays()),
-		"number_of_posts":      fmt.Sprintf("%d", userrec.NumPosts()),
-		// "number_of_badposts":   fmt.Sprintf("%d", userrec.NumLoginDays),
-		"money":           fmt.Sprintf("%d", userrec.Money()),
-		"last_login_time": userrec.LastLogin().Format(time.RFC3339),
-		"last_login_ipv4": userrec.LastHost(),
-		"last_login_ip":   userrec.LastHost(),
-		// "last_login_country": fmt.Sprintf("%d", userrec.NumLoginDays),
-		"chess_status": map[string]interface{}{},
-		"plan":         map[string]interface{}{},
-	}
-
 	responseMap := map[string]interface{}{
 		"data": dataMap,
 	}
-
 	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
 
 	w.Write(responseByte)
 }
+
 func (rest *restHandler) getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 	token := rest.getTokenFromRequest(r)
 	err := checkTokenPermission(token,
@@ -104,11 +77,10 @@ func (rest *restHandler) getUserFavorites(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	recs, err := rest.userRepo.GetUserFavoriteRecords(context.Background(), userId)
-	rest.logger.Debugf("file items length: %v", len(recs))
-	// dataMap := map[string]interface{}{}
-
-	dataItems := rest.parseFavoriteFolderItem(recs)
+	dataItems, err := rest.userUsecase.GetUserFavorites(context.Background(), userId)
+	if err != nil {
+		rest.logger.Errorf("failed to get user favorites: %s\n", err)
+	}
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
@@ -121,36 +93,6 @@ func (rest *restHandler) getUserFavorites(w http.ResponseWriter, r *http.Request
 	w.Write(responseByte)
 }
 
-func (rest *restHandler) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
-	dataItems := []interface{}{}
-	for _, item := range recs {
-		rest.logger.Debugf("fav type: %v", item.Type())
-
-		switch item.Type() {
-		case bbs.FavoriteTypeBoard:
-			dataItems = append(dataItems, map[string]interface{}{
-				"type":     "board",
-				"board_id": item.BoardId(),
-			})
-
-		case bbs.FavoriteTypeFolder:
-			dataItems = append(dataItems, map[string]interface{}{
-				"type":  "folder",
-				"title": item.Title(),
-				"items": rest.parseFavoriteFolderItem(item.Records()),
-			})
-
-		case bbs.FavoriteTypeLine:
-			dataItems = append(dataItems, map[string]interface{}{
-				"type": "line",
-			})
-		default:
-			rest.logger.Warningf("parseFavoriteFolderItem unknown favItem type")
-		}
-	}
-	return dataItems
-}
-
 func parseUserPath(path string) (userId string, item string, err error) {
 	pathSegment := strings.Split(path, "/")
 	// /{{version}}/users/{{user_id}}/{{item}}
@@ -158,7 +100,5 @@ func parseUserPath(path string) (userId string, item string, err error) {
 		// /{{version}}/users/{{user_id}}
 		return pathSegment[3], "", nil
 	}
-
 	return pathSegment[3], pathSegment[4], nil
-
 }

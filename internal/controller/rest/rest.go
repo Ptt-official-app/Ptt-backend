@@ -6,6 +6,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 func NewRESTHandler(globalConfig *config.Config, userRepo repository.UserRepository, boardRepo repository.BoardRepository) http.Handler {
@@ -16,18 +17,21 @@ func NewRESTHandler(globalConfig *config.Config, userRepo repository.UserReposit
 }
 
 type restHandler struct {
-	logger       logging.Logger
+	logger logging.Logger
+
 	globalConfig *config.Config
-	userRepo     repository.UserRepository
-	boardRepo    repository.BoardRepository
+
+	boardRepo repository.BoardRepository
+
+	userUsecase usecase.UserUsecase
 }
 
 func newRestHandler(globalConfig *config.Config, userRepo repository.UserRepository, boardRepo repository.BoardRepository) *restHandler {
 	return &restHandler{
 		logger:       logging.NewLogger(),
 		globalConfig: globalConfig,
-		userRepo:     userRepo,
 		boardRepo:    boardRepo,
+		userUsecase:  usecase.NewUserUsecase(userRepo),
 	}
 }
 

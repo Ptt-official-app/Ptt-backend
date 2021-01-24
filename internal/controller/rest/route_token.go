@@ -3,7 +3,6 @@ package rest
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -28,7 +27,7 @@ func (rest *restHandler) postToken(w http.ResponseWriter, r *http.Request) {
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	userec, err := rest.findUserecById(username)
+	userec, err := rest.userUsecase.GetUserByID(context.Background(), username)
 	if err != nil {
 		m := map[string]string{
 			"error":             "grant_error",
@@ -65,18 +64,6 @@ func (rest *restHandler) postToken(w http.ResponseWriter, r *http.Request) {
 	b, _ := json.MarshalIndent(m, "", "  ")
 
 	w.Write(b)
-
-}
-
-func (rest *restHandler) findUserecById(userid string) (bbs.UserRecord, error) {
-
-	for _, it := range rest.userRepo.GetUsers(context.Background()) {
-		if userid == it.UserId() {
-			return it, nil
-		}
-	}
-	return nil, fmt.Errorf("user record not found")
-
 }
 
 func (rest *restHandler) verifyPassword(userec bbs.UserRecord, password string) error {
