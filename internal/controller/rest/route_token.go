@@ -11,24 +11,24 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func routeToken(w http.ResponseWriter, r *http.Request) {
+func (rest *restHandler) routeToken(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 
 	if r.Method == "POST" {
-		postToken(w, r)
+		rest.postToken(w, r)
 		return
 	}
 
 }
 
-func postToken(w http.ResponseWriter, r *http.Request) {
+func (rest *restHandler) postToken(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	userec, err := findUserecById(username)
+	userec, err := rest.findUserecById(username)
 	if err != nil {
 		m := map[string]string{
 			"error":             "grant_error",
@@ -41,7 +41,7 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("found user:", userec)
-	err = verifyPassword(userec, password)
+	err = rest.verifyPassword(userec, password)
 	if err != nil {
 		// TODO: add delay, warning, notify user
 
@@ -56,7 +56,7 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate Access Token
-	token := newAccessTokenWithUsername(username)
+	token := rest.getAccessTokenWithUsername(username)
 	m := map[string]string{
 		"access_token": token,
 		"token_type":   "bearer",
@@ -68,9 +68,9 @@ func postToken(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func findUserecById(userid string) (bbs.UserRecord, error) {
+func (rest *restHandler) findUserecById(userid string) (bbs.UserRecord, error) {
 
-	for _, it := range userRepo.GetUsers(context.Background()) {
+	for _, it := range rest.userRepo.GetUsers(context.Background()) {
 		if userid == it.UserId() {
 			return it, nil
 		}
@@ -79,16 +79,16 @@ func findUserecById(userid string) (bbs.UserRecord, error) {
 
 }
 
-func verifyPassword(userec bbs.UserRecord, password string) error {
+func (rest *restHandler) verifyPassword(userec bbs.UserRecord, password string) error {
 	log.Println("password", userec.HashedPassword())
 	return userec.VerifyPassword(password)
 }
 
-func getTokenFromRequest(r *http.Request) string {
+func (rest *restHandler) getTokenFromRequest(r *http.Request) string {
 	a := r.Header.Get("Authorization")
 	s := strings.Split(a, " ")
 	if len(s) < 2 {
-		logger.Warningf("getTokenFromRequest error: len(s) < 2, got: %v", len(s))
+		rest.logger.Warningf("getTokenFromRequest error: len(s) < 2, got: %v", len(s))
 		return ""
 	}
 	return s[1]

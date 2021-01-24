@@ -12,9 +12,9 @@ import (
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
 // article list to client
-func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
-	logger.Debugf("getBoardArticles: %v", r)
-	token := getTokenFromRequest(r)
+func (rest *restHandler) getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
+	rest.logger.Debugf("getBoardArticles: %v", r)
+	token := rest.getTokenFromRequest(r)
 	// Check permission for board
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadBoardInformation},
@@ -29,9 +29,9 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 	}
 
 	var fileHeaders []bbs.ArticleRecord
-	fileHeaders, err = boardRepo.GetBoardArticleRecords(context.Background(), boardId)
+	fileHeaders, err = rest.boardRepo.GetBoardArticleRecords(context.Background(), boardId)
 	if err != nil {
-		logger.Warningf("open directory file error: %v", err)
+		rest.logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
 	}
 
@@ -51,7 +51,7 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 		}
 		items = append(items, m)
 	}
-	logger.Debugf("fh: %v", fileHeaders)
+	rest.logger.Debugf("fh: %v", fileHeaders)
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
@@ -64,10 +64,10 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 
 }
 
-func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string, filename string) {
-	logger.Debugf("getBoardArticlesFile: %v", r)
+func (rest *restHandler) getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string, filename string) {
+	rest.logger.Debugf("getBoardArticlesFile: %v", r)
 
-	token := getTokenFromRequest(r)
+	token := rest.getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadBoardInformation},
 		map[string]string{
@@ -80,9 +80,9 @@ func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string
 		return
 	}
 
-	buf, err := boardRepo.GetBoardArticle(context.Background(), boardId, filename)
+	buf, err := rest.boardRepo.GetBoardArticle(context.Background(), boardId, filename)
 	if err != nil {
-		logger.Errorf("read file %v/%v error: %v", boardId, filename, err)
+		rest.logger.Errorf("read file %v/%v error: %v", boardId, filename, err)
 	}
 
 	bufStr := base64.StdEncoding.EncodeToString(buf)

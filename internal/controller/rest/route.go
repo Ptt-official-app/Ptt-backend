@@ -6,24 +6,15 @@ import (
 	"strings"
 )
 
-func buildRoute(r *http.ServeMux) {
-
-	r.HandleFunc("/v1/token", routeToken)
-	r.HandleFunc("/v1/boards", routeBoards)
-	r.HandleFunc("/v1/boards/", routeBoards)
-	r.HandleFunc("/v1/classes/", routeClasses)
-	r.HandleFunc("/v1/users/", routeUsers)
-}
-
-func routeClass(w http.ResponseWriter, r *http.Request) {
+func (rest *restHandler) routeClass(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		getClass(w, r)
+		rest.getClass(w, r)
 		return
 	}
 
 }
 
-func getClass(w http.ResponseWriter, r *http.Request) {
+func (rest *restHandler) getClass(w http.ResponseWriter, r *http.Request) {
 
 	seg := strings.Split(r.URL.Path, "/")
 
@@ -31,7 +22,7 @@ func getClass(w http.ResponseWriter, r *http.Request) {
 	if len(seg) > 2 {
 		classId = seg[3]
 	}
-	logger.Informationalf("user get class: %v", classId)
+	rest.logger.Informationalf("user get class: %v", classId)
 
 	list := []interface{}{}
 

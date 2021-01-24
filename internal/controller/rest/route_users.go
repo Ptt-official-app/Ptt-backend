@@ -11,33 +11,33 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func routeUsers(w http.ResponseWriter, r *http.Request) {
+func (rest *restHandler) routeUsers(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 
 	if r.Method == "GET" {
-		getUsers(w, r)
+		rest.getUsers(w, r)
 		return
 	}
 
 }
 
-func getUsers(w http.ResponseWriter, r *http.Request) {
+func (rest *restHandler) getUsers(w http.ResponseWriter, r *http.Request) {
 	userId, item, err := parseUserPath(r.URL.Path)
 
 	if item == "information" {
-		getUserInformation(w, r, userId)
+		rest.getUserInformation(w, r, userId)
 		return
 	} else if item == "favorites" {
-		getUserFavorites(w, r, userId)
+		rest.getUserFavorites(w, r, userId)
 		return
 	}
 	// else
-	logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
+	rest.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
 	w.WriteHeader(http.StatusNotFound)
 }
 
-func getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
-	token := getTokenFromRequest(r)
+func (rest *restHandler) getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
+	token := rest.getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadUserInformation},
 		map[string]string{
@@ -50,7 +50,7 @@ func getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
 		return
 	}
 
-	userrec, err := findUserecById(userId)
+	userrec, err := rest.findUserecById(userId)
 	if err != nil {
 		// TODO: record error
 
@@ -90,8 +90,8 @@ func getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
 
 	w.Write(responseByte)
 }
-func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
-	token := getTokenFromRequest(r)
+func (rest *restHandler) getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
+	token := rest.getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadUserInformation},
 		map[string]string{
@@ -104,11 +104,11 @@ func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 		return
 	}
 
-	recs, err := userRepo.GetUserFavoriteRecords(context.Background(), userId)
-	logger.Debugf("file items length: %v", len(recs))
+	recs, err := rest.userRepo.GetUserFavoriteRecords(context.Background(), userId)
+	rest.logger.Debugf("file items length: %v", len(recs))
 	// dataMap := map[string]interface{}{}
 
-	dataItems := parseFavoriteFolderItem(recs)
+	dataItems := rest.parseFavoriteFolderItem(recs)
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
@@ -121,10 +121,10 @@ func getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 	w.Write(responseByte)
 }
 
-func parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
+func (rest *restHandler) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {
-		logger.Debugf("fav type: %v", item.Type())
+		rest.logger.Debugf("fav type: %v", item.Type())
 
 		switch item.Type() {
 		case bbs.FavoriteTypeBoard:
@@ -137,7 +137,7 @@ func parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 			dataItems = append(dataItems, map[string]interface{}{
 				"type":  "folder",
 				"title": item.Title(),
-				"items": parseFavoriteFolderItem(item.Records()),
+				"items": rest.parseFavoriteFolderItem(item.Records()),
 			})
 
 		case bbs.FavoriteTypeLine:
@@ -145,7 +145,7 @@ func parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 				"type": "line",
 			})
 		default:
-			logger.Warningf("parseFavoriteFolderItem unknown favItem type")
+			rest.logger.Warningf("parseFavoriteFolderItem unknown favItem type")
 		}
 	}
 	return dataItems
