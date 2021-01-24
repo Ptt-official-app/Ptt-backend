@@ -1,14 +1,13 @@
-package main
+package rest
 
 import (
 	"context"
-
-	"github.com/PichuChen/go-bbs"
-
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/PichuChen/go-bbs"
 )
 
 // routeBoards is the handler for `/v1/boards`

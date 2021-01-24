@@ -1,15 +1,14 @@
-package main
+package rest
 
 import (
 	"context"
-
-	"github.com/PichuChen/go-bbs"
-
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/PichuChen/go-bbs"
 )
 
 func routeUsers(w http.ResponseWriter, r *http.Request) {

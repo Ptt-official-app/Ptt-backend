@@ -1,14 +1,14 @@
-package main
+package rest
 
 import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/PichuChen/go-bbs"
-
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/PichuChen/go-bbs"
 )
 
 func routeToken(w http.ResponseWriter, r *http.Request) {

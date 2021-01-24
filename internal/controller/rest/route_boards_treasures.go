@@ -1,16 +1,14 @@
-package main
+package rest
 
 import (
 	"context"
-
-	"github.com/PichuChen/go-bbs"
-
 	// "encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
-	// "os"
+
+	"github.com/PichuChen/go-bbs"
 )
 
 func getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {

@@ -1,14 +1,13 @@
-package main
+package rest
 
 import (
 	"context"
-
-	"github.com/PichuChen/go-bbs"
-
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
+
+	"github.com/PichuChen/go-bbs"
 )
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
