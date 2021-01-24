@@ -8,6 +8,7 @@ import (
 
 	"github.com/PichuChen/go-bbs"
 	_ "github.com/PichuChen/go-bbs/pttbbs"
+	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
@@ -16,12 +17,19 @@ var boardHeader []bbs.BoardRecord
 
 var db *bbs.DB
 var logger = logging.NewLogger()
+var globalConfig *config.Config
 
 func main() {
 	logger.Informationalf("server start")
 
-	loadDefaultConfig()
 	var err error
+
+	globalConfig, err = config.NewDefaultConfig()
+	if err != nil {
+		logger.Errorf("failed to get config: %v", err)
+		return
+	}
+
 	db, err = bbs.Open("pttbbs", globalConfig.BBSHome)
 	if err != nil {
 		logger.Errorf("open bbs db error: %v", err)
@@ -105,7 +113,7 @@ func getClass(w http.ResponseWriter, r *http.Request) {
 }
 
 // return a boolean value to indicate support guest account
-// and using guset permission when permission insufficient
+// and using guest permission when permission insufficient
 func supportGuest() bool {
 	return false
 }
