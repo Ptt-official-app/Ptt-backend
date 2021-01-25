@@ -10,6 +10,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/controller/rest"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 func main() {
@@ -41,7 +42,9 @@ func main() {
 		return
 	}
 
-	r := rest.NewRESTHandler(globalConfig, userRepo, boardRepo)
+	userUsecase := usecase.NewUserUsecase(userRepo)
+
+	r := rest.NewRESTHandler(globalConfig, userUsecase, boardRepo)
 
 	logger.Informationalf("listen port on %v", globalConfig.ListenPort)
 	err = http.ListenAndServe(fmt.Sprintf(":%v", globalConfig.ListenPort), r)

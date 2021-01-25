@@ -9,9 +9,9 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-func NewRESTHandler(globalConfig *config.Config, userRepo repository.UserRepository, boardRepo repository.BoardRepository) http.Handler {
+func NewRESTHandler(globalConfig *config.Config, userUsecase usecase.UserUsecase, boardRepo repository.BoardRepository) http.Handler {
 	mux := http.NewServeMux()
-	rest := newRestHandler(globalConfig, userRepo, boardRepo)
+	rest := newRestHandler(globalConfig, userUsecase, boardRepo)
 	rest.buildRoute(mux)
 	return mux
 }
@@ -26,12 +26,12 @@ type restHandler struct {
 	userUsecase usecase.UserUsecase
 }
 
-func newRestHandler(globalConfig *config.Config, userRepo repository.UserRepository, boardRepo repository.BoardRepository) *restHandler {
+func newRestHandler(globalConfig *config.Config, userUsecase usecase.UserUsecase, boardRepo repository.BoardRepository) *restHandler {
 	return &restHandler{
 		logger:       logging.NewLogger(),
 		globalConfig: globalConfig,
 		boardRepo:    boardRepo,
-		userUsecase:  usecase.NewUserUsecase(userRepo),
+		userUsecase:  userUsecase,
 	}
 }
 
