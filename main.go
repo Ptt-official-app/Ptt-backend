@@ -9,6 +9,7 @@ import (
 	"github.com/PichuChen/go-bbs"
 	_ "github.com/PichuChen/go-bbs/pttbbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
+	"github.com/julienschmidt/httprouter"
 )
 
 var userRecs []bbs.UserRecord
@@ -30,8 +31,7 @@ func main() {
 
 	loadPasswdsFile()
 	loadBoardFile()
-
-	r := http.NewServeMux()
+	r := httprouter.New()
 	buildRoute(r)
 
 	logger.Informationalf("listen port on %v", globalConfig.ListenPort)

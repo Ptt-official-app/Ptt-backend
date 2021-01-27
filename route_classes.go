@@ -8,22 +8,14 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/julienschmidt/httprouter"
 )
-
-// routeClasses is the handler for `/v1/classes`
-func routeClasses(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check IP Flowspeed
-
-	if r.Method == "GET" {
-		getClasses(w, r)
-		return
-	}
-
-}
 
 // getClasses HandleFunc handles path start with `/v1/classes`
 // and pass requests to next handle function
-func getClasses(w http.ResponseWriter, r *http.Request) {
+func getClasses(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// TODO: Check IP Flowspeed
 	logger.Debugf("getClasses: %v", r)
 	classId, item, err := parseClassPath(r.URL.Path)
 	logger.Noticef("query class: %v item: %v err: %v", classId, item, err)

@@ -1,14 +1,12 @@
 package main
 
-import (
-	"net/http"
-)
+import "github.com/julienschmidt/httprouter"
 
-func buildRoute(r *http.ServeMux) {
+func buildRoute(r *httprouter.Router) {
 
-	r.HandleFunc("/v1/token", routeToken)
-	r.HandleFunc("/v1/boards", routeBoards)
-	r.HandleFunc("/v1/boards/", routeBoards)
-	r.HandleFunc("/v1/classes/", routeClasses)
-	r.HandleFunc("/v1/users/", routeUsers)
+	r.POST("/v1/token", postToken)
+	r.GET("/v1/boards", getBoards)
+	r.GET("/v1/classes/", getClasses)
+	r.GET("/v1/users/", getUsers)
+
 }

@@ -3,25 +3,17 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/PichuChen/go-bbs"
+	"github.com/julienschmidt/httprouter"
 
 	"log"
 	"net/http"
 	"strings"
 )
 
-func routeToken(w http.ResponseWriter, r *http.Request) {
+func postToken(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// TODO: Check IP Flowspeed
-
-	if r.Method == "POST" {
-		postToken(w, r)
-		return
-	}
-
-}
-
-func postToken(w http.ResponseWriter, r *http.Request) {
-
 	r.ParseForm()
 
 	username := r.FormValue("username")

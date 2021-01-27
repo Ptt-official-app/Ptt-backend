@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/PichuChen/go-bbs"
+	"github.com/julienschmidt/httprouter"
 
 	"encoding/json"
 	"fmt"
@@ -9,20 +10,9 @@ import (
 	"strings"
 )
 
-// routeBoards is the handler for `/v1/boards`
-func routeBoards(w http.ResponseWriter, r *http.Request) {
-	logger.Debugf("routeBoards: %v", r)
-
-	// TODO: Check IP Flowspeed
-	if r.Method == "GET" {
-		getBoards(w, r)
-		return
-	}
-
-}
-
 // getBoards is the handler for `/v1/boards` with GET method
-func getBoards(w http.ResponseWriter, r *http.Request) {
+func getBoards(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	// TODO: Check IP Flowspeed
 	logger.Debugf("getBoards: %v", r)
 	boardId, item, filename, err := parseBoardPath(r.URL.Path)
 	if boardId == "" {

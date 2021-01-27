@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/PichuChen/go-bbs"
+	"github.com/julienschmidt/httprouter"
 
 	"encoding/json"
 	"fmt"
@@ -10,17 +11,8 @@ import (
 	"time"
 )
 
-func routeUsers(w http.ResponseWriter, r *http.Request) {
+func getUsers(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	// TODO: Check IP Flowspeed
-
-	if r.Method == "GET" {
-		getUsers(w, r)
-		return
-	}
-
-}
-
-func getUsers(w http.ResponseWriter, r *http.Request) {
 	userId, item, err := parseUserPath(r.URL.Path)
 
 	if item == "information" {
