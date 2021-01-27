@@ -1,2 +1,7 @@
 config.toml
 Ptt-backend
+/vendor
+/.idea
+/.vscode
+/bin
+*.out
