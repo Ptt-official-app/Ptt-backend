@@ -1,6 +1,6 @@
 [bbs]
 # bbs 的家目錄
-home= "/home/bbs"
+home= "./home/bbs"
 
 [websocket]
 # WebSocket to Telnet Proxy
