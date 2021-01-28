@@ -3,7 +3,6 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -69,18 +68,11 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 		}
 	}
 
-	dataList := []interface{}{}
-	for _, b := range delivery.boardRepo.GetBoards(context.Background()) {
-		// TODO: Show Board by user level
-		if b.IsClass() {
-			continue
-		}
-		if !shouldShowOnUserLevel(b, userId) {
-			continue
-		}
-		jb, _ := json.Marshal(b)
-		delivery.logger.Debugf("marshal board: %v", string(jb))
-		dataList = append(dataList, marshalBoardHeader(b))
+	boards := delivery.boardUsecase.GetBoards(context.Background(), userId)
+
+	dataList := make([]interface{}, 0, len(boards))
+	for _, board := range boards {
+		dataList = append(dataList, marshalBoardHeader(board))
 	}
 
 	responseMap := map[string]interface{}{
@@ -89,7 +81,6 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	w.Write(b)
-
 }
 
 func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
@@ -107,7 +98,7 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 		return
 	}
 
-	brd, err := delivery.findBoardHeaderById(boardId)
+	brd, err := delivery.boardUsecase.GetBoardByID(context.Background(), boardId)
 	if err != nil {
 		// TODO: record error
 		delivery.logger.Warningf("find board %s failed: %v", boardId, err)
@@ -127,7 +118,6 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	w.Write(b)
-
 }
 
 // marshal generate board or class metadata object,
@@ -154,7 +144,6 @@ func marshalBoardHeader(b bbs.BoardRecord) map[string]interface{} {
 func shouldShowOnUserLevel(b bbs.BoardRecord, u string) bool {
 	// TODO: Get user Level
 	return true
-
 }
 
 // parseBoardPath covert url path from /v1/boards/SYSOP/article to
@@ -184,15 +173,4 @@ func (delivery *httpDelivery) parseBoardPath(path string) (boardId string, item 
 	}
 	delivery.logger.Warningf("parseBoardPath got malform path: %v", path)
 	return
-
-}
-
-func (delivery *httpDelivery) findBoardHeaderById(boardId string) (bbs.BoardRecord, error) {
-	for _, it := range delivery.boardRepo.GetBoards(context.Background()) {
-		if boardId == it.BoardId() {
-			return it, nil
-		}
-	}
-	return nil, fmt.Errorf("board record not found")
-
 }

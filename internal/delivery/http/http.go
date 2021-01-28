@@ -6,7 +6,6 @@ import (
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
-	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
@@ -15,17 +14,16 @@ type httpDelivery struct {
 
 	globalConfig *config.Config
 
-	boardRepo repository.BoardRepository
-
-	userUsecase usecase.UserUsecase
+	userUsecase  usecase.UserUsecase
+	boardUsecase usecase.BoardUsecase
 }
 
-func NewHTTPDelivery(globalConfig *config.Config, userUsecase usecase.UserUsecase, boardRepo repository.BoardRepository) *httpDelivery {
+func NewHTTPDelivery(globalConfig *config.Config, userUsecase usecase.UserUsecase, boardRepo usecase.BoardUsecase) *httpDelivery {
 	delivery := &httpDelivery{
 		logger:       logging.NewLogger(),
 		globalConfig: globalConfig,
-		boardRepo:    boardRepo,
 		userUsecase:  userUsecase,
+		boardUsecase: boardRepo,
 	}
 	return delivery
 }

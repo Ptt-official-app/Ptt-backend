@@ -41,8 +41,9 @@ func main() {
 	}
 
 	userUsecase := usecase.NewUserUsecase(userRepo)
+	boardUsecase := usecase.NewBoardUsecase(boardRepo)
 
-	httpDelivery := http.NewHTTPDelivery(globalConfig, userUsecase, boardRepo)
+	httpDelivery := http.NewHTTPDelivery(globalConfig, userUsecase, boardUsecase)
 	if err := httpDelivery.Run(); err != nil {
 		logger.Errorf("run http delivery error: %s\n", err)
 	}

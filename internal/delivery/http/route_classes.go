@@ -70,17 +70,10 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
+	boards := delivery.boardUsecase.GetClasses(context.Background(), userId, classId)
+
 	dataList := []interface{}{}
-	for bid, b := range delivery.boardRepo.GetBoards(context.Background()) {
-		// TODO: Show Board by user level
-		if !shouldShowOnUserLevel(b, userId) {
-			continue
-		}
-		if b.ClassId() != classId {
-			continue
-		}
-		jb, _ := json.Marshal(b)
-		delivery.logger.Debugf("marshal class board: %v", string(jb))
+	for bid, b := range boards {
 		m := marshalBoardHeader(b)
 		if b.IsClass() {
 			m["id"] = fmt.Sprintf("%v", bid+1)
