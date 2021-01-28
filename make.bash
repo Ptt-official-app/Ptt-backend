@@ -44,10 +44,11 @@ function lint() {
 	  echo "golangci-lint checking..."
 	  "$GOBIN"/golangci-lint run --deadline=30m --enable=misspell --enable=gosec --enable=gofmt --enable=goimports --enable=golint ./cmd/... ./...
 }
-
+# no arguments
 if [ $# -lt 1 ];then
     help
     exit 0
+# number of arguments greater than 1
 elif [ $# -gt 1 ];then
     echo "invalid args, please check command"
     help
@@ -58,22 +59,28 @@ case "$1" in
 help)
     help
     ;;
+# build: Build project
 build)
     build
     ;;
+# deps: Ensures fresh go.mod and go.sum for dependencies
 deps)
 	  go mod tidy
 	  go mod verify
     ;;
+# format: Formats Go code
 format)
     format
     ;;
+# lint: Run golangci-lint check
 lint)
     lint
     ;;
+# test-unit: Run all unit tests
 test-unit)
 	  go test -v -cover . ./...
     ;;
+# test-integration: Run all integration and unit tests
 test-integration)
     echo 'mode: atomic' > coverage.out
     go list ./... | xargs -n1 -I{} sh -c 'go test -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp -coverpkg $(go list ./... | tr "\n" ",") {} && tail -n +2 coverage.tmp >> coverage.out || exit 255'
