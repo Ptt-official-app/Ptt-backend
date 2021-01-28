@@ -33,11 +33,3 @@ func (delivery *httpDelivery) Run(port int16) error {
 	delivery.logger.Informationalf("listen port on %v", port)
 	return http.ListenAndServe(fmt.Sprintf(":%v", port), mux)
 }
-
-func (delivery *httpDelivery) buildRoute(mux *http.ServeMux) {
-	mux.HandleFunc("/v1/token", delivery.routeToken)
-	mux.HandleFunc("/v1/boards", delivery.routeBoards)
-	mux.HandleFunc("/v1/boards/", delivery.routeBoards)
-	mux.HandleFunc("/v1/classes/", delivery.routeClasses)
-	mux.HandleFunc("/v1/users/", delivery.routeUsers)
-}

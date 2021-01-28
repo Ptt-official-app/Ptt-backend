@@ -10,16 +10,6 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (delivery *httpDelivery) routeToken(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check IP Flowspeed
-
-	if r.Method == "POST" {
-		delivery.postToken(w, r)
-		return
-	}
-
-}
-
 func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()

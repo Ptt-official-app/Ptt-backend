@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
-	"fmt"
 	"net/http"
 )
 
@@ -68,8 +67,4 @@ func (delivery *httpDelivery) getBoardArticlesFile(w http.ResponseWriter, r *htt
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	w.Write(b)
-}
-
-func getArticleURL(boardId string, filename string) string {
-	return fmt.Sprintf("https://ptt-app-dev-codingman.pichuchen.tw/bbs/%s/%s.html", boardId, filename)
 }

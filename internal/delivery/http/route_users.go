@@ -4,16 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
-	"strings"
 )
-
-func (delivery *httpDelivery) routeUsers(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check IP Flowspeed
-	switch r.Method {
-	case http.MethodGet:
-		delivery.getUsers(w, r)
-	}
-}
 
 func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	userId, item, err := parseUserPath(r.URL.Path)
@@ -91,14 +82,4 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
 
 	w.Write(responseByte)
-}
-
-func parseUserPath(path string) (userId string, item string, err error) {
-	pathSegment := strings.Split(path, "/")
-	// /{{version}}/users/{{user_id}}/{{item}}
-	if len(pathSegment) == 4 {
-		// /{{version}}/users/{{user_id}}
-		return pathSegment[3], "", nil
-	}
-	return pathSegment[3], pathSegment[4], nil
 }

@@ -11,14 +11,36 @@ import (
 	"strings"
 )
 
-// routeClasses is the handler for `/v1/classes`
-func (delivery *httpDelivery) routeClasses(w http.ResponseWriter, r *http.Request) {
-	// TODO: Check IP Flowspeed
+func (delivery *httpDelivery) getClass(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method == "GET" {
-		delivery.getClasses(w, r)
-		return
+	seg := strings.Split(r.URL.Path, "/")
+
+	classId := "0"
+	if len(seg) > 2 {
+		classId = seg[3]
 	}
+	delivery.logger.Informationalf("user get class: %v", classId)
+
+	list := []interface{}{}
+
+	c := map[string]interface{}{
+		"id":             1,
+		"type":           "class",
+		"title":          "title",
+		"number_of_user": 3,
+		"moderators": []string{
+			"SYSOP",
+			"pichu",
+		},
+	}
+	list = append(list, c)
+
+	m := map[string]interface{}{
+		"data": list,
+	}
+	b, _ := json.MarshalIndent(m, "", "  ")
+
+	w.Write(b)
 
 }
 
@@ -87,24 +109,4 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	w.Write(b)
-
-}
-
-// parseClassPath covert url path from /v1/classes/1/information to
-// {1, information) or /v1/classes to {,}
-func (delivery *httpDelivery) parseClassPath(path string) (classId string, item string, err error) {
-	pathSegment := strings.Split(path, "/")
-	if len(pathSegment) == 5 {
-		// /{{version}}/classes/{{class_id}}/{{item}}
-		return pathSegment[3], pathSegment[4], nil
-	} else if len(pathSegment) == 4 {
-		// /{{version}}/classes/{{class_id}}
-		return pathSegment[3], "", nil
-	} else if len(pathSegment) == 3 {
-		// /{{version}}/classes
-		return "", "", nil
-	}
-	delivery.logger.Warningf("parseClassPath got malform path: %v", path)
-	return "", "", nil
-
 }
