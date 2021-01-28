@@ -55,7 +55,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	delivery.logger.Debugf("getBoardList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userId, err := delivery.getUserIdFromToken(token)
+	userId, err := delivery.tokenUsecase.GetUserIdFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?

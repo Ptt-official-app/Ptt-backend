@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
@@ -12,28 +11,27 @@ import (
 type httpDelivery struct {
 	logger logging.Logger
 
-	globalConfig *config.Config
-
 	userUsecase  usecase.UserUsecase
 	boardUsecase usecase.BoardUsecase
+	tokenUsecase usecase.TokenUsecase
 }
 
-func NewHTTPDelivery(globalConfig *config.Config, userUsecase usecase.UserUsecase, boardRepo usecase.BoardUsecase) *httpDelivery {
+func NewHTTPDelivery(userUsecase usecase.UserUsecase, boardRepo usecase.BoardUsecase, tokenUsecase usecase.TokenUsecase) *httpDelivery {
 	delivery := &httpDelivery{
 		logger:       logging.NewLogger(),
-		globalConfig: globalConfig,
 		userUsecase:  userUsecase,
 		boardUsecase: boardRepo,
+		tokenUsecase: tokenUsecase,
 	}
 	return delivery
 }
 
-func (delivery *httpDelivery) Run() error {
+func (delivery *httpDelivery) Run(port int16) error {
 	mux := http.NewServeMux()
 	delivery.buildRoute(mux)
 
-	delivery.logger.Informationalf("listen port on %v", delivery.globalConfig.ListenPort)
-	return http.ListenAndServe(fmt.Sprintf(":%v", delivery.globalConfig.ListenPort), mux)
+	delivery.logger.Informationalf("listen port on %v", port)
+	return http.ListenAndServe(fmt.Sprintf(":%v", port), mux)
 }
 
 func (delivery *httpDelivery) buildRoute(mux *http.ServeMux) {

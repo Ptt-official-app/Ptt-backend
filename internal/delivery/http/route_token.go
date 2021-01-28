@@ -55,7 +55,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Generate Access Token
-	token := delivery.getAccessTokenWithUsername(username)
+	token := delivery.tokenUsecase.CreateAccessTokenWithUsername(username)
 	m := map[string]string{
 		"access_token": token,
 		"token_type":   "bearer",

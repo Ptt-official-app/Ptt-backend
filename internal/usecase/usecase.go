@@ -24,3 +24,8 @@ type BoardUsecase interface {
 	// FIXME: use concrete type rather than []interface{}
 	GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{}
 }
+
+type TokenUsecase interface {
+	CreateAccessTokenWithUsername(username string) string
+	GetUserIdFromToken(token string) (string, error)
+}

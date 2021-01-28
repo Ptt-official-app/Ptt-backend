@@ -57,7 +57,7 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 	delivery.logger.Debugf("getClassesList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userId, err := delivery.getUserIdFromToken(token)
+	userId, err := delivery.tokenUsecase.GetUserIdFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?
