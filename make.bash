@@ -40,9 +40,9 @@ function lint() {
 		  curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$GOBIN" "$GOLANGCI_LINT_VERSION"; \
 		  echo "download golangci-lint into $GOBIN" ;\
    	fi;
+   	go vet ./...
 	  echo "golangci-lint checking..."
 	  "$GOBIN"/golangci-lint run --deadline=30m --enable=misspell --enable=gosec --enable=gofmt --enable=goimports --enable=golint ./cmd/... ./...
-	  go vet ./...
 }
 
 if [ $# -lt 1 ];then
