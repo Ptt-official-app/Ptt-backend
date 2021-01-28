@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"context"
@@ -11,52 +11,52 @@ import (
 )
 
 // routeBoards is the handler for `/v1/boards`
-func (rest *restHandler) routeBoards(w http.ResponseWriter, r *http.Request) {
-	rest.logger.Debugf("routeBoards: %v", r)
+func (delivery *httpDelivery) routeBoards(w http.ResponseWriter, r *http.Request) {
+	delivery.logger.Debugf("routeBoards: %v", r)
 
 	// TODO: Check IP Flowspeed
 	if r.Method == "GET" {
-		rest.getBoards(w, r)
+		delivery.getBoards(w, r)
 		return
 	}
 
 }
 
 // getBoards is the handler for `/v1/boards` with GET method
-func (rest *restHandler) getBoards(w http.ResponseWriter, r *http.Request) {
-	rest.logger.Debugf("getBoards: %v", r)
-	boardId, item, filename, err := rest.parseBoardPath(r.URL.Path)
+func (delivery *httpDelivery) getBoards(w http.ResponseWriter, r *http.Request) {
+	delivery.logger.Debugf("getBoards: %v", r)
+	boardId, item, filename, err := delivery.parseBoardPath(r.URL.Path)
 	if boardId == "" {
-		rest.getBoardList(w, r)
+		delivery.getBoardList(w, r)
 		return
 	}
 	// get single board
 	if item == "information" {
-		rest.getBoardInformation(w, r, boardId)
+		delivery.getBoardInformation(w, r, boardId)
 		return
 	} else if item == "articles" {
 		if filename == "" {
-			rest.getBoardArticles(w, r, boardId)
+			delivery.getBoardArticles(w, r, boardId)
 		} else {
-			rest.getBoardArticlesFile(w, r, boardId, filename)
+			delivery.getBoardArticlesFile(w, r, boardId, filename)
 		}
 		return
 	} else if item == "treasures" {
-		rest.getBoardTreasures(w, r, boardId)
+		delivery.getBoardTreasures(w, r, boardId)
 		return
 	}
 
 	// 404
 	w.WriteHeader(http.StatusNotFound)
 
-	rest.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
+	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
 }
 
-func (rest *restHandler) getBoardList(w http.ResponseWriter, r *http.Request) {
-	rest.logger.Debugf("getBoardList: %v", r)
+func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Request) {
+	delivery.logger.Debugf("getBoardList: %v", r)
 
-	token := rest.getTokenFromRequest(r)
-	userId, err := rest.getUserIdFromToken(token)
+	token := delivery.getTokenFromRequest(r)
+	userId, err := delivery.getUserIdFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?
@@ -70,7 +70,7 @@ func (rest *restHandler) getBoardList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	dataList := []interface{}{}
-	for _, b := range rest.boardRepo.GetBoards(context.Background()) {
+	for _, b := range delivery.boardRepo.GetBoards(context.Background()) {
 		// TODO: Show Board by user level
 		if b.IsClass() {
 			continue
@@ -79,7 +79,7 @@ func (rest *restHandler) getBoardList(w http.ResponseWriter, r *http.Request) {
 			continue
 		}
 		jb, _ := json.Marshal(b)
-		rest.logger.Debugf("marshal board: %v", string(jb))
+		delivery.logger.Debugf("marshal board: %v", string(jb))
 		dataList = append(dataList, marshalBoardHeader(b))
 	}
 
@@ -92,9 +92,9 @@ func (rest *restHandler) getBoardList(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (rest *restHandler) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
-	rest.logger.Debugf("getBoardInformation: %v", r)
-	token := rest.getTokenFromRequest(r)
+func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
+	delivery.logger.Debugf("getBoardInformation: %v", r)
+	token := delivery.getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadBoardInformation},
 		map[string]string{
@@ -107,10 +107,10 @@ func (rest *restHandler) getBoardInformation(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	brd, err := rest.findBoardHeaderById(boardId)
+	brd, err := delivery.findBoardHeaderById(boardId)
 	if err != nil {
 		// TODO: record error
-		rest.logger.Warningf("find board %s failed: %v", boardId, err)
+		delivery.logger.Warningf("find board %s failed: %v", boardId, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_board_error",
@@ -159,7 +159,7 @@ func shouldShowOnUserLevel(b bbs.BoardRecord, u string) bool {
 
 // parseBoardPath covert url path from /v1/boards/SYSOP/article to
 // {SYSOP, article) or /v1/boards to {,}
-func (rest *restHandler) parseBoardPath(path string) (boardId string, item string, filename string, err error) {
+func (delivery *httpDelivery) parseBoardPath(path string) (boardId string, item string, filename string, err error) {
 	pathSegment := strings.Split(path, "/")
 
 	if len(pathSegment) >= 6 {
@@ -182,13 +182,13 @@ func (rest *restHandler) parseBoardPath(path string) (boardId string, item strin
 		// Should not be reach...
 		return
 	}
-	rest.logger.Warningf("parseBoardPath got malform path: %v", path)
+	delivery.logger.Warningf("parseBoardPath got malform path: %v", path)
 	return
 
 }
 
-func (rest *restHandler) findBoardHeaderById(boardId string) (bbs.BoardRecord, error) {
-	for _, it := range rest.boardRepo.GetBoards(context.Background()) {
+func (delivery *httpDelivery) findBoardHeaderById(boardId string) (bbs.BoardRecord, error) {
+	for _, it := range delivery.boardRepo.GetBoards(context.Background()) {
 		if boardId == it.BoardId() {
 			return it, nil
 		}

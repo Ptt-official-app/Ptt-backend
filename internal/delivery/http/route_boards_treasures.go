@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"context"
@@ -11,17 +11,17 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (rest *restHandler) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
-	rest.logger.Debugf("getBoardTreasures: %v", r)
-	token := rest.getTokenFromRequest(r)
-	_, treasuresId, filename, err := rest.parseBoardTreasurePath(r.URL.Path)
+func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
+	delivery.logger.Debugf("getBoardTreasures: %v", r)
+	token := delivery.getTokenFromRequest(r)
+	_, treasuresId, filename, err := delivery.parseBoardTreasurePath(r.URL.Path)
 	if err != nil {
-		rest.logger.Warningf("parseBoardTreasurePath error: %v", err)
+		delivery.logger.Warningf("parseBoardTreasurePath error: %v", err)
 		// TODO return 400?
 	}
 	if filename != "" {
 		// get file
-		rest.getBoardTreasuresFile(w, r, boardId, treasuresId, filename)
+		delivery.getBoardTreasuresFile(w, r, boardId, treasuresId, filename)
 		return
 	}
 
@@ -39,9 +39,9 @@ func (rest *restHandler) getBoardTreasures(w http.ResponseWriter, r *http.Reques
 	}
 
 	var fileHeaders []bbs.ArticleRecord
-	fileHeaders, err = rest.boardRepo.GetBoardTreasureRecords(context.Background(), boardId, treasuresId)
+	fileHeaders, err = delivery.boardRepo.GetBoardTreasureRecords(context.Background(), boardId, treasuresId)
 	if err != nil {
-		rest.logger.Warningf("open directory file error: %v", err)
+		delivery.logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
 	}
 
@@ -61,7 +61,7 @@ func (rest *restHandler) getBoardTreasures(w http.ResponseWriter, r *http.Reques
 		}
 		items = append(items, m)
 	}
-	rest.logger.Debugf("fh: %v", fileHeaders)
+	delivery.logger.Debugf("fh: %v", fileHeaders)
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
@@ -74,15 +74,15 @@ func (rest *restHandler) getBoardTreasures(w http.ResponseWriter, r *http.Reques
 
 }
 
-func (rest *restHandler) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardId string, treasuresId []string, filename string) {
-	rest.logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresId: %v, filename: %v", r, boardId, treasuresId, filename)
+func (delivery *httpDelivery) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardId string, treasuresId []string, filename string) {
+	delivery.logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresId: %v, filename: %v", r, boardId, treasuresId, filename)
 
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
 // parseBoardTreasurePath parse covert url path from /v1/boards/SYSOP/article to
 // {SYSOP, article) or /v1/boards to {,}
-func (rest *restHandler) parseBoardTreasurePath(path string) (boardId string, treasuresId []string, filename string, err error) {
+func (delivery *httpDelivery) parseBoardTreasurePath(path string) (boardId string, treasuresId []string, filename string, err error) {
 	pathSegment := strings.Split(path, "/")
 
 	if len(pathSegment) == 6 {
@@ -106,7 +106,7 @@ func (rest *restHandler) parseBoardTreasurePath(path string) (boardId string, tr
 		return
 	}
 	// should not be reached
-	rest.logger.Warningf("parseBoardTreasurePath got malform path: %v", path)
+	delivery.logger.Warningf("parseBoardTreasurePath got malform path: %v", path)
 	return
 
 }

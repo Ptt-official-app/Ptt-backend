@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"encoding/json"
@@ -6,15 +6,15 @@ import (
 	"strings"
 )
 
-func (rest *restHandler) routeClass(w http.ResponseWriter, r *http.Request) {
+func (delivery *httpDelivery) routeClass(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "GET" {
-		rest.getClass(w, r)
+		delivery.getClass(w, r)
 		return
 	}
 
 }
 
-func (rest *restHandler) getClass(w http.ResponseWriter, r *http.Request) {
+func (delivery *httpDelivery) getClass(w http.ResponseWriter, r *http.Request) {
 
 	seg := strings.Split(r.URL.Path, "/")
 
@@ -22,7 +22,7 @@ func (rest *restHandler) getClass(w http.ResponseWriter, r *http.Request) {
 	if len(seg) > 2 {
 		classId = seg[3]
 	}
-	rest.logger.Informationalf("user get class: %v", classId)
+	delivery.logger.Informationalf("user get class: %v", classId)
 
 	list := []interface{}{}
 

@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"context"
@@ -10,24 +10,24 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (rest *restHandler) routeToken(w http.ResponseWriter, r *http.Request) {
+func (delivery *httpDelivery) routeToken(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 
 	if r.Method == "POST" {
-		rest.postToken(w, r)
+		delivery.postToken(w, r)
 		return
 	}
 
 }
 
-func (rest *restHandler) postToken(w http.ResponseWriter, r *http.Request) {
+func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) {
 
 	r.ParseForm()
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	userec, err := rest.userUsecase.GetUserByID(context.Background(), username)
+	userec, err := delivery.userUsecase.GetUserByID(context.Background(), username)
 	if err != nil {
 		m := map[string]string{
 			"error":             "grant_error",
@@ -40,7 +40,7 @@ func (rest *restHandler) postToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("found user:", userec)
-	err = rest.verifyPassword(userec, password)
+	err = delivery.verifyPassword(userec, password)
 	if err != nil {
 		// TODO: add delay, warning, notify user
 
@@ -55,7 +55,7 @@ func (rest *restHandler) postToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate Access Token
-	token := rest.getAccessTokenWithUsername(username)
+	token := delivery.getAccessTokenWithUsername(username)
 	m := map[string]string{
 		"access_token": token,
 		"token_type":   "bearer",
@@ -66,16 +66,16 @@ func (rest *restHandler) postToken(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-func (rest *restHandler) verifyPassword(userec bbs.UserRecord, password string) error {
+func (delivery *httpDelivery) verifyPassword(userec bbs.UserRecord, password string) error {
 	log.Println("password", userec.HashedPassword())
 	return userec.VerifyPassword(password)
 }
 
-func (rest *restHandler) getTokenFromRequest(r *http.Request) string {
+func (delivery *httpDelivery) getTokenFromRequest(r *http.Request) string {
 	a := r.Header.Get("Authorization")
 	s := strings.Split(a, " ")
 	if len(s) < 2 {
-		rest.logger.Warningf("getTokenFromRequest error: len(s) < 2, got: %v", len(s))
+		delivery.logger.Warningf("getTokenFromRequest error: len(s) < 2, got: %v", len(s))
 		return ""
 	}
 	return s[1]

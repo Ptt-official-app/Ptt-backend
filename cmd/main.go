@@ -1,16 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
-
-	"github.com/PichuChen/go-bbs"
-	_ "github.com/PichuChen/go-bbs/pttbbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
-	"github.com/Ptt-official-app/Ptt-backend/internal/delivery/rest"
+	"github.com/Ptt-official-app/Ptt-backend/internal/delivery/http"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
+
+	"github.com/PichuChen/go-bbs"
+	_ "github.com/PichuChen/go-bbs/pttbbs"
 )
 
 func main() {
@@ -44,11 +42,8 @@ func main() {
 
 	userUsecase := usecase.NewUserUsecase(userRepo)
 
-	r := rest.NewRESTHandler(globalConfig, userUsecase, boardRepo)
-
-	logger.Informationalf("listen port on %v", globalConfig.ListenPort)
-	err = http.ListenAndServe(fmt.Sprintf(":%v", globalConfig.ListenPort), r)
-	if err != nil {
-		logger.Errorf("listen serve error: %v", err)
+	httpDelivery := http.NewHTTPDelivery(globalConfig, userUsecase, boardRepo)
+	if err := httpDelivery.Run(); err != nil {
+		logger.Errorf("run http delivery error: %s\n", err)
 	}
 }

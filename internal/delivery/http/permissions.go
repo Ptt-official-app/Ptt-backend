@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"github.com/dgrijalva/jwt-go"
@@ -20,38 +20,38 @@ func checkTokenPermission(token string, permissionId []permission, userInfo map[
 	return nil
 }
 
-func (rest *restHandler) getAccessTokenWithUsername(username string) string {
+func (delivery *httpDelivery) getAccessTokenWithUsername(username string) string {
 	claims := &jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(rest.globalConfig.AccessTokenExpiresAt).Unix(),
+		ExpiresAt: time.Now().Add(delivery.globalConfig.AccessTokenExpiresAt).Unix(),
 		// Issuer:    "test",
 		Subject: username,
 	}
 
 	// TODO: Setting me in config
 	// openssl ecparam -name prime256v1 -genkey -noout -out pkey
-	privateKey := rest.globalConfig.AccessTokenPrivateKey
+	privateKey := delivery.globalConfig.AccessTokenPrivateKey
 
 	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
-		rest.logger.Criticalf("parse private key failed: %v", err)
+		delivery.logger.Criticalf("parse private key failed: %v", err)
 		return ""
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
 	ss, err := token.SignedString(key)
 	if err != nil {
-		rest.logger.Errorf("sign token failed: %v", err)
+		delivery.logger.Errorf("sign token failed: %v", err)
 		return ""
 	}
 	return ss
 }
 
-func (rest *restHandler) getUserIdFromToken(token string) (string, error) {
-	rest.logger.Debugf("getUserIdFromToken token: %v", token)
-	pem := rest.globalConfig.AccessTokenPublicKey
+func (delivery *httpDelivery) getUserIdFromToken(token string) (string, error) {
+	delivery.logger.Debugf("getUserIdFromToken token: %v", token)
+	pem := delivery.globalConfig.AccessTokenPublicKey
 	key, err := jwt.ParseECPublicKeyFromPEM([]byte(pem))
 	if err != nil {
-		rest.logger.Criticalf("parse public key failed: %v", err)
+		delivery.logger.Criticalf("parse public key failed: %v", err)
 		return "", err
 	}
 
@@ -60,22 +60,22 @@ func (rest *restHandler) getUserIdFromToken(token string) (string, error) {
 			return key, nil
 		})
 	if err != nil {
-		rest.logger.Warningf("parse token failed: %v", err)
+		delivery.logger.Warningf("parse token failed: %v", err)
 		return "", err
 	}
 
 	if jwtToken == nil {
-		rest.logger.Warningf("jwtToken == nil")
+		delivery.logger.Warningf("jwtToken == nil")
 		return "", nil
 	}
 
 	// logger.Debugf("getUserIdFromToken jwtToken: %v %v", jwtToken, err)
 	if claim, ok := jwtToken.Claims.(*jwt.StandardClaims); ok && jwtToken.Valid {
-		rest.logger.Debugf("subject: %v %v", claim, jwtToken.Valid)
+		delivery.logger.Debugf("subject: %v %v", claim, jwtToken.Valid)
 		return claim.Subject, nil
 		// return "", nil
 	}
-	rest.logger.Debugf("subject: %v", jwtToken.Valid)
+	delivery.logger.Debugf("subject: %v", jwtToken.Valid)
 	return "", fmt.Errorf("token not valid")
 
 }

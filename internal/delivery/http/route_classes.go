@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"context"
@@ -12,11 +12,11 @@ import (
 )
 
 // routeClasses is the handler for `/v1/classes`
-func (rest *restHandler) routeClasses(w http.ResponseWriter, r *http.Request) {
+func (delivery *httpDelivery) routeClasses(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 
 	if r.Method == "GET" {
-		rest.getClasses(w, r)
+		delivery.getClasses(w, r)
 		return
 	}
 
@@ -24,15 +24,15 @@ func (rest *restHandler) routeClasses(w http.ResponseWriter, r *http.Request) {
 
 // getClasses HandleFunc handles path start with `/v1/classes`
 // and pass requests to next handle function
-func (rest *restHandler) getClasses(w http.ResponseWriter, r *http.Request) {
-	rest.logger.Debugf("getClasses: %v", r)
-	classId, item, err := rest.parseClassPath(r.URL.Path)
-	rest.logger.Noticef("query class: %v item: %v err: %v", classId, item, err)
+func (delivery *httpDelivery) getClasses(w http.ResponseWriter, r *http.Request) {
+	delivery.logger.Debugf("getClasses: %v", r)
+	classId, item, err := delivery.parseClassPath(r.URL.Path)
+	delivery.logger.Noticef("query class: %v item: %v err: %v", classId, item, err)
 	if classId == "" {
 		getClassesWithoutClassId(w, r)
 		return
 	}
-	rest.getClassesList(w, r, classId)
+	delivery.getClassesList(w, r, classId)
 	return
 
 	// // get single board
@@ -53,11 +53,11 @@ func getClassesWithoutClassId(w http.ResponseWriter, r *http.Request) {
 // getClassesList handle path with class id and will return boards and classes
 // under this class.
 // TODO: What should we return when target class not found?
-func (rest *restHandler) getClassesList(w http.ResponseWriter, r *http.Request, classId string) {
-	rest.logger.Debugf("getClassesList: %v", r)
+func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Request, classId string) {
+	delivery.logger.Debugf("getClassesList: %v", r)
 
-	token := rest.getTokenFromRequest(r)
-	userId, err := rest.getUserIdFromToken(token)
+	token := delivery.getTokenFromRequest(r)
+	userId, err := delivery.getUserIdFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?
@@ -71,7 +71,7 @@ func (rest *restHandler) getClassesList(w http.ResponseWriter, r *http.Request, 
 	}
 
 	dataList := []interface{}{}
-	for bid, b := range rest.boardRepo.GetBoards(context.Background()) {
+	for bid, b := range delivery.boardRepo.GetBoards(context.Background()) {
 		// TODO: Show Board by user level
 		if !shouldShowOnUserLevel(b, userId) {
 			continue
@@ -80,7 +80,7 @@ func (rest *restHandler) getClassesList(w http.ResponseWriter, r *http.Request, 
 			continue
 		}
 		jb, _ := json.Marshal(b)
-		rest.logger.Debugf("marshal class board: %v", string(jb))
+		delivery.logger.Debugf("marshal class board: %v", string(jb))
 		m := marshalBoardHeader(b)
 		if b.IsClass() {
 			m["id"] = fmt.Sprintf("%v", bid+1)
@@ -99,7 +99,7 @@ func (rest *restHandler) getClassesList(w http.ResponseWriter, r *http.Request, 
 
 // parseClassPath covert url path from /v1/classes/1/information to
 // {1, information) or /v1/classes to {,}
-func (rest *restHandler) parseClassPath(path string) (classId string, item string, err error) {
+func (delivery *httpDelivery) parseClassPath(path string) (classId string, item string, err error) {
 	pathSegment := strings.Split(path, "/")
 	if len(pathSegment) == 5 {
 		// /{{version}}/classes/{{class_id}}/{{item}}
@@ -111,7 +111,7 @@ func (rest *restHandler) parseClassPath(path string) (classId string, item strin
 		// /{{version}}/classes
 		return "", "", nil
 	}
-	rest.logger.Warningf("parseClassPath got malform path: %v", path)
+	delivery.logger.Warningf("parseClassPath got malform path: %v", path)
 	return "", "", nil
 
 }

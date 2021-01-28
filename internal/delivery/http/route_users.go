@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"context"
@@ -7,29 +7,29 @@ import (
 	"strings"
 )
 
-func (rest *restHandler) routeUsers(w http.ResponseWriter, r *http.Request) {
+func (delivery *httpDelivery) routeUsers(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 	switch r.Method {
 	case http.MethodGet:
-		rest.getUsers(w, r)
+		delivery.getUsers(w, r)
 	}
 }
 
-func (rest *restHandler) getUsers(w http.ResponseWriter, r *http.Request) {
+func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	userId, item, err := parseUserPath(r.URL.Path)
 	switch item {
 	case "information":
-		rest.getUserInformation(w, r, userId)
+		delivery.getUserInformation(w, r, userId)
 	case "favorites":
-		rest.getUserFavorites(w, r, userId)
+		delivery.getUserFavorites(w, r, userId)
 	default:
-		rest.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
+		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
 
-func (rest *restHandler) getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
-	token := rest.getTokenFromRequest(r)
+func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
+	token := delivery.getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadUserInformation},
 		map[string]string{
@@ -42,7 +42,7 @@ func (rest *restHandler) getUserInformation(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	dataMap, err := rest.userUsecase.GetUserInformation(context.Background(), userId)
+	dataMap, err := delivery.userUsecase.GetUserInformation(context.Background(), userId)
 	if err != nil {
 		// TODO: record error
 		w.WriteHeader(http.StatusInternalServerError)
@@ -63,8 +63,8 @@ func (rest *restHandler) getUserInformation(w http.ResponseWriter, r *http.Reque
 	w.Write(responseByte)
 }
 
-func (rest *restHandler) getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
-	token := rest.getTokenFromRequest(r)
+func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
+	token := delivery.getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadUserInformation},
 		map[string]string{
@@ -77,9 +77,9 @@ func (rest *restHandler) getUserFavorites(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	dataItems, err := rest.userUsecase.GetUserFavorites(context.Background(), userId)
+	dataItems, err := delivery.userUsecase.GetUserFavorites(context.Background(), userId)
 	if err != nil {
-		rest.logger.Errorf("failed to get user favorites: %s\n", err)
+		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
 	}
 
 	responseMap := map[string]interface{}{

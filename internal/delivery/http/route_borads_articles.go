@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"context"
@@ -12,9 +12,9 @@ import (
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
 // article list to client
-func (rest *restHandler) getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
-	rest.logger.Debugf("getBoardArticles: %v", r)
-	token := rest.getTokenFromRequest(r)
+func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
+	delivery.logger.Debugf("getBoardArticles: %v", r)
+	token := delivery.getTokenFromRequest(r)
 	// Check permission for board
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadBoardInformation},
@@ -29,9 +29,9 @@ func (rest *restHandler) getBoardArticles(w http.ResponseWriter, r *http.Request
 	}
 
 	var fileHeaders []bbs.ArticleRecord
-	fileHeaders, err = rest.boardRepo.GetBoardArticleRecords(context.Background(), boardId)
+	fileHeaders, err = delivery.boardRepo.GetBoardArticleRecords(context.Background(), boardId)
 	if err != nil {
-		rest.logger.Warningf("open directory file error: %v", err)
+		delivery.logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
 	}
 
@@ -51,7 +51,7 @@ func (rest *restHandler) getBoardArticles(w http.ResponseWriter, r *http.Request
 		}
 		items = append(items, m)
 	}
-	rest.logger.Debugf("fh: %v", fileHeaders)
+	delivery.logger.Debugf("fh: %v", fileHeaders)
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
@@ -64,10 +64,10 @@ func (rest *restHandler) getBoardArticles(w http.ResponseWriter, r *http.Request
 
 }
 
-func (rest *restHandler) getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string, filename string) {
-	rest.logger.Debugf("getBoardArticlesFile: %v", r)
+func (delivery *httpDelivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string, filename string) {
+	delivery.logger.Debugf("getBoardArticlesFile: %v", r)
 
-	token := rest.getTokenFromRequest(r)
+	token := delivery.getTokenFromRequest(r)
 	err := checkTokenPermission(token,
 		[]permission{PermissionReadBoardInformation},
 		map[string]string{
@@ -80,9 +80,9 @@ func (rest *restHandler) getBoardArticlesFile(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	buf, err := rest.boardRepo.GetBoardArticle(context.Background(), boardId, filename)
+	buf, err := delivery.boardRepo.GetBoardArticle(context.Background(), boardId, filename)
 	if err != nil {
-		rest.logger.Errorf("read file %v/%v error: %v", boardId, filename, err)
+		delivery.logger.Errorf("read file %v/%v error: %v", boardId, filename, err)
 	}
 
 	bufStr := base64.StdEncoding.EncodeToString(buf)

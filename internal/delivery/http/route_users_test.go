@@ -1,4 +1,4 @@
-package rest
+package http
 
 import (
 	"github.com/PichuChen/go-bbs"
