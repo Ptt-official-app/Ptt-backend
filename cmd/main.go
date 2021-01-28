@@ -7,7 +7,7 @@ import (
 	"github.com/PichuChen/go-bbs"
 	_ "github.com/PichuChen/go-bbs/pttbbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
-	"github.com/Ptt-official-app/Ptt-backend/internal/controller/rest"
+	"github.com/Ptt-official-app/Ptt-backend/internal/delivery/rest"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
