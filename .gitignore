@@ -1,2 +1,8 @@
 config.toml
 Ptt-backend
+
+bbs_backup_lastest.tar.xz
+home/
+
+dump.shm
+dump.shm.lastest.tar.bz2
