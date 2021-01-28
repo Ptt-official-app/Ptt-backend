@@ -28,4 +28,6 @@ type BoardUsecase interface {
 type TokenUsecase interface {
 	CreateAccessTokenWithUsername(username string) string
 	GetUserIdFromToken(token string) (string, error)
+	// FIXME: use concrete type rather than map[string]string
+	CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error
 }

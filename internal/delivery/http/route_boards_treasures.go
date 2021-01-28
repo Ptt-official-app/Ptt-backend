@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"strings"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
@@ -23,8 +25,8 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 	}
 
 	// Check permission for board
-	err = checkTokenPermission(token,
-		[]permission{PermissionReadTreasureInformation},
+	err = delivery.tokenUsecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadTreasureInformation},
 		map[string]string{
 			"board_id":    boardId,
 			"treasure_id": strings.Join(treasuresId, ","),

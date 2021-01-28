@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Request) {
@@ -43,8 +44,8 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	err := checkTokenPermission(token,
-		[]permission{PermissionReadBoardInformation},
+	err := delivery.tokenUsecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadBoardInformation},
 		map[string]string{
 			"board_id": boardId,
 		})

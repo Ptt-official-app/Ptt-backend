@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
@@ -13,8 +15,8 @@ func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Re
 	delivery.logger.Debugf("getBoardArticles: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	// Check permission for board
-	err := checkTokenPermission(token,
-		[]permission{PermissionReadBoardInformation},
+	err := delivery.tokenUsecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadBoardInformation},
 		map[string]string{
 			"board_id": boardId,
 		})
@@ -40,8 +42,8 @@ func (delivery *httpDelivery) getBoardArticlesFile(w http.ResponseWriter, r *htt
 	delivery.logger.Debugf("getBoardArticlesFile: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	err := checkTokenPermission(token,
-		[]permission{PermissionReadBoardInformation},
+	err := delivery.tokenUsecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadBoardInformation},
 		map[string]string{
 			"board_id": boardId,
 		})

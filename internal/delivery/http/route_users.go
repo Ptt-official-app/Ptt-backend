@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
@@ -21,8 +23,9 @@ func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
 
 func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
 	token := delivery.getTokenFromRequest(r)
-	err := checkTokenPermission(token,
-		[]permission{PermissionReadUserInformation},
+
+	err := delivery.tokenUsecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadUserInformation},
 		map[string]string{
 			"user_id": userId,
 		})
@@ -56,8 +59,8 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 
 func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 	token := delivery.getTokenFromRequest(r)
-	err := checkTokenPermission(token,
-		[]permission{PermissionReadUserInformation},
+	err := delivery.tokenUsecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadUserInformation},
 		map[string]string{
 			"user_id": userId,
 		})

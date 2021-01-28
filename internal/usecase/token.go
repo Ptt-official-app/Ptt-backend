@@ -9,6 +9,15 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+type Permission string
+
+const (
+	PermissionReadUserInformation     Permission = "READ_USER_INFORMATION"
+	PermissionReadBoardInformation    Permission = "READ_BOARD_INFORMATION"
+	PermissionReadTreasureInformation Permission = "READ_TREASURE_INFORMATION"
+	PermissionReadFavorite            Permission = "READ_FAVORITE"
+)
+
 type tokenUsecase struct {
 	logger       logging.Logger
 	globalConfig *config.Config
@@ -78,4 +87,8 @@ func (t *tokenUsecase) GetUserIdFromToken(token string) (string, error) {
 	}
 	t.logger.Debugf("subject: %v", jwtToken.Valid)
 	return "", fmt.Errorf("token not valid")
+}
+
+func (t *tokenUsecase) CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error {
+	return nil
 }
