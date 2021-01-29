@@ -29,9 +29,7 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
       - name: Linting & vetting.
-        run: |
-             sudo chmod +777 make.bash
-             ./make.bash lint
+        run: ./make.bash lint
   test:
     strategy:
       matrix:
@@ -56,9 +54,7 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
       - name: Run tests
-        run: |
-             sudo chmod +777 make.bash
-             ./make.bash test-integration
+        run: ./make.bash test-integration
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v1
