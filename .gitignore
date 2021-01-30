@@ -29,6 +29,10 @@ dump.shm.lastest.tar.bz2
 # vendor/
 
 
+### Goland
+.idea
+
+
 ### VIM
 
 # Swap
