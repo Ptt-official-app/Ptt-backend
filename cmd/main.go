@@ -28,23 +28,13 @@ func main() {
 		return
 	}
 
-	boardRepo, err := repository.NewBoardRepository(db)
-	if err != nil {
-		logger.Errorf("failed to create board repository: %s\n", err)
-		return
-	}
-
-	userRepo, err := repository.NewUserRepository(db)
+	repo, err := repository.NewRepository(db)
 	if err != nil {
 		logger.Errorf("failed to create user repository: %s\n", err)
 		return
 	}
-
-	userUsecase := usecase.NewUserUsecase(userRepo)
-	boardUsecase := usecase.NewBoardUsecase(boardRepo)
-	tokenUsecase := usecase.NewTokenUsecase(globalConfig)
-
-	httpDelivery := http.NewHTTPDelivery(userUsecase, boardUsecase, tokenUsecase)
+	usecase := usecase.NewUsecase(globalConfig, repo)
+	httpDelivery := http.NewHTTPDelivery(usecase)
 	if err := httpDelivery.Run(globalConfig.ListenPort); err != nil {
 		logger.Errorf("run http delivery error: %s\n", err)
 	}
