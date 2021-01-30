@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Ptt-official-app/Ptt-backend/internal/config"
-	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -18,19 +16,7 @@ const (
 	PermissionReadFavorite            Permission = "READ_FAVORITE"
 )
 
-type tokenUsecase struct {
-	logger       logging.Logger
-	globalConfig *config.Config
-}
-
-func NewTokenUsecase(globalConfig *config.Config) TokenUsecase {
-	return &tokenUsecase{
-		logger:       logging.NewLogger(),
-		globalConfig: globalConfig,
-	}
-}
-
-func (t *tokenUsecase) CreateAccessTokenWithUsername(username string) string {
+func (t *usecase) CreateAccessTokenWithUsername(username string) string {
 	claims := &jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(t.globalConfig.AccessTokenExpiresAt).Unix(),
 		// Issuer:    "test",
@@ -56,7 +42,7 @@ func (t *tokenUsecase) CreateAccessTokenWithUsername(username string) string {
 	return ss
 }
 
-func (t *tokenUsecase) GetUserIdFromToken(token string) (string, error) {
+func (t *usecase) GetUserIdFromToken(token string) (string, error) {
 	t.logger.Debugf("getUserIdFromToken token: %v", token)
 	pem := t.globalConfig.AccessTokenPublicKey
 	key, err := jwt.ParseECPublicKeyFromPEM([]byte(pem))
@@ -89,6 +75,6 @@ func (t *tokenUsecase) GetUserIdFromToken(token string) (string, error) {
 	return "", fmt.Errorf("token not valid")
 }
 
-func (t *tokenUsecase) CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error {
+func (t *usecase) CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error {
 	return nil
 }

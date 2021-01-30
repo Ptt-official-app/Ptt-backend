@@ -6,24 +6,10 @@ import (
 	"time"
 
 	"github.com/PichuChen/go-bbs"
-	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
-	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 )
 
-type userUsecase struct {
-	logger   logging.Logger
-	userRepo repository.UserRepository
-}
-
-func NewUserUsecase(userRepo repository.UserRepository) UserUsecase {
-	return &userUsecase{
-		logger:   logging.NewLogger(),
-		userRepo: userRepo,
-	}
-}
-
-func (u *userUsecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
-	for _, it := range u.userRepo.GetUsers(ctx) {
+func (u *usecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
+	for _, it := range u.repo.GetUsers(ctx) {
 		if userID == it.UserId() {
 			return it, nil
 		}
@@ -31,8 +17,8 @@ func (u *userUsecase) GetUserByID(ctx context.Context, userID string) (bbs.UserR
 	return nil, fmt.Errorf("user record not found")
 }
 
-func (u *userUsecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
-	recs, err := u.userRepo.GetUserFavoriteRecords(ctx, userID)
+func (u *usecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
+	recs, err := u.repo.GetUserFavoriteRecords(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +27,7 @@ func (u *userUsecase) GetUserFavorites(ctx context.Context, userID string) ([]in
 	return dataItems, nil
 }
 
-func (u *userUsecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
+func (u *usecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
 	user, err := u.GetUserByID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get userrec for %s failed", userID)
@@ -67,7 +53,7 @@ func (u *userUsecase) GetUserInformation(ctx context.Context, userID string) (ma
 	return result, nil
 }
 
-func (u *userUsecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
+func (u *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {
 		u.logger.Debugf("fav type: %v", item.Type())
