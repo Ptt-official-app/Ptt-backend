@@ -24,7 +24,7 @@ func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
 func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.tokenUsecase.CheckPermission(token,
+	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadUserInformation},
 		map[string]string{
 			"user_id": userId,
@@ -36,7 +36,7 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 		return
 	}
 
-	dataMap, err := delivery.userUsecase.GetUserInformation(context.Background(), userId)
+	dataMap, err := delivery.usecase.GetUserInformation(context.Background(), userId)
 	if err != nil {
 		// TODO: record error
 		w.WriteHeader(http.StatusInternalServerError)
@@ -59,7 +59,7 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 
 func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.tokenUsecase.CheckPermission(token,
+	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadUserInformation},
 		map[string]string{
 			"user_id": userId,
@@ -71,7 +71,7 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	dataItems, err := delivery.userUsecase.GetUserFavorites(context.Background(), userId)
+	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userId)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
 	}

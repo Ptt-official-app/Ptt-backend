@@ -79,7 +79,7 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 	delivery.logger.Debugf("getClassesList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userId, err := delivery.tokenUsecase.GetUserIdFromToken(token)
+	userId, err := delivery.usecase.GetUserIdFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?
@@ -92,7 +92,7 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 		}
 	}
 
-	boards := delivery.boardUsecase.GetClasses(context.Background(), userId, classId)
+	boards := delivery.usecase.GetClasses(context.Background(), userId, classId)
 
 	dataList := []interface{}{}
 	for bid, b := range boards {

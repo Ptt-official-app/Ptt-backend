@@ -13,7 +13,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	delivery.logger.Debugf("getBoardList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userId, err := delivery.tokenUsecase.GetUserIdFromToken(token)
+	userId, err := delivery.usecase.GetUserIdFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?
@@ -26,7 +26,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 		}
 	}
 
-	boards := delivery.boardUsecase.GetBoards(context.Background(), userId)
+	boards := delivery.usecase.GetBoards(context.Background(), userId)
 
 	dataList := make([]interface{}, 0, len(boards))
 	for _, board := range boards {
@@ -44,7 +44,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.tokenUsecase.CheckPermission(token,
+	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadBoardInformation},
 		map[string]string{
 			"board_id": boardId,
@@ -56,7 +56,7 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 		return
 	}
 
-	brd, err := delivery.boardUsecase.GetBoardByID(context.Background(), boardId)
+	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardId)
 	if err != nil {
 		// TODO: record error
 		delivery.logger.Warningf("find board %s failed: %v", boardId, err)

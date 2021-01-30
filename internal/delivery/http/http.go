@@ -9,19 +9,14 @@ import (
 )
 
 type httpDelivery struct {
-	logger logging.Logger
-
-	userUsecase  usecase.UserUsecase
-	boardUsecase usecase.BoardUsecase
-	tokenUsecase usecase.TokenUsecase
+	logger  logging.Logger
+	usecase usecase.Usecase
 }
 
-func NewHTTPDelivery(userUsecase usecase.UserUsecase, boardRepo usecase.BoardUsecase, tokenUsecase usecase.TokenUsecase) *httpDelivery {
+func NewHTTPDelivery(usecase usecase.Usecase) *httpDelivery {
 	delivery := &httpDelivery{
-		logger:       logging.NewLogger(),
-		userUsecase:  userUsecase,
-		boardUsecase: boardRepo,
-		tokenUsecase: tokenUsecase,
+		logger:  logging.NewLogger(),
+		usecase: usecase,
 	}
 	return delivery
 }

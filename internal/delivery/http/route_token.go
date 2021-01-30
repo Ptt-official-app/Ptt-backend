@@ -17,7 +17,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
 
-	userec, err := delivery.userUsecase.GetUserByID(context.Background(), username)
+	userec, err := delivery.usecase.GetUserByID(context.Background(), username)
 	if err != nil {
 		m := map[string]string{
 			"error":             "grant_error",
@@ -45,7 +45,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Generate Access Token
-	token := delivery.tokenUsecase.CreateAccessTokenWithUsername(username)
+	token := delivery.usecase.CreateAccessTokenWithUsername(username)
 	m := map[string]string{
 		"access_token": token,
 		"token_type":   "bearer",
