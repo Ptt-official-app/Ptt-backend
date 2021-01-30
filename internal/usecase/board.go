@@ -7,8 +7,8 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (b *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
-	for _, it := range b.repo.GetBoards(ctx) {
+func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
+	for _, it := range usecase.repo.GetBoards(ctx) {
 		if boardID == it.BoardId() {
 			return it, nil
 		}
@@ -16,14 +16,14 @@ func (b *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRe
 	return nil, fmt.Errorf("board record not found")
 }
 
-func (b *usecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecord {
+func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecord {
 	boards := make([]bbs.BoardRecord, 0)
-	for _, board := range b.repo.GetBoards(ctx) {
+	for _, board := range usecase.repo.GetBoards(ctx) {
 		// TODO: Show Board by user level
 		if board.IsClass() {
 			continue
 		}
-		if !b.shouldShowOnUserLevel(board, userID) {
+		if !usecase.shouldShowOnUserLevel(board, userID) {
 			continue
 		}
 		boards = append(boards, board)
@@ -31,11 +31,11 @@ func (b *usecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecor
 	return boards
 }
 
-func (b *usecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
+func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
 	boards := make([]bbs.BoardRecord, 0)
-	for _, board := range b.repo.GetBoards(ctx) {
+	for _, board := range usecase.repo.GetBoards(ctx) {
 		// TODO: Show Board by user level
-		if !b.shouldShowOnUserLevel(board, userID) {
+		if !usecase.shouldShowOnUserLevel(board, userID) {
 			continue
 		}
 		if board.ClassId() != classID {
@@ -50,10 +50,10 @@ func (b *usecase) GetClasses(ctx context.Context, userID, classID string) []bbs.
 	return boards
 }
 
-func (b *usecase) GetBoardArticles(ctx context.Context, boardID string) []interface{} {
-	articleRecords, err := b.repo.GetBoardArticleRecords(ctx, boardID)
+func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string) []interface{} {
+	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
 	if err != nil {
-		b.logger.Warningf("open directory file error: %v", err)
+		usecase.logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
 	}
 
@@ -76,18 +76,18 @@ func (b *usecase) GetBoardArticles(ctx context.Context, boardID string) []interf
 	return items
 }
 
-func (b *usecase) GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error) {
-	buf, err := b.repo.GetBoardArticle(ctx, boardID, filename)
+func (usecase *usecase) GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error) {
+	buf, err := usecase.repo.GetBoardArticle(ctx, boardID, filename)
 	if err != nil {
 		return nil, fmt.Errorf("read file %s/%s error: %w", boardID, filename, err)
 	}
 	return buf, nil
 }
 
-func (b *usecase) GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} {
-	fileHeaders, err := b.repo.GetBoardTreasureRecords(ctx, boardID, treasuresID)
+func (usecase *usecase) GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} {
+	fileHeaders, err := usecase.repo.GetBoardTreasureRecords(ctx, boardID, treasuresID)
 	if err != nil {
-		b.logger.Warningf("open directory file error: %v", err)
+		usecase.logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
 	}
 
@@ -110,7 +110,7 @@ func (b *usecase) GetBoardTreasures(ctx context.Context, boardID string, treasur
 	return items
 }
 
-func (b *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID string) bool {
+func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID string) bool {
 	// TODO: Get user Level
 	return true
 }

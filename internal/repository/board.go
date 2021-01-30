@@ -7,20 +7,20 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (b *repository) GetBoards(_ context.Context) []bbs.BoardRecord {
-	return b.boardRecords
+func (repo *repository) GetBoards(_ context.Context) []bbs.BoardRecord {
+	return repo.boardRecords
 }
 
-func (b *repository) GetBoardArticle(_ context.Context, boardID, filename string) ([]byte, error) {
-	return b.db.ReadBoardArticleFile(boardID, filename)
+func (repo *repository) GetBoardArticle(_ context.Context, boardID, filename string) ([]byte, error) {
+	return repo.db.ReadBoardArticleFile(boardID, filename)
 }
 
-func (b *repository) GetBoardArticleRecords(_ context.Context, boardID string) ([]bbs.ArticleRecord, error) {
-	return b.db.ReadBoardArticleRecordsFile(boardID)
+func (repo *repository) GetBoardArticleRecords(_ context.Context, boardID string) ([]bbs.ArticleRecord, error) {
+	return repo.db.ReadBoardArticleRecordsFile(boardID)
 }
 
-func (b *repository) GetBoardTreasureRecords(_ context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {
-	return b.db.ReadBoardTreasureRecordsFile(boardID, treasureIDs)
+func (repo *repository) GetBoardTreasureRecords(_ context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {
+	return repo.db.ReadBoardTreasureRecordsFile(boardID, treasureIDs)
 }
 
 func loadBoardFile(db *bbs.DB) ([]bbs.BoardRecord, error) {

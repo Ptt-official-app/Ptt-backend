@@ -16,27 +16,27 @@ const (
 	PermissionReadFavorite            Permission = "READ_FAVORITE"
 )
 
-func (t *usecase) CreateAccessTokenWithUsername(username string) string {
+func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {
 	claims := &jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(t.globalConfig.AccessTokenExpiresAt).Unix(),
+		ExpiresAt: time.Now().Add(usecase.globalConfig.AccessTokenExpiresAt).Unix(),
 		// Issuer:    "test",
 		Subject: username,
 	}
 
 	// TODO: Setting me in config
 	// openssl ecparam -name prime256v1 -genkey -noout -out pkey
-	privateKey := t.globalConfig.AccessTokenPrivateKey
+	privateKey := usecase.globalConfig.AccessTokenPrivateKey
 
 	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
-		t.logger.Criticalf("parse private key failed: %v", err)
+		usecase.logger.Criticalf("parse private key failed: %v", err)
 		return ""
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodES256, claims)
 	ss, err := token.SignedString(key)
 	if err != nil {
-		t.logger.Errorf("sign token failed: %v", err)
+		usecase.logger.Errorf("sign token failed: %v", err)
 		return ""
 	}
 	return ss
@@ -75,6 +75,6 @@ func (t *usecase) GetUserIdFromToken(token string) (string, error) {
 	return "", fmt.Errorf("token not valid")
 }
 
-func (t *usecase) CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error {
+func (usecase *usecase) CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error {
 	return nil
 }

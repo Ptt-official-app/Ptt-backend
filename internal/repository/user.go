@@ -7,12 +7,12 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (u *repository) GetUsers(_ context.Context) []bbs.UserRecord {
-	return u.userRecords
+func (repo *repository) GetUsers(_ context.Context) []bbs.UserRecord {
+	return repo.userRecords
 }
 
-func (u *repository) GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error) {
-	return u.db.ReadUserFavoriteRecords(userID)
+func (repo *repository) GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error) {
+	return repo.db.ReadUserFavoriteRecords(userID)
 }
 
 func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {

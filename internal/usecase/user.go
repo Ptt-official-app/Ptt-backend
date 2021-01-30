@@ -8,8 +8,8 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (u *usecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
-	for _, it := range u.repo.GetUsers(ctx) {
+func (usecase *usecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
+	for _, it := range usecase.repo.GetUsers(ctx) {
 		if userID == it.UserId() {
 			return it, nil
 		}
@@ -17,18 +17,18 @@ func (u *usecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecor
 	return nil, fmt.Errorf("user record not found")
 }
 
-func (u *usecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
-	recs, err := u.repo.GetUserFavoriteRecords(ctx, userID)
+func (usecase *usecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
+	recs, err := usecase.repo.GetUserFavoriteRecords(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	dataItems := u.parseFavoriteFolderItem(recs)
+	dataItems := usecase.parseFavoriteFolderItem(recs)
 	return dataItems, nil
 }
 
-func (u *usecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
-	user, err := u.GetUserByID(ctx, userID)
+func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
+	user, err := usecase.GetUserByID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get userrec for %s failed", userID)
 	}
@@ -53,10 +53,10 @@ func (u *usecase) GetUserInformation(ctx context.Context, userID string) (map[st
 	return result, nil
 }
 
-func (u *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
+func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {
-		u.logger.Debugf("fav type: %v", item.Type())
+		usecase.logger.Debugf("fav type: %v", item.Type())
 
 		switch item.Type() {
 		case bbs.FavoriteTypeBoard:
@@ -69,7 +69,7 @@ func (u *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface
 			dataItems = append(dataItems, map[string]interface{}{
 				"type":  "folder",
 				"title": item.Title(),
-				"items": u.parseFavoriteFolderItem(item.Records()),
+				"items": usecase.parseFavoriteFolderItem(item.Records()),
 			})
 
 		case bbs.FavoriteTypeLine:
@@ -77,7 +77,7 @@ func (u *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface
 				"type": "line",
 			})
 		default:
-			u.logger.Warningf("parseFavoriteFolderItem unknown favItem type")
+			usecase.logger.Warningf("parseFavoriteFolderItem unknown favItem type")
 		}
 	}
 	return dataItems
