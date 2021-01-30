@@ -22,7 +22,7 @@ var (
 
 func NewDefaultConfig() (*Config, error) {
 	var config *Config
-
+	config = &Config{}
 	logger.Debugf("load default config")
 
 	defaultConfig, err := toml.LoadFile("config_default.toml")
@@ -34,7 +34,7 @@ func NewDefaultConfig() (*Config, error) {
 	logger.Debugf("load user config")
 	userConfig, err := toml.LoadFile("config.toml")
 	if err != nil {
-		return nil, fmt.Errorf("failed to load user config: %w", err)
+		return config, nil
 	}
 	applyConfig(config, userConfig)
 
