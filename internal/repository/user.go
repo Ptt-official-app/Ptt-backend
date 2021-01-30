@@ -7,28 +7,11 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-type userRepository struct {
-	db          *bbs.DB
-	userRecords []bbs.UserRecord
-}
-
-func NewUserRepository(db *bbs.DB) (UserRepository, error) {
-	userRecords, err := loadUserRecords(db)
-	if err != nil {
-		return nil, fmt.Errorf("failed to load user records: %w", err)
-	}
-
-	return &userRepository{
-		db:          db,
-		userRecords: userRecords,
-	}, nil
-}
-
-func (u *userRepository) GetUsers(_ context.Context) []bbs.UserRecord {
+func (u *repository) GetUsers(_ context.Context) []bbs.UserRecord {
 	return u.userRecords
 }
 
-func (u *userRepository) GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error) {
+func (u *repository) GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error) {
 	return u.db.ReadUserFavoriteRecords(userID)
 }
 
