@@ -6,9 +6,6 @@ labels: bug
 assignees: ''
 ---
 
-### 優先度 / priority
-<!-- '高' '低' -->
-
 ### 發生了什麼事？ / The Problem
 <!-- * 簡潔扼要的描述什麼 bug / A clear and concise description about the bug. -->
 
