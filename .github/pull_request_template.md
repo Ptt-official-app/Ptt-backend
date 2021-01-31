@@ -1,24 +1,16 @@
-## Github Issue
-<!-- https://github.com/***** -->
+<!-- 原則上不接受沒有 Issue ID 的 PR。 -->
+<!-- We don't accept PRs which has no Issue ID. -->
 
-## 相關文件 / Documents
-<!-- 例如 API 文件，某個套件的連結 -->
+## 👏 解決掉的 issue / Resolved Issues
+- close #0
+- close #0
 
-## 目的 / Why
-<!-- 簡述目的 -->
+## 📝 相關的 issue / Related Issues
+- #0
+- #0
 
-## 實作內容 / What
-<!-- 新增，修改內容的詳細解釋 -->
-
-### 特別需要被review的地方 / Needs to be reviewed
-<!-- 描述哪部分設計可能有更好的寫法，沒有的話可寫「無」 -->
-
-### 相關API / APIs
-<!-- 相關的API path, ex: [GET] /v1/users/ -->
-
-### 相關DB / DB Tables or Columns
-<!-- 相關的table,column名 ex: `users` -->
-
-### TODO
-<!-- 紀錄未完成的項目。如果還有未完成，把Pull Request轉換成 Draft -->
-- [ ] ()
+## ⛏ 變更內容 / Details of Changes
+<!-- 簡要陳列您的修改 -->
+<!-- List down your changes concisely -->
+- xxxxxx
+- xxx
