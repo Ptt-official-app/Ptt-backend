@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/Ptt-backend/internal/db"
 )
 
 func (repo *repository) GetBoards(_ context.Context) []bbs.BoardRecord {
@@ -23,7 +24,7 @@ func (repo *repository) GetBoardTreasureRecords(_ context.Context, boardID strin
 	return repo.db.ReadBoardTreasureRecordsFile(boardID, treasureIDs)
 }
 
-func loadBoardFile(db *bbs.DB) ([]bbs.BoardRecord, error) {
+func loadBoardFile(db db.DB) ([]bbs.BoardRecord, error) {
 	boardRecords, err := db.ReadBoardRecords()
 	if err != nil {
 		logger.Errorf("get board header error: %v", err)

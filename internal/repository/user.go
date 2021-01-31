@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/Ptt-backend/internal/db"
 )
 
 func (repo *repository) GetUsers(_ context.Context) []bbs.UserRecord {
@@ -15,7 +16,7 @@ func (repo *repository) GetUserFavoriteRecords(ctx context.Context, userID strin
 	return repo.db.ReadUserFavoriteRecords(userID)
 }
 
-func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {
+func loadUserRecords(db db.DB) ([]bbs.UserRecord, error) {
 	userRecords, err := db.ReadUserRecords()
 	if err != nil {
 		logger.Errorf("get user rec error: %v", err)
