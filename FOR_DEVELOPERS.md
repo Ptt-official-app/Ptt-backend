@@ -1,6 +1,6 @@
 # 給開發者的資訊
 
-## 1. 開發環境建置
+## 開發環境建置
 
 安裝下列的應用程式來建構開發環境：
 
@@ -11,7 +11,7 @@
 |[Sublime Text 3](https://classic.yarnpkg.com/zh-Hant/)| |如果使用 Sublime Text，記得安裝 Gofmt 套件|
 |[docker compose](https://docs.docker.com/compose/install/)| |使用 `docker compose` 直襲本專案時|
 
-### 1-1. Sublime Text 3 的套件
+### Sublime Text 3 的套件
 
 要使用 Sublime Text 3，請安裝以下套件。
 
@@ -22,8 +22,15 @@
 
 ---
 
-## 2. 下載測試伺服器靜態資料
+## 安裝與設定
 
+### Clone Ptt-backend 專案
+
+```bash
+$ git clone https://github.com/Ptt-official-app/Ptt-backend.git
+```
+
+### 下載測試伺服器靜態資料與配置設定檔
 ```bash
 # 下載 BBS Home
 $ wget http://pttapp.cc/data-archives/bbs_backup_lastest.tar.xz
@@ -36,48 +43,36 @@ $ wget http://pttapp.cc/data-archives/dump.shm.lastest.tar.bz2
 $ tar -jxvf dump.shm.lastest.tar.bz2
 ```
 
+- 設定檔預設讀取 `config_default.toml`，如果希望改成自己的設定檔請將他複製成 `config.toml` 即可。
 
-## 3. 執行此專案
+## 編譯與執行
 
-請在工作目錄(./Ptt-backend)下執行此命令。
 
-### 3-1. 直接使用 `go build` 的狀況
+請在工作目錄 `./Ptt-backend` 下執行此命令。
 
-#### 3-1-1. 安裝以及編譯
-
+### 狀況 1: 直接使用 `go build`
 ```bash
-# 編譯
 $ go build
-```
-
-#### 3-1-2. 執行
-
-```bash
-# 編譯
 $ ./Ptt-backend
 ```
 
-#### 3-1-3. 提示
-
-- 設定檔預設讀取 config_default.toml，如果希望改成自己的設定檔請將他複製成 config.toml 即可。
-
-#### 3-1-4. Troubleshoot
+#### Troubleshoot
 
 // TODO
 
-### 3-2. 使用 Gitpod 開發的狀況
+### 狀況 2: 使用 Gitpod 開發
 
 // TODO
 
 ---
 
-## 4. 生產環境/其他環境的判定
+## 生產環境/其他環境的判定
 
 一但要上線到生產環境，請務必改掉 security 章節內的設定。
 
 ---
 
-## 5. Deploy 到 Staging 環境以及正式環境的方法
+## Deploy 到 Staging 環境以及正式環境的方法
 
 當下表左欄所列的分支更新後，分支和網站將會自動被更新。
 
@@ -89,7 +84,7 @@ $ ./Ptt-backend
 
 ---
 
-## 6. 分支規則
+## 分支規則
 
 只允許推送 Pull Request 到 `development` 。
 在推送 Pull Request 時，請依照以下命名規則為您的分支命名
@@ -99,7 +94,7 @@ $ ./Ptt-backend
 |新增功能|`feature/#{ISSUE_ID}-#{branch_title_name}`|
 |Hotfix commit|`hotfix/#{ISSUE_ID}-#{branch_title_name}`|
 
-### 6-1. 基本分支
+### 基本分支
 
 
 | 目的 | 分支 | 預覽用 URL | 誰可以發 Pull Request | 備註 |
@@ -109,7 +104,7 @@ $ ./Ptt-backend
 | 正式版 | master |  | Only administrators | 禁止管理員以外的人推送 Pull Request |
 
 
-### 7-2. 系統所使用的分支
+### 系統所使用的分支
 
 | 目的 | 分支 | 預覽用 URL | 備註 |
 | ---- | -------- | ---- | ---- |
