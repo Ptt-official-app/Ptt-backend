@@ -15,16 +15,23 @@ func NewMockUsecase() usecase.Usecase {
 	return &MockUsecase{}
 }
 
+// usecase/user.go
 func (usecase *MockUsecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
 	panic("Not implemented")
 }
+
 func (usecase *MockUsecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
 	panic("Not implemented")
 }
+
 func (usecase *MockUsecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
-	panic("Not implemented")
+	result := map[string]interface{}{
+		"user_id": "id",
+	}
+	return result, nil
 }
 
+// usecase/board.go
 func (usecase *MockUsecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	panic("Not implemented")
 }
@@ -49,8 +56,9 @@ func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID strin
 	panic("Not implemented")
 }
 
+// usecase/token.go
 func (usecase *MockUsecase) CreateAccessTokenWithUsername(username string) string {
-	panic("Not implemented")
+	return "token"
 }
 
 func (usecase *MockUsecase) GetUserIdFromToken(token string) (string, error) {
@@ -58,5 +66,5 @@ func (usecase *MockUsecase) GetUserIdFromToken(token string) (string, error) {
 }
 
 func (usecase *MockUsecase) CheckPermission(token string, permissionId []usecase.Permission, userInfo map[string]string) error {
-	panic("Not implemented")
+	return nil
 }
