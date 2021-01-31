@@ -26,6 +26,8 @@ function build() {
     GOFLAGS="-trimpath"
     LDFLAGS="-X main/version.version=$VERSION -X main/version.commit=$GITSHA -X main/version.buildTime=$BUILDTIME"
     mkdir -p "bin"
+    echo "VERSION: $VERSION"
+    echo "GITSHA: $GITSHA"
     echo "binary file output into ./bin"
     go build "$GOFLAGS" -ldflags "$LDFLAGS" -o ./bin ./...
 }
