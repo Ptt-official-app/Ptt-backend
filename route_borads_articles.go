@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
@@ -34,8 +35,18 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 		// The board may not contain any article
 	}
 
-	items := []interface{}{}
-	for _, f := range fileHeaders {
+	var items []interface{}
+	var articles []bbs.ArticleRecord
+	queryParam := r.URL.Query()
+	titleParam, searchByTitle := queryParam["title"]
+	authorParam, searchByAuthor := queryParam["author"]
+	if searchByTitle || searchByAuthor {
+		articles = searchArticles(fileHeaders, titleParam, authorParam)
+	} else {
+		articles = fileHeaders
+	}
+
+	for _, f := range articles {
 		m := map[string]interface{}{
 			"filename": f.Filename(),
 			// Bug(pichu): f.Modified time will be 0 when file is vote
@@ -61,6 +72,24 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	w.Write(b)
 
+}
+
+func searchArticles(fileHeaders []bbs.ArticleRecord, titleParam, authorParam []string) []bbs.ArticleRecord {
+	var targetArticles []bbs.ArticleRecord
+	var title, author string
+	if titleParam != nil {
+		title = titleParam[0]
+	}
+
+	if authorParam != nil {
+		author = authorParam[0]
+	}
+	for _, f := range fileHeaders {
+		if strings.Contains(f.Title(), title) && strings.Contains(f.Owner(), author) {
+			targetArticles = append(targetArticles, f)
+		}
+	}
+	return targetArticles
 }
 
 func getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardId string, filename string) {
