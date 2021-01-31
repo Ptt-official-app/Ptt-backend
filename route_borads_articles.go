@@ -85,8 +85,8 @@ func searchArticles(fileHeaders []bbs.ArticleRecord, titleParam, authorParam []s
 		author = authorParam[0]
 	}
 	for _, f := range fileHeaders {
-		if strings.Contains(strings.ToLower(f.Title()), title) &&
-			strings.Contains(strings.ToLower(f.Owner()), author) {
+		if strings.Contains(strings.ToLower(f.Title()), strings.ToLower(title)) &&
+			strings.Contains(strings.ToLower(f.Owner()), strings.ToLower(author)) {
 			targetArticles = append(targetArticles, f)
 		}
 	}
