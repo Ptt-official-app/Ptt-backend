@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/PichuChen/go-bbs"
-	"github.com/Ptt-official-app/Ptt-backend/internal/db"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
@@ -27,12 +26,12 @@ type Repository interface {
 }
 
 type repository struct {
-	db           db.DB
+	db           *bbs.DB
 	userRecords  []bbs.UserRecord
 	boardRecords []bbs.BoardRecord
 }
 
-func NewRepository(db db.DB) (Repository, error) {
+func NewRepository(db *bbs.DB) (Repository, error) {
 	userRecords, err := loadUserRecords(db)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load user records: %w", err)
