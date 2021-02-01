@@ -1,17 +1,3 @@
-github.com/PichuChen/go-bbs v0.1.0 h1:E+YtbvAOdWI+4YXHXPDR08dfjXVc7yvRTOCsjiOea/8=
-github.com/PichuChen/go-bbs v0.1.0/go.mod h1:RzkgmgCsX4967OQ6HSq4Adb4nJEUivp6jW2lC8Dw+nQ=
-github.com/PichuChen/go-bbs v0.1.1 h1:oMDQCOqh45BZ4QRHaTFzkNcsJtWjG4nBq0aoTtB2+/M=
-github.com/PichuChen/go-bbs v0.1.1/go.mod h1:RzkgmgCsX4967OQ6HSq4Adb4nJEUivp6jW2lC8Dw+nQ=
-github.com/PichuChen/go-bbs v0.1.2 h1:HKlGSM5ZNe34aQYxQfnARZxPj8IIj1Momxxz5Z5x/R4=
-github.com/PichuChen/go-bbs v0.1.2/go.mod h1:RzkgmgCsX4967OQ6HSq4Adb4nJEUivp6jW2lC8Dw+nQ=
-github.com/PichuChen/go-bbs v0.2.0 h1:mGpDCysXjeSBiW43vSytZR5B+RHfA9KMbg1FAa335TI=
-github.com/PichuChen/go-bbs v0.2.0/go.mod h1:RzkgmgCsX4967OQ6HSq4Adb4nJEUivp6jW2lC8Dw+nQ=
-github.com/PichuChen/go-bbs v0.2.1 h1:zL6Jy0EC2tRZQRhcZalBAezBepgnxAQiWmPaXsNIyRQ=
-github.com/PichuChen/go-bbs v0.2.1/go.mod h1:RzkgmgCsX4967OQ6HSq4Adb4nJEUivp6jW2lC8Dw+nQ=
-github.com/PichuChen/go-bbs v0.2.2 h1:i+jQ9yG+WrcuBQzyizAaEu+OCnS+AL5VUKeUax0O1lc=
-github.com/PichuChen/go-bbs v0.2.2/go.mod h1:RzkgmgCsX4967OQ6HSq4Adb4nJEUivp6jW2lC8Dw+nQ=
-github.com/PichuChen/go-bbs v0.2.3 h1:9RfWwKSTB7aSdGvPNfQMaqX33VP/TuFhELoQxBTDJUo=
-github.com/PichuChen/go-bbs v0.2.3/go.mod h1:RzkgmgCsX4967OQ6HSq4Adb4nJEUivp6jW2lC8Dw+nQ=
 github.com/PichuChen/go-bbs v0.2.5 h1:Nql/nLwm4zdWuB8h0f9pcxAawCvjzQTx9iJcGjqQWLA=
 github.com/PichuChen/go-bbs v0.2.5/go.mod h1:RzkgmgCsX4967OQ6HSq4Adb4nJEUivp6jW2lC8Dw+nQ=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
