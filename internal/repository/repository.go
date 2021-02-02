@@ -16,13 +16,19 @@ var (
 type Repository interface {
 
 	// board.go
+	// GetBoards return all board record
 	GetBoards(ctx context.Context) []bbs.BoardRecord
+	// GetBoardArticle returns an article file in a specified board and filename
 	GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error)
+	// GetBoardArticleRecords returns article records of a board
 	GetBoardArticleRecords(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error)
+	// GetBoardTreasureRecords returns treasure article records of a board
 	GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error)
 
 	// user.go
+	// GetUsers returns all user reords
 	GetUsers(ctx context.Context) []bbs.UserRecord
+	// GetUserFavoriteRecords returns favorite records of a user
 	GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error)
 }
 
