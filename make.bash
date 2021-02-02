@@ -2,7 +2,7 @@
 
 function help() {
     echo "---- Project: Ptt-backend ----"
-    echo " Usage: ./make.bash COMMAND"
+    echo " Usage: ./make.bash [COMMAND]"
     echo
     echo " Management Commands:"
     echo "  build              Build project"

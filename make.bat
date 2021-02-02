@@ -1,6 +1,9 @@
 @echo off
 set argC=0
+REM calcute number of arguments
 for %%x in (%*) do Set /A argC+=1
+
+REM no arguments and number of arguments greater than 1
 if %argC% neq 1 goto invalidArgs
 if %1==help goto help
 if %1==build goto build
@@ -18,7 +21,7 @@ goto end
  
 :help
 echo ---- Project: Ptt-backend ----
-echo  Usage: ./make.bash COMMAND
+echo  Usage: make.bat [COMMAND]
 echo. 
 echo  Management Commands:
 echo   build              Build project
@@ -31,7 +34,9 @@ echo   clean              Remove object files, ./bin, .out files
 echo.
 goto end
 
+REM build: Build project
 :build
+REM if git tag exists, take it as version, otherwise use commit sha
 FOR /F "tokens=*" %%g IN ('"git rev-parse --short HEAD"') do set GITSHA=%%g
 set Tag=""
 FOR /F %%i IN ('"git rev-list --tags --max-count 1"') do set Tag=%%i
@@ -41,6 +46,7 @@ IF NOT %Tag%=="" (
     set VERSION=git-%GITSHA%
  )
 
+REM get current utc time in format: %Y-%m-%dT%H:%M:%SZ
 for /f %%x in ('wmic path win32_utctime get /format:list ^| findstr "="') do set %%x
 Set Second=0%Second%
 Set Second=%Second:~-2%
@@ -63,15 +69,18 @@ echo binary file output into .\bin
 go build %GOFLAGS% -ldflags %LDFLAGS% -o .\bin .\...
 goto end
 
+REM deps: Ensures fresh go.mod and go.sum for dependencies
 :deps
 go mod tidy
 go mod verify
 goto end
 
+REM format: Formats Go code
 :format
 go fmt .\...
 goto end
 
+REM lint: Run golangci-lint check
 :lint
 set "GOBIN=%GOPATH%\bin"
 if not exist "%GOBIN%\golangci-lint.exe" (
@@ -80,12 +89,14 @@ if not exist "%GOBIN%\golangci-lint.exe" (
 %GOBIN%\golangci-lint run ./...
 goto end
 
+REM test-unit: Run all unit tests
 :test-unit
 setlocal
     set CGO_ENABLED=1 && go test -v -coverprofile=coverage.out -cover -race
 endlocal
 goto end
 
+REM test-integration: Run all integration and unit tests
 :test-integration
 setlocal
     set CGO_ENABLED=1 && go test -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp
@@ -93,6 +104,7 @@ setlocal
 endlocal
 goto end
 
+REM clean: Remove object files, ./bin, .out files
 :clean
 go clean -i -x
 echo delete bin, clean out files
