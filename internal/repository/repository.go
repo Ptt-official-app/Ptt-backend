@@ -12,6 +12,7 @@ var (
 	logger = logging.NewLogger()
 )
 
+// Repository directly interacts with database via db handler.
 type Repository interface {
 
 	// board.go

@@ -9,6 +9,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 )
 
+// Usecase is the implementation of backend business logic.
 type Usecase interface {
 	// user.go
 	GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error)
