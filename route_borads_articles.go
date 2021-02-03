@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -37,11 +38,22 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 
 	var items []interface{}
 	var articles []bbs.ArticleRecord
+	var recommendCountGe int
 	queryParam := r.URL.Query()
-	titleParam, searchByTitle := queryParam["title"]
-	authorParam, searchByAuthor := queryParam["author"]
-	if searchByTitle || searchByAuthor {
-		articles = searchArticles(fileHeaders, titleParam, authorParam)
+	title := queryParam.Get("title_contain")
+	author := queryParam.Get("author")
+	recommendCountParam := queryParam.Get("recommend_count_ge")
+	recommendCountGe, err = strconv.Atoi(recommendCountParam)
+	if err != nil && recommendCountParam != "" {
+		logger.Errorf("recommend count should be integer")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(strings.TrimSpace(title)) > 0 ||
+		len(strings.TrimSpace(author)) > 0 ||
+		recommendCountGe != 0 {
+		articles = searchArticles(fileHeaders, title, author, recommendCountGe)
 	} else {
 		articles = fileHeaders
 	}
@@ -74,19 +86,15 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardId string) {
 
 }
 
-func searchArticles(fileHeaders []bbs.ArticleRecord, titleParam, authorParam []string) []bbs.ArticleRecord {
+func searchArticles(fileHeaders []bbs.ArticleRecord, title, author string, recommendCountGe int) []bbs.ArticleRecord {
 	var targetArticles []bbs.ArticleRecord
-	var title, author string
-	if titleParam != nil {
-		title = titleParam[0]
-	}
 
-	if authorParam != nil {
-		author = authorParam[0]
-	}
 	for _, f := range fileHeaders {
 		if strings.Contains(strings.ToLower(f.Title()), strings.ToLower(title)) &&
-			strings.Contains(strings.ToLower(f.Owner()), strings.ToLower(author)) {
+			strings.Contains(strings.ToLower(f.Owner()), strings.ToLower(author)) &&
+			((recommendCountGe == 0) ||
+				(recommendCountGe > 0 && f.Recommend() >= recommendCountGe) ||
+				(recommendCountGe < 0 && f.Recommend() <= recommendCountGe)) {
 			targetArticles = append(targetArticles, f)
 		}
 	}
