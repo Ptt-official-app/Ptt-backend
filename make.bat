@@ -1,6 +1,6 @@
 @echo off
 set argC=0
-REM calcute number of arguments
+REM calculate number of arguments
 for %%x in (%*) do Set /A argC+=1
 
 REM no arguments and number of arguments greater than 1
@@ -18,11 +18,11 @@ if %1==clean goto clean
 echo invalid args, please check command
 call :help
 goto end
- 
+
 :help
 echo ---- Project: Ptt-backend ----
 echo  Usage: make.bat [COMMAND]
-echo. 
+echo.
 echo  Management Commands:
 echo   build              Build project
 echo   deps               Ensures fresh go.mod and go.sum for dependencies
@@ -82,24 +82,29 @@ goto end
 
 REM lint: Run golangci-lint check
 :lint
-set "GOBIN=%GOPATH%\bin"
-if not exist "%GOBIN%\golangci-lint.exe" (
-    go get github.com/golangci/golangci-lint/cmd/golangci-lint@v1.35.2
-)
-%GOBIN%\golangci-lint run ./...
+setlocal
+    set "GOBIN=%GOPATH%\bin"
+    if not "%GOLANGCI_LINT_VERSION%"=="" (
+        set "GOLANGCI_LINT_VERSION=@%GOLANGCI_LINT_VERSION%"
+    )
+    if not exist "%GOBIN%\golangci-lint.exe" (
+        go get github.com/golangci/golangci-lint/cmd/golangci-lint%GOLANGCI_LINT_VERSION%
+    )
+    %GOBIN%\golangci-lint run ./...
+endlocal
 goto end
 
 REM test-unit: Run all unit tests
 :test-unit
 setlocal
-    set CGO_ENABLED=1 && go test -v -coverprofile=coverage.out -cover -race
+    set CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race
 endlocal
 goto end
 
 REM test-integration: Run all integration and unit tests
 :test-integration
 setlocal
-    set CGO_ENABLED=1 && go test -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp
+    set CGO_ENABLED=1 && go test ./...  -v -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp
     DEL "*.tmp"
 endlocal
 goto end
