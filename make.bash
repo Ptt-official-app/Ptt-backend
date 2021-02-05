@@ -1,5 +1,5 @@
 #!/bin/bash
-set -ou pipefail
+set -o pipefail
 
 function help() {
     echo "---- Project: Ptt-backend ----"
