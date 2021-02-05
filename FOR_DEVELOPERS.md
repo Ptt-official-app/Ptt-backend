@@ -43,7 +43,7 @@ $ wget http://pttapp.cc/data-archives/dump.shm.lastest.tar.bz2
 $ tar -jxvf dump.shm.lastest.tar.bz2
 ```
 
-- 設定檔預設讀取 `config_default.toml`，如果希望改成自己的設定檔請將他複製成 `config.toml` 即可。
+- 設定檔預設讀取 `conf/config_default.toml`，如果希望改成自己的設定檔請直接改在 `config.toml` 中即可。
 
 ## 編譯與執行
 
@@ -52,8 +52,10 @@ $ tar -jxvf dump.shm.lastest.tar.bz2
 
 ### 狀況 1: 直接使用 `go build`
 ```bash
+$ cd cmd
 $ go build
-$ ./Ptt-backend
+$ cd ..
+$ ./cmd/cmd
 ```
 
 #### Troubleshoot
