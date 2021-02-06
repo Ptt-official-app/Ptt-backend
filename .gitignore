@@ -9,6 +9,7 @@ home/
 dump.shm
 dump.shm.lastest.tar.bz2
 
+bin
 
 ### Golang
 
@@ -26,12 +27,13 @@ dump.shm.lastest.tar.bz2
 *.out
 
 # Dependency directories (remove the comment below to include it)
-# vendor/
-
+vendor/
 
 ### Goland
 .idea
 
+### VScode
+.vscode
 
 ### VIM
 

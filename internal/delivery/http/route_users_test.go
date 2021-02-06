@@ -1,7 +1,7 @@
-package main
+package http
 
 import (
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/Ptt-backend/internal/mock"
 
 	"encoding/json"
 	"net/http"
@@ -52,24 +52,21 @@ func (u *MockUserRecord) LastHost() string { return "" }
 
 func TestGetUserInformation(t *testing.T) {
 
-	expected := NewMockUserRecord("SYSOP")
-
-	userRecs = []bbs.UserRecord{
-		expected,
-	}
-
+	userID := "id"
+	usecase := mock.NewMockUsecase()
+	delivery := NewHTTPDelivery(usecase)
 	req, err := http.NewRequest("GET", "/v1/users/SYSOP/information", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	token := newAccessTokenWithUsername(expected.UserId())
+	token := usecase.CreateAccessTokenWithUsername(userID)
 	t.Logf("testing token: %v", token)
 	req.Header.Add("Authorization", "bearer "+token)
 
 	rr := httptest.NewRecorder()
 	r := http.NewServeMux()
-	r.HandleFunc("/v1/users/", routeUsers)
+	r.HandleFunc("/v1/users/", delivery.routeUsers)
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
@@ -81,12 +78,10 @@ func TestGetUserInformation(t *testing.T) {
 	json.Unmarshal(rr.Body.Bytes(), &responsedMap)
 	t.Logf("got response %v", rr.Body.String())
 	responsedData := responsedMap["data"].(map[string]interface{})
-	if responsedData["user_id"] != expected.UserId() {
+	if responsedData["user_id"] != userID {
 		t.Errorf("handler returned unexpected body, user_id not match: got %v want userId %v",
-			rr.Body.String(), expected.UserId())
-
+			rr.Body.String(), userID)
 	}
-
 }
 
 func TestParseUserPath(t *testing.T) {
