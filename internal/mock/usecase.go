@@ -44,7 +44,7 @@ func (usecase *MockUsecase) GetClasses(ctx context.Context, userID, classID stri
 	panic("Not implemented")
 }
 
-func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string) []interface{} {
+func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []interface{} {
 	panic("Not implemented")
 }
 
