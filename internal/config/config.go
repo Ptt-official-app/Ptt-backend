@@ -30,8 +30,7 @@ func NewDefaultConfig() (*Config, error) {
 // user configration will override default configuration.
 func NewConfig(defaultPath, userPath string) (*Config, error) {
 
-	var config *Config
-	config = &Config{}
+	var config = &Config{}
 	logger.Debugf("load default config")
 
 	defaultConfig, err := toml.LoadFile(defaultPath)

@@ -13,7 +13,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	delivery.logger.Debugf("getBoardList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userId, err := delivery.usecase.GetUserIdFromToken(token)
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?
@@ -21,12 +21,11 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(`{"error":"token_invalid"}`))
 			return
-		} else {
-			userId = "guest" // TODO: use const variable
 		}
+		userID = "guest" // TODO: use const variable
 	}
 
-	boards := delivery.usecase.GetBoards(context.Background(), userId)
+	boards := delivery.usecase.GetBoards(context.Background(), userID)
 
 	dataList := make([]interface{}, 0, len(boards))
 	for _, board := range boards {
@@ -41,13 +40,13 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	w.Write(b)
 }
 
-func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
+func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadBoardInformation},
 		map[string]string{
-			"board_id": boardId,
+			"board_id": boardID,
 		})
 
 	if err != nil {
@@ -56,14 +55,14 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 		return
 	}
 
-	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardId)
+	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardID)
 	if err != nil {
 		// TODO: record error
-		delivery.logger.Warningf("find board %s failed: %v", boardId, err)
+		delivery.logger.Warningf("find board %s failed: %v", boardID, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_board_error",
-			"error_description": "get board for " + boardId + " failed",
+			"error_description": "get board for " + boardID + " failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.Write(b)
