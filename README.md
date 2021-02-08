@@ -134,5 +134,6 @@ ASCII 圖片產圖引擎
 
 * [RESTful API 文件](https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit?usp=sharing)
 * [go-bbs Package](https://github.com/PichuChen/go-bbs)
-
+* [Openapi](http://localhost:8081/swagger) (待本地端 swagger container 使用以下指令啟動後)  
+  `sudo docker run -p 8081:8080 -e BASE_URL=/swagger -e SWAGGER_JSON=/tmp/swagger.yaml -v {專案絕對路徑}:/tmp swaggerapi/swagger-ui`
 
