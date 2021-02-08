@@ -51,7 +51,8 @@ func (u *MockUserRecord) LastLogin() time.Time { return time.Now() }
 func (u *MockUserRecord) LastHost() string { return "" }
 
 func TestGetUserInformation(t *testing.T) {
-
+	t.Log("log...")
+	t.Error(1)
 	userID := "id"
 	usecase := mock.NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)

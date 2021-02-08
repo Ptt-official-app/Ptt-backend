@@ -16,7 +16,7 @@ function help() {
     echo
 }
 
-function build() {    
+function build() {
     VERSION=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
     BUILDTIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     GITSHA=$(git rev-parse --short HEAD 2>/dev/null)
@@ -39,7 +39,7 @@ function format() {
 }
 
 function lint() {
-    GOBIN=$(go env GOBIN)
+    GOBIN=$(go env GOPATH)/bin
     if [ ! -f "$GOBIN/golangci-lint" ]; then
         curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$GOBIN" "$GOLANGCI_LINT_VERSION"
         echo "download golangci-lint into $GOBIN"
