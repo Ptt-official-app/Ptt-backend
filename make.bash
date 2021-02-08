@@ -87,8 +87,7 @@ test-unit)
 # test-integration: Run all integration and unit tests
 test-integration)
     echo 'mode: atomic' >coverage.out
-    go list ./... | xargs -n1 -I{} sh -c 'CGO_ENABLED=1 && go test -v -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp -coverpkg $(go list ./... | tr "\n" ",") {} && tail -n +2 coverage.tmp >> coverage.out || exit 255'
-    rm coverage.tmp
+    CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
     ;;
 # clean: Remove object files, ./bin, .out files
 clean)
