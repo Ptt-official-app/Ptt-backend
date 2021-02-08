@@ -52,6 +52,7 @@ func (u *MockUserRecord) LastHost() string { return "" }
 
 func TestGetUserInformation(t *testing.T) {
 
+	t.Error("t")
 	userID := "id"
 	usecase := mock.NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
