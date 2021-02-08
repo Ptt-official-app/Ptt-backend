@@ -11,7 +11,8 @@ import (
 	"strings"
 )
 
-func (delivery *httpDelivery) getClass(w http.ResponseWriter, r *http.Request) {
+// nolint
+func (delivery *Delivery) getClass(w http.ResponseWriter, r *http.Request) {
 
 	seg := strings.Split(r.URL.Path, "/")
 
@@ -46,7 +47,7 @@ func (delivery *httpDelivery) getClass(w http.ResponseWriter, r *http.Request) {
 
 // getClasses HandleFunc handles path start with `/v1/classes`
 // and pass requests to next handle function
-func (delivery *httpDelivery) getClasses(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) getClasses(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getClasses: %v", r)
 	classID, item, err := delivery.parseClassPath(r.URL.Path)
 	delivery.logger.Noticef("query class: %v item: %v err: %v", classID, item, err)
@@ -55,14 +56,6 @@ func (delivery *httpDelivery) getClasses(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	delivery.getClassesList(w, r, classID)
-	return
-
-	// // get single board
-	// if item == "information" {
-	// 	getBoardInformation(w, r, boardId)
-	// 	return
-	// }
-
 }
 
 // getClassesWithoutClassID handles path don't contain item after class id
@@ -75,7 +68,7 @@ func getClassesWithoutClassID(w http.ResponseWriter, r *http.Request) {
 // getClassesList handle path with class id and will return boards and classes
 // under this class.
 // TODO: What should we return when target class not found?
-func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Request, classID string) {
+func (delivery *Delivery) getClassesList(w http.ResponseWriter, r *http.Request, classID string) {
 	delivery.logger.Debugf("getClassesList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)

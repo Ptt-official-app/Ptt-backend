@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func (delivery *httpDelivery) buildRoute(mux *http.ServeMux) {
+func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
 	mux.HandleFunc("/v1/token", delivery.routeToken)
 	mux.HandleFunc("/v1/boards", delivery.routeBoards)
 	mux.HandleFunc("/v1/boards/", delivery.routeBoards)
@@ -13,7 +13,7 @@ func (delivery *httpDelivery) buildRoute(mux *http.ServeMux) {
 	mux.HandleFunc("/v1/users/", delivery.routeUsers)
 }
 
-func (delivery *httpDelivery) routeToken(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) routeToken(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 	switch r.Method {
 	case http.MethodPost:
@@ -21,7 +21,8 @@ func (delivery *httpDelivery) routeToken(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func (delivery *httpDelivery) routeClass(w http.ResponseWriter, r *http.Request) {
+// nolint
+func (delivery *Delivery) routeClass(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getClass(w, r)
@@ -29,7 +30,7 @@ func (delivery *httpDelivery) routeClass(w http.ResponseWriter, r *http.Request)
 }
 
 // routeBoards is the handler for `/v1/boards`
-func (delivery *httpDelivery) routeBoards(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) routeBoards(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("routeBoards: %v", r)
 	// TODO: Check IP Flowspeed
 	switch r.Method {
@@ -39,7 +40,7 @@ func (delivery *httpDelivery) routeBoards(w http.ResponseWriter, r *http.Request
 }
 
 // routeClasses is the handler for `/v1/classes`
-func (delivery *httpDelivery) routeClasses(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) routeClasses(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 	switch r.Method {
 	case http.MethodGet:
@@ -47,7 +48,7 @@ func (delivery *httpDelivery) routeClasses(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-func (delivery *httpDelivery) routeUsers(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) routeUsers(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 	switch r.Method {
 	case http.MethodGet:
@@ -56,7 +57,7 @@ func (delivery *httpDelivery) routeUsers(w http.ResponseWriter, r *http.Request)
 }
 
 // getBoards is the handler for `/v1/boards` with GET method
-func (delivery *httpDelivery) getBoards(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getBoards: %v", r)
 	boardID, item, filename, err := delivery.parseBoardPath(r.URL.Path)
 	if boardID == "" {
@@ -87,7 +88,7 @@ func (delivery *httpDelivery) getBoards(w http.ResponseWriter, r *http.Request) 
 
 // parseBoardPath covert url path from /v1/boards/SYSOP/article to
 // {SYSOP, article) or /v1/boards to {,}
-func (delivery *httpDelivery) parseBoardPath(path string) (boardID string, item string, filename string, err error) {
+func (delivery *Delivery) parseBoardPath(path string) (boardID string, item string, filename string, err error) {
 	pathSegment := strings.Split(path, "/")
 
 	if len(pathSegment) >= 6 {
@@ -116,7 +117,7 @@ func (delivery *httpDelivery) parseBoardPath(path string) (boardID string, item 
 
 // parseBoardTreasurePath parse covert url path from /v1/boards/SYSOP/article to
 // {SYSOP, article) or /v1/boards to {,}
-func (delivery *httpDelivery) parseBoardTreasurePath(path string) (boardID string, treasuresID []string, filename string, err error) {
+func (delivery *Delivery) parseBoardTreasurePath(path string) (boardID string, treasuresID []string, filename string, err error) {
 	pathSegment := strings.Split(path, "/")
 
 	if len(pathSegment) == 6 {
@@ -146,7 +147,7 @@ func (delivery *httpDelivery) parseBoardTreasurePath(path string) (boardID strin
 
 // parseClassPath covert url path from /v1/classes/1/information to
 // {1, information) or /v1/classes to {,}
-func (delivery *httpDelivery) parseClassPath(path string) (classID string, item string, err error) {
+func (delivery *Delivery) parseClassPath(path string) (classID string, item string, err error) {
 	pathSegment := strings.Split(path, "/")
 	if len(pathSegment) == 5 {
 		// /{{version}}/classes/{{class_id}}/{{item}}

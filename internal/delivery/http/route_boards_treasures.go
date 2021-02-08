@@ -10,7 +10,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardID string) {
+func (delivery *Delivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardTreasures: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	_, treasuresID, filename, err := delivery.parseBoardTreasurePath(r.URL.Path)
@@ -51,7 +51,7 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 
 }
 
-func (delivery *httpDelivery) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardID string, treasuresID []string, filename string) {
+func (delivery *Delivery) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardID string, treasuresID []string, filename string) {
 	delivery.logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresID: %v, filename: %v", r, boardID, treasuresID, filename)
 
 	w.WriteHeader(http.StatusNotImplemented)

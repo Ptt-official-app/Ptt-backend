@@ -10,9 +10,9 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 
-	r.ParseForm()
+	_ = r.ParseForm()
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
@@ -56,12 +56,12 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 	w.Write(b)
 }
 
-func (delivery *httpDelivery) verifyPassword(userec bbs.UserRecord, password string) error {
+func (delivery *Delivery) verifyPassword(userec bbs.UserRecord, password string) error {
 	log.Println("password", userec.HashedPassword())
 	return userec.VerifyPassword(password)
 }
 
-func (delivery *httpDelivery) getTokenFromRequest(r *http.Request) string {
+func (delivery *Delivery) getTokenFromRequest(r *http.Request) string {
 	a := r.Header.Get("Authorization")
 	s := strings.Split(a, " ")
 	if len(s) < 2 {

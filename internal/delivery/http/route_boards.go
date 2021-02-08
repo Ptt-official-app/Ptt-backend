@@ -9,7 +9,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) getBoardList(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getBoardList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
@@ -19,7 +19,10 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 		// Support Guest?
 		if !supportGuest() {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"error":"token_invalid"}`))
+			_, err = w.Write([]byte(`{"error":"token_invalid"}`))
+			if err != nil {
+				delivery.logger.Debugf("%v", err)
+			}
 			return
 		}
 		userID = "guest" // TODO: use const variable
@@ -37,10 +40,13 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Debugf("%v", err)
+	}
 }
 
-func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
+func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
@@ -65,7 +71,10 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 			"error_description": "get board for " + boardID + " failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Debugf("%v", err)
+		}
 		return
 	}
 
@@ -74,7 +83,10 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Debugf("%v", err)
+	}
 }
 
 // marshal generate board or class metadata object,

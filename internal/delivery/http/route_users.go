@@ -8,7 +8,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	userID, item, err := parseUserPath(r.URL.Path)
 	switch item {
 	case "information":
@@ -21,7 +21,7 @@ func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
+func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
 	err := delivery.usecase.CheckPermission(token,
@@ -57,7 +57,7 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 	w.Write(responseByte)
 }
 
-func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
+func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadUserInformation},

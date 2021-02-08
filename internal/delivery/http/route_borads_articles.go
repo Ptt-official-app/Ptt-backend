@@ -11,7 +11,7 @@ import (
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
 // article list to client
-func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Request, boardID string) {
+func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardArticles: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	// Check permission for board
@@ -38,7 +38,7 @@ func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Re
 
 }
 
-func (delivery *httpDelivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardID string, filename string) {
+func (delivery *Delivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardID string, filename string) {
 	delivery.logger.Debugf("getBoardArticlesFile: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
