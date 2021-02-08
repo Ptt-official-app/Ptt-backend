@@ -28,8 +28,8 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
-      - name: Linting & vetting.
-        run: ./make.bash lint
+      # - name: Linting & vetting.
+      #   run: ./make.bash lint
   test:
     strategy:
       matrix:
