@@ -97,14 +97,14 @@ goto end
 REM test-unit: Run all unit tests
 :test-unit
 setlocal
-    set CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race
+    set CGO_ENABLED=1 && go test ./... -coverprofile=coverage.out -cover -race
 endlocal
 goto end
 
 REM test-integration: Run all integration and unit tests
 :test-integration
 setlocal
-    set CGO_ENABLED=1 && go test ./...  -v -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp
+    set CGO_ENABLED=1 && go test ./... -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp
     DEL "*.tmp"
 endlocal
 goto end
