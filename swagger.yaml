@@ -89,7 +89,7 @@ paths:
                   type: string
                 grant_type:
                   type: string
-                  example: "password"
+                  enum: ["password"]
               required:
                 - username
                 - password
