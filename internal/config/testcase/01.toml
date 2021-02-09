@@ -1,0 +1,33 @@
+[bbs]
+# bbs 的家目錄
+home= "./home/bbs"
+
+[websocket]
+# WebSocket to Telnet Proxy
+
+listen_port=8082
+enable_tls= false
+tls_key_file= ""
+tls_cert_file= ""
+
+[networking]
+listen_port=8081
+
+
+[security]
+# How to generate Private Key?
+# openssl ecparam -name prime256v1 -genkey -noout -out pkey
+#
+access_token_private_key= """
+access_token_private_key
+"""
+
+# And How to generate Public Key form Private Key?
+# openssl ec -in privatekey.pem -pubout
+access_token_public_key= """
+access_token_public_key
+"""
+
+# 預設 Access Token 多久過期
+# 格式請見 https://golang.org/pkg/time/#ParseDuration
+access_token_expires_at= "24h"
