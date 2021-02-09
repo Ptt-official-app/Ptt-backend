@@ -9,8 +9,8 @@ import (
 )
 
 type ArticleSearchCond struct {
-	Title string
-	Author string
+	Title            string
+	Author           string
 	RecommendCountGe int
 }
 
