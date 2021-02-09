@@ -82,7 +82,7 @@ lint)
     ;;
 # test-unit: Run all unit tests
 test-unit)
-    CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race
+    CGO_ENABLED=1 && go test ./... -coverprofile=coverage.out -cover -race
     ;;
 # test-integration: Run all integration and unit tests
 test-integration)
