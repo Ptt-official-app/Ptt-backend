@@ -89,11 +89,13 @@ test-integration)
     echo 'mode: atomic' >coverage.out
     CGO_ENABLED=1 && go test ./...  -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
     ;;
-# clean: Remove object files, ./bin, .out files
+# clean: Remove object files, ./bin, .out .exe files
 clean)
     go clean -i -x
-    echo "rm -rf ./bin *.out"
-    rm -rf ./bin *.out
+    echo "rm -rf ./Ptt-backend and  *.out"
+    rm ./*.out
+    rm ./Ptt-backend
+    rm ./Ptt-backend.exe
     ;;
 *)
     echo "invalid args, please check command"
