@@ -126,7 +126,7 @@ paths:
       security:
         - BearerAuth: [ ]
       parameters:
-        - name: userId
+        - name: user_id
           in: path
           required: true
           description: '使用者 id'
@@ -222,7 +222,7 @@ paths:
       security:
         - BearerAuth: [ ]
       parameters:
-        - name: userId
+        - name: user_id
           in: path
           required: true
           description: '使用者 id'
@@ -351,10 +351,14 @@ paths:
                   type: string
                 settings:
                   type: array
+                  items:
+                    type: string
                 moderators:
                   type: string
                 read_settings:
                   type: array
+                  items:
+                    type: string
               required:
                 - board_id
                 - category
