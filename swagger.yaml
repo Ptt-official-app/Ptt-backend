@@ -115,7 +115,7 @@ paths:
                     description: "access token 的過期時效，以秒為單位，請參考 OAuth 2.0 標準 (RFC 6749)。"
                   token_type:
                     type: string
-                    example: "bearer"
+                    enum: ["bearer"]
                     description: "固定為 bearer"
       tags:
         - 使用者部分
