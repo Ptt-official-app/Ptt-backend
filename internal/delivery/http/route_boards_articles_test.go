@@ -5,13 +5,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/Ptt-official-app/Ptt-backend/internal/mock"
 )
 
 func TestGetBoardArticlesBadRequest(t *testing.T) {
 	userID := "id"
-	usecase := mock.NewMockUsecase()
+	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
 
 	title := ""
