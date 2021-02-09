@@ -254,6 +254,13 @@ paths:
       description: '新增，刪除，修改我的最愛項目，看板、分隔線或是資料夾'
       security:
         - BearerAuth: [ ]
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: '使用者 id'
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -646,25 +653,22 @@ paths:
       tags:
         - 文章列表部分
 
-  /v1/boards/{{board_id}}/articles/{filename}:
-    get:
-      description: ''
-      responses:
-        '200':
-          description: 'ok'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: object
-      tags:
-        - 單篇文章部分
-
   /v1/boards/{board_id}/articles/{filename}:
     get:
       description: ''
+      parameters:
+        - name: board_id
+          in: path
+          required: true
+          description: 'board_id'
+          schema:
+            type: string
+        - name: filename
+          in: path
+          required: true
+          description: 'filename'
+          schema:
+            type: string
       responses:
         '200':
           description: 'ok'
