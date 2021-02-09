@@ -47,7 +47,10 @@ func (delivery *Delivery) getBoardTreasures(w http.ResponseWriter, r *http.Reque
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Debugf("%v", err)
+	}
 
 }
 

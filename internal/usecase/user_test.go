@@ -33,7 +33,7 @@ func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID
 func (repo *MockRepository) GetUsers(ctx context.Context) []bbs.UserRecord {
 	ret := []bbs.UserRecord{}
 	ret = append(ret, &MockUser{
-		userId: "pichu",
+		userID: "pichu",
 	})
 	return ret
 }
@@ -42,10 +42,10 @@ func (repo *MockRepository) GetUserFavoriteRecords(ctx context.Context, userID s
 }
 
 type MockUser struct {
-	userId string
+	userID string
 }
 
-func (u *MockUser) UserId() string                       { return u.userId }
+func (u *MockUser) UserId() string                       { return u.userID }
 func (u *MockUser) HashedPassword() string               { return "" }
 func (u *MockUser) VerifyPassword(password string) error { return nil }
 func (u *MockUser) Nickname() string                     { return "" }

@@ -24,7 +24,10 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 			"error_description": err.Error(),
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Debugf("%v", err)
+		}
 		return
 
 	}
@@ -40,7 +43,10 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Debugf("%v", err)
+		}
 		return
 	}
 
@@ -53,7 +59,10 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 
 	b, _ := json.MarshalIndent(m, "", "  ")
 
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Debugf("%v", err)
+	}
 }
 
 func (delivery *Delivery) verifyPassword(userec bbs.UserRecord, password string) error {

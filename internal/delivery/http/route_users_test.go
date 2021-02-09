@@ -107,11 +107,11 @@ func (usecase *MockUsecase) CreateAccessTokenWithUsername(username string) strin
 	return "token"
 }
 
-func (usecase *MockUsecase) GetUserIdFromToken(token string) (string, error) {
+func (usecase *MockUsecase) GetUserIDFromToken(token string) (string, error) {
 	panic("Not implemented")
 }
 
-func (usecase *MockUsecase) CheckPermission(token string, permissionId []usecase.Permission, userInfo map[string]string) error {
+func (usecase *MockUsecase) CheckPermission(token string, permissionID []usecase.Permission, userInfo map[string]string) error {
 	return nil
 }
 

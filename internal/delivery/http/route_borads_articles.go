@@ -34,7 +34,10 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Debugf("%v", err)
+	}
 
 }
 
@@ -68,5 +71,8 @@ func (delivery *Delivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Re
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Debugf("%v", err)
+	}
 }
