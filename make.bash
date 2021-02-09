@@ -46,7 +46,7 @@ function lint() {
     fi
     go vet ./...
     echo "golangci-lint checking..."
-    "$GOBIN"/golangci-lint run --deadline=30m --enable=misspell --enable=gosec --enable=gofmt --enable=goimports --enable=golint ./cmd/... ./...
+    "$GOBIN"/golangci-lint run --deadline=30m --enable=misspell --enable=gosec --enable=gofmt --enable=goimports --enable=golint ./...
 }
 # no arguments
 if [ $# -lt 1 ]; then
@@ -87,7 +87,7 @@ test-unit)
 # test-integration: Run all integration and unit tests
 test-integration)
     echo 'mode: atomic' >coverage.out
-    CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
+    CGO_ENABLED=1 && go test ./...  -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
     ;;
 # clean: Remove object files, ./bin, .out files
 clean)
