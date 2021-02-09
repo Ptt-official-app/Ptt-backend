@@ -65,8 +65,8 @@ set LDFLAGS="-X main/version.version=%VERSION% -X main/version.commit=%GITSHA% -
 mkdir bin 2>nul
 echo VERSION: %VERSION%
 echo GITSHA: %GITSHA%
-echo binary file output into .\bin
-go build %GOFLAGS% -ldflags %LDFLAGS% -o .\bin .\...
+go build %GOFLAGS% -ldflags %LDFLAGS%
+echo executable file .\Ptt-backend.exe
 goto end
 
 REM deps: Ensures fresh go.mod and go.sum for dependencies

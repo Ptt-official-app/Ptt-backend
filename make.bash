@@ -29,8 +29,8 @@ function build() {
     mkdir -p "bin"
     echo "VERSION: $VERSION"
     echo "GITSHA: $GITSHA"
-    echo "binary file output into ./bin"
-    go build "$GOFLAGS" -ldflags "$LDFLAGS" -o ./bin ./...
+    go build "$GOFLAGS" -ldflags "$LDFLAGS"
+    echo "binary file ./Ptt-backend"
 }
 
 function format() {
