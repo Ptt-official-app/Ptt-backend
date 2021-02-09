@@ -89,11 +89,10 @@ test-integration)
     echo 'mode: atomic' >coverage.out
     CGO_ENABLED=1 && go test ./...  -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
     ;;
-# clean: Remove object files, ./bin, .out files
+# clean: Remove object files, ./bin, .out .exe files
 clean)
     go clean -i -x
-    echo "rm -rf ./bin *.out"
-    rm -rf ./bin *.out
+    rm -f *.out
     ;;
 *)
     echo "invalid args, please check command"

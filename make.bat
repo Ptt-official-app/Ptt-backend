@@ -109,11 +109,10 @@ setlocal
 endlocal
 goto end
 
-REM clean: Remove object files, ./bin, .out files
+REM clean: Remove object files, ./bin, .out .exe files
 :clean
 go clean -i -x
-echo delete bin, clean out files
-rmdir /S /Q "bin" 2>nul
+echo delete Ptt-backend.exe, clean out files
 DEL /Q /F /S "*.out" 2>nul
 goto end
 
