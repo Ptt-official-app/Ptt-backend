@@ -16,7 +16,7 @@ function help() {
     echo
 }
 
-function build() {    
+function build() {
     VERSION=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
     BUILDTIME=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
     GITSHA=$(git rev-parse --short HEAD 2>/dev/null)
@@ -39,7 +39,7 @@ function format() {
 }
 
 function lint() {
-    GOBIN=$(go env GOBIN)
+    GOBIN=$(go env GOPATH)/bin
     if [ ! -f "$GOBIN/golangci-lint" ]; then
         curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b "$GOBIN" "$GOLANGCI_LINT_VERSION"
         echo "download golangci-lint into $GOBIN"
@@ -87,8 +87,7 @@ test-unit)
 # test-integration: Run all integration and unit tests
 test-integration)
     echo 'mode: atomic' >coverage.out
-    go list ./... | xargs -n1 -I{} sh -c 'CGO_ENABLED=1 && go test -v -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp -coverpkg $(go list ./... | tr "\n" ",") {} && tail -n +2 coverage.tmp >> coverage.out || exit 255'
-    rm coverage.tmp
+    CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
     ;;
 # clean: Remove object files, ./bin, .out files
 clean)
