@@ -28,35 +28,35 @@ func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	var recommendCountGe, recommendCountLe int
-	var recommendCountGeIsSet, recommendCountLeIsSet bool
+	var recommendCountGreaterEqual, recommendCountLessEqual int
+	var recommendCountGreaterEqualIsSet, recommendCountLessEqualIsSet bool
 	queryParam := r.URL.Query()
-	recommendCountGeParam := queryParam.Get("recommend_count_ge")
-	recommendCountGeIsSet = recommendCountGeParam != ""
-	recommendCountGe, err = strconv.Atoi(recommendCountGeParam)
+	recommendCountGreaterEqualParam := queryParam.Get("recommend_count_ge")
+	recommendCountGreaterEqualIsSet = recommendCountGreaterEqualParam != ""
+	recommendCountGreaterEqual, err = strconv.Atoi(recommendCountGreaterEqualParam)
 
-	if err != nil && recommendCountGeIsSet {
+	if err != nil && recommendCountGreaterEqualIsSet {
 		delivery.logger.Errorf("recommend_count_ge should be integer")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	recommendCountLeParam := queryParam.Get("recommend_count_le")
-	recommendCountLeIsSet = recommendCountLeParam != ""
-	recommendCountLe, err = strconv.Atoi(recommendCountLeParam)
-	if err != nil && recommendCountLeIsSet {
+	recommendCountLessEqualParam := queryParam.Get("recommend_count_le")
+	recommendCountLessEqualIsSet = recommendCountLessEqualParam != ""
+	recommendCountLessEqual, err = strconv.Atoi(recommendCountLessEqualParam)
+	if err != nil && recommendCountLessEqualIsSet {
 		delivery.logger.Errorf("recommend_count_le should be integer")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	searchCond := &usecase.ArticleSearchCond{
-		Title:                 queryParam.Get("title_contain"),
-		Author:                queryParam.Get("author"),
-		RecommendCountGe:      recommendCountGe,
-		RecommendCountLe:      recommendCountLe,
-		RecommendCountGeIsSet: recommendCountGeIsSet,
-		RecommendCountLeIsSet: recommendCountLeIsSet,
+		Title:                           queryParam.Get("title_contain"),
+		Author:                          queryParam.Get("author"),
+		RecommendCountGreaterEqual:      recommendCountGreaterEqual,
+		RecommendCountLessEqual:         recommendCountLessEqual,
+		RecommendCountGreaterEqualIsSet: recommendCountGreaterEqualIsSet,
+		RecommendCountLessEqualIsSet:    recommendCountLessEqualIsSet,
 	}
 
 	responseMap := map[string]interface{}{

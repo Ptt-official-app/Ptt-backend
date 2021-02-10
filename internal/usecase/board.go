@@ -9,17 +9,17 @@ import (
 )
 
 type ArticleSearchCond struct {
-	Title                 string
-	Author                string
-	RecommendCountValue   int
-	RecommendCountLt      int
-	RecommendCountLe      int
-	RecommendCountEq      int
-	RecommendCountNe      int
-	RecommendCountGt      int
-	RecommendCountGe      int
-	RecommendCountGeIsSet bool
-	RecommendCountLeIsSet bool
+	Title                           string
+	Author                          string
+	RecommendCountValue             int
+	RecommendCountLessThan          int
+	RecommendCountLessEqual         int
+	RecommendCountEqual             int
+	RecommendCountNotEqual          int
+	RecommendCountGreaterThan       int
+	RecommendCountGreaterEqual      int
+	RecommendCountGreaterEqualIsSet bool
+	RecommendCountLessEqualIsSet    bool
 }
 
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
@@ -75,8 +75,8 @@ func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, co
 
 	if len(strings.TrimSpace(cond.Title)) > 0 ||
 		len(strings.TrimSpace(cond.Author)) > 0 ||
-		cond.RecommendCountGeIsSet ||
-		cond.RecommendCountLeIsSet {
+		cond.RecommendCountGreaterEqualIsSet ||
+		cond.RecommendCountLessEqualIsSet {
 		articles = searchArticles(articleRecords, cond)
 	} else {
 		articles = articleRecords
@@ -148,12 +148,23 @@ func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []
 	var targetArticles []bbs.ArticleRecord
 
 	for _, f := range fileHeaders {
-		if strings.Contains(strings.ToLower(f.Title()), strings.ToLower(cond.Title)) &&
-			strings.Contains(strings.ToLower(f.Owner()), strings.ToLower(cond.Author)) &&
-			((cond.RecommendCountGeIsSet && f.Recommend() >= cond.RecommendCountGe) ||
-				(cond.RecommendCountLeIsSet && f.Recommend() <= cond.RecommendCountLe)) {
-			targetArticles = append(targetArticles, f)
+		if !strings.Contains(strings.ToLower(f.Title()), strings.ToLower(cond.Title)) {
+			continue
 		}
+
+		if !strings.Contains(strings.ToLower(f.Owner()), strings.ToLower(cond.Author)) {
+			continue
+		}
+
+		if cond.RecommendCountGreaterEqualIsSet && !(f.Recommend() >= cond.RecommendCountGreaterEqual) {
+			continue
+		}
+
+		if cond.RecommendCountLessEqualIsSet && !(f.Recommend() <= cond.RecommendCountLessEqual) {
+			continue
+		}
+
+		targetArticles = append(targetArticles, f)
 	}
 	return targetArticles
 }
