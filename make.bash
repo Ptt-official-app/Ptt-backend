@@ -29,8 +29,8 @@ function build() {
     mkdir -p "bin"
     echo "VERSION: $VERSION"
     echo "GITSHA: $GITSHA"
-    echo "binary file output into ./bin"
-    go build "$GOFLAGS" -ldflags "$LDFLAGS" -o ./bin ./...
+    go build "$GOFLAGS" -ldflags "$LDFLAGS"
+    echo "binary file ./Ptt-backend"
 }
 
 function format() {
@@ -46,7 +46,7 @@ function lint() {
     fi
     go vet ./...
     echo "golangci-lint checking..."
-    "$GOBIN"/golangci-lint run --deadline=30m --enable=misspell --enable=gosec --enable=gofmt --enable=goimports --enable=golint ./cmd/... ./...
+    "$GOBIN"/golangci-lint run --deadline=30m --enable=misspell --enable=gosec --enable=gofmt --enable=goimports --enable=golint ./...
 }
 # no arguments
 if [ $# -lt 1 ]; then
@@ -82,18 +82,17 @@ lint)
     ;;
 # test-unit: Run all unit tests
 test-unit)
-    CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race
+    CGO_ENABLED=1 && go test ./... -coverprofile=coverage.out -cover -race
     ;;
 # test-integration: Run all integration and unit tests
 test-integration)
     echo 'mode: atomic' >coverage.out
-    CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
+    CGO_ENABLED=1 && go test ./...  -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
     ;;
-# clean: Remove object files, ./bin, .out files
+# clean: Remove object files, ./bin, .out .exe files
 clean)
     go clean -i -x
-    echo "rm -rf ./bin *.out"
-    rm -rf ./bin *.out
+    rm -f *.out
     ;;
 *)
     echo "invalid args, please check command"
