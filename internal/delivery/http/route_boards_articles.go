@@ -28,20 +28,35 @@ func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	var recommendCountGe int
+	var recommendCountGe, recommendCountLe int
+	var recommendCountGeIsSet, recommendCountLeIsSet bool
 	queryParam := r.URL.Query()
-	recommendCountParam := queryParam.Get("recommend_count_ge")
-	recommendCountGe, err = strconv.Atoi(recommendCountParam)
-	if err != nil && recommendCountParam != "" {
-		delivery.logger.Errorf("recommend count should be integer")
+	recommendCountGeParam := queryParam.Get("recommend_count_ge")
+	recommendCountGeIsSet = recommendCountGeParam != ""
+	recommendCountGe, err = strconv.Atoi(recommendCountGeParam)
+
+	if err != nil && recommendCountGeIsSet {
+		delivery.logger.Errorf("recommend_count_ge should be integer")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	recommendCountLeParam := queryParam.Get("recommend_count_le")
+	recommendCountLeIsSet = recommendCountLeParam != ""
+	recommendCountLe, err = strconv.Atoi(recommendCountLeParam)
+	if err != nil && recommendCountLeIsSet {
+		delivery.logger.Errorf("recommend_count_le should be integer")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	searchCond := &usecase.ArticleSearchCond{
-		Title:            queryParam.Get("title_contain"),
-		Author:           queryParam.Get("author"),
-		RecommendCountGe: recommendCountGe,
+		Title:                 queryParam.Get("title_contain"),
+		Author:                queryParam.Get("author"),
+		RecommendCountGe:      recommendCountGe,
+		RecommendCountLe:      recommendCountLe,
+		RecommendCountGeIsSet: recommendCountGeIsSet,
+		RecommendCountLeIsSet: recommendCountLeIsSet,
 	}
 
 	responseMap := map[string]interface{}{

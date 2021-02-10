@@ -9,9 +9,17 @@ import (
 )
 
 type ArticleSearchCond struct {
-	Title            string
-	Author           string
-	RecommendCountGe int
+	Title                 string
+	Author                string
+	RecommendCountValue   int
+	RecommendCountLt      int
+	RecommendCountLe      int
+	RecommendCountEq      int
+	RecommendCountNe      int
+	RecommendCountGt      int
+	RecommendCountGe      int
+	RecommendCountGeIsSet bool
+	RecommendCountLeIsSet bool
 }
 
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
@@ -67,13 +75,14 @@ func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, co
 
 	if len(strings.TrimSpace(cond.Title)) > 0 ||
 		len(strings.TrimSpace(cond.Author)) > 0 ||
-		cond.RecommendCountGe != 0 {
+		cond.RecommendCountGeIsSet ||
+		cond.RecommendCountLeIsSet {
 		articles = searchArticles(articleRecords, cond)
 	} else {
 		articles = articleRecords
 	}
 
-	items := []interface{}{}
+	var items []interface{}
 	for _, f := range articles {
 		m := map[string]interface{}{
 			"filename": f.Filename(),
@@ -141,9 +150,8 @@ func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []
 	for _, f := range fileHeaders {
 		if strings.Contains(strings.ToLower(f.Title()), strings.ToLower(cond.Title)) &&
 			strings.Contains(strings.ToLower(f.Owner()), strings.ToLower(cond.Author)) &&
-			((cond.RecommendCountGe == 0) ||
-				(cond.RecommendCountGe > 0 && f.Recommend() >= cond.RecommendCountGe) ||
-				(cond.RecommendCountGe < 0 && f.Recommend() <= cond.RecommendCountGe)) {
+			((cond.RecommendCountGeIsSet && f.Recommend() >= cond.RecommendCountGe) ||
+				(cond.RecommendCountLeIsSet && f.Recommend() <= cond.RecommendCountLe)) {
 			targetArticles = append(targetArticles, f)
 		}
 	}
