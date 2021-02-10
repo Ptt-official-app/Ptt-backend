@@ -65,8 +65,8 @@ set LDFLAGS="-X main/version.version=%VERSION% -X main/version.commit=%GITSHA% -
 mkdir bin 2>nul
 echo VERSION: %VERSION%
 echo GITSHA: %GITSHA%
-echo binary file output into .\bin
-go build %GOFLAGS% -ldflags %LDFLAGS% -o .\bin .\...
+go build %GOFLAGS% -ldflags %LDFLAGS%
+echo executable file .\Ptt-backend.exe
 goto end
 
 REM deps: Ensures fresh go.mod and go.sum for dependencies
@@ -97,23 +97,22 @@ goto end
 REM test-unit: Run all unit tests
 :test-unit
 setlocal
-    set CGO_ENABLED=1 && go test ./... -v -coverprofile=coverage.out -cover -race
+    set CGO_ENABLED=1 && go test ./... -coverprofile=coverage.out -cover -race
 endlocal
 goto end
 
 REM test-integration: Run all integration and unit tests
 :test-integration
 setlocal
-    set CGO_ENABLED=1 && go test ./...  -v -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp
+    set CGO_ENABLED=1 && go test ./... -race -tags=integration -covermode=atomic -coverprofile=coverage.tmp
     DEL "*.tmp"
 endlocal
 goto end
 
-REM clean: Remove object files, ./bin, .out files
+REM clean: Remove object files, ./bin, .out .exe files
 :clean
 go clean -i -x
-echo delete bin, clean out files
-rmdir /S /Q "bin" 2>nul
+echo delete Ptt-backend.exe, clean out files
 DEL /Q /F /S "*.out" 2>nul
 goto end
 
