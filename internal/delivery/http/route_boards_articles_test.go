@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"testing"
 )
 
@@ -15,8 +16,12 @@ func TestGetBoardArticlesBadRequest(t *testing.T) {
 	title := ""
 	author := ""
 	recommendCountGe := "qwerty"
-	url := fmt.Sprintf("/v1/boards/test/articles?title=%s&author=%s&recommend_count_ge=%s", title, author, recommendCountGe)
-	req, err := http.NewRequest("GET", url, nil)
+	v := url.Values{}
+	v.Set("title", title)
+	v.Set("author", author)
+	v.Set("recommend_count_ge", recommendCountGe)
+	uri := fmt.Sprintf("/v1/boards/test/articles?%s", v.Encode())
+	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {
 		t.Fatal(err)
 	}
