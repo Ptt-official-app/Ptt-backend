@@ -31,23 +31,35 @@ func TestSearchArticles(t *testing.T) {
 	cases := []TestCase{
 		{
 			input: &ArticleSearchCond{
-				Title:                 "廢文",
-				Author:                "s",
-				RecommendCountGe:      0,
-				RecommendCountLe:      50,
-				RecommendCountGeIsSet: true,
-				RecommendCountLeIsSet: true,
+				Title:                           "廢文",
+				Author:                          "s",
+				RecommendCountGreaterEqual:      0,
+				RecommendCountLessEqual:         50,
+				RecommendCountGreaterEqualIsSet: true,
+				RecommendCountLessEqualIsSet:    true,
 			},
 			expectedItems: []bbs.ArticleRecord{&mockArticle1},
 		},
 		{
 			input: &ArticleSearchCond{
-				Title:                 "",
-				Author:                "X",
-				RecommendCountLe:      10,
-				RecommendCountLeIsSet: true,
+				Title:                        "",
+				Author:                       "X",
+				RecommendCountLessEqual:      10,
+				RecommendCountLessEqualIsSet: true,
 			},
 			expectedItems: []bbs.ArticleRecord{&mockArticle2},
+		},
+		{
+			input: &ArticleSearchCond{
+				Title: "Unicode",
+			},
+			expectedItems: []bbs.ArticleRecord{&mockArticle2},
+		},
+		{
+			input: &ArticleSearchCond{
+				Author: "sysop",
+			},
+			expectedItems: []bbs.ArticleRecord{&mockArticle1},
 		},
 	}
 
