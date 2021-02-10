@@ -51,9 +51,7 @@ $ tar -jxvf dump.shm.lastest.tar.bz2
 
 ### 狀況 1: 直接使用 `go build`
 ```bash
-$ cd cmd
 $ go build
-$ cd ..
 $ ./Ptt-backend
 ```
 
