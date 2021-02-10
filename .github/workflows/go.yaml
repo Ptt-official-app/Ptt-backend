@@ -55,8 +55,8 @@ jobs:
 
       - name: Run tests
         run: ./make.bash test-integration
-      - name: test
-        run: go test -v ./...
+      # - name: test
+      #   run: go test -v ./...
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v1
