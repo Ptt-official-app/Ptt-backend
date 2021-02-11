@@ -86,6 +86,10 @@ func (usecase *MockUsecase) GetBoards(ctx context.Context, userID string) []bbs.
 	panic("Not implemented")
 }
 
+func (usecase *MockUsecase) GetPopularBoards(ctx context.Context) []bbs.BoardRecord {
+	panic("Not implemented")
+}
+
 func (usecase *MockUsecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
 	panic("Not implemented")
 }
