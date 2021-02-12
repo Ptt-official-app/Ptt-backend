@@ -52,7 +52,9 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	}
 
 	responseMap := map[string]interface{}{
-		"data": dataList,
+		"data": struct {
+			Items []interface{} `json:"items"`
+		}{ dataList },
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
