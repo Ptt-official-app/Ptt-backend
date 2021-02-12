@@ -156,11 +156,11 @@ func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []
 			continue
 		}
 
-		if cond.RecommendCountGreaterEqualIsSet && !(f.Recommend() >= cond.RecommendCountGreaterEqual) {
+		if cond.RecommendCountGreaterEqualIsSet && f.Recommend() < cond.RecommendCountGreaterEqual {
 			continue
 		}
 
-		if cond.RecommendCountLessEqualIsSet && !(f.Recommend() <= cond.RecommendCountLessEqual) {
+		if cond.RecommendCountLessEqualIsSet && f.Recommend() > cond.RecommendCountLessEqual {
 			continue
 		}
 
