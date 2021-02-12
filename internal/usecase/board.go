@@ -82,7 +82,7 @@ func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, co
 		articles = articleRecords
 	}
 
-	var items []interface{}
+	items := []interface{}{}
 	for _, f := range articles {
 		m := map[string]interface{}{
 			"filename": f.Filename(),
