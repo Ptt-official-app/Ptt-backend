@@ -21,18 +21,27 @@ var (
 )
 
 func NewDefaultConfig() (*Config, error) {
+	return NewConfig("./conf/config_default.toml", "config.toml")
+}
+
+// NewConfig load and return global config from config files, it will load
+// defaultPath first, then userPath. if defaultPath can not be read, it will
+// return error. it userPath can not be read, it will ignore userPath.
+// user configration will override default configuration.
+func NewConfig(defaultPath, userPath string) (*Config, error) {
+
 	var config *Config
 	config = &Config{}
 	logger.Debugf("load default config")
 
-	defaultConfig, err := toml.LoadFile("./conf/config_default.toml")
+	defaultConfig, err := toml.LoadFile(defaultPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load default config: %w", err)
 	}
 	applyConfig(config, defaultConfig)
 
 	logger.Debugf("load user config")
-	userConfig, err := toml.LoadFile("config.toml")
+	userConfig, err := toml.LoadFile(userPath)
 	if err != nil {
 		return config, nil
 	}
