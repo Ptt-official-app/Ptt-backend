@@ -44,7 +44,19 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getPopularBoardList: %v", r)
 
-	boards := delivery.usecase.GetPopularBoards(context.Background())
+	boards, err := delivery.usecase.GetPopularBoards(context.Background())
+	if err != nil {
+		// TODO: record error
+		delivery.logger.Warningf("find popular board failed: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		m := map[string]string{
+			"error":             "find_popular_board_error",
+			"error_description": "get popular board failed",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		w.Write(b)
+		return
+	}
 
 	dataList := make([]interface{}, 0, len(boards))
 	for _, board := range boards {

@@ -6,6 +6,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 
 	"context"
+	"errors"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -86,8 +87,8 @@ func (usecase *MockUsecase) GetBoards(ctx context.Context, userID string) []bbs.
 	panic("Not implemented")
 }
 
-func (usecase *MockUsecase) GetPopularBoards(ctx context.Context) []bbs.BoardRecord {
-	panic("Not implemented")
+func (usecase *MockUsecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error) {
+	return []bbs.BoardRecord{}, errors.New("Not implemented")
 }
 
 func (usecase *MockUsecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
