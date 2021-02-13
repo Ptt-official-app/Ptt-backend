@@ -2,8 +2,9 @@ package usecase
 
 import (
 	"context"
-	"github.com/PichuChen/go-bbs"
 	"time"
+
+	"github.com/PichuChen/go-bbs"
 )
 
 func (repo *MockRepository) GetUsers(ctx context.Context) []bbs.UserRecord {
@@ -31,3 +32,8 @@ func (u *MockUser) NumPosts() int                        { return 0 }
 func (u *MockUser) Money() int                           { return 0 }
 func (u *MockUser) LastLogin() time.Time                 { return time.Unix(0, 0) }
 func (u *MockUser) LastHost() string                     { return "" }
+func (u *MockUser) NumBadPosts() int                     { return 0 }
+func (u *MockUser) LastCountry() string                  { return "" }
+func (u *MockUser) MailboxDescription() string           { return "" }
+func (u *MockUser) ChessStatus() map[string]interface{}  { return map[string]interface{}{} }
+func (u *MockUser) Plan() map[string]interface{}         { return map[string]interface{}{} }
