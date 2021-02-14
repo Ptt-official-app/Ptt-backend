@@ -1,6 +1,8 @@
 package http
 
 import (
+	"github.com/PichuChen/go-bbs"
+
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 
 	"context"
@@ -85,7 +87,7 @@ func TestGetBoardList (t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r := http.NewServeMux()
-	r.HandleFunc("v1/boards", delivery.routeBoards)
+	r.HandleFunc("/v1/boards", delivery.routeBoards)
 	r.ServeHTTP(w, req)
 
 	if status := w.Code; status != http.StatusOK {
