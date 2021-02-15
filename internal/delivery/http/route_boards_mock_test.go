@@ -8,7 +8,8 @@ import (
 )
 
 func (usecase *MockUsecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
-	panic("Not implemented")
+	BoardRecord := NewMockBoardRecord(boardID)
+	return BoardRecord, nil
 }
 
 func (usecase *MockUsecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecord {
@@ -30,3 +31,24 @@ func (usecase *MockUsecase) GetBoardArticle(ctx context.Context, boardID, filena
 func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} {
 	panic("Not implemented")
 }
+
+type MockBoardRecord struct{
+	boardID string
+}
+
+func NewMockBoardRecord(boardID string) *MockBoardRecord {
+	return &MockBoardRecord{
+		boardID: boardID,
+	}
+}
+
+func (b *MockBoardRecord) BoardId() string { return b.boardID }
+
+func (b *MockBoardRecord) Title() string { return "" }
+
+func (b *MockBoardRecord) IsClass() bool { return true }
+
+// ClassId should return the class id to which this board/class belongs.
+func (b *MockBoardRecord) ClassId() string { return "" }
+
+func (b *MockBoardRecord) BM() []string { return []string{} }

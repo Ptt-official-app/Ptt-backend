@@ -9,7 +9,7 @@ func (usecase *MockUsecase) CreateAccessTokenWithUsername(username string) strin
 }
 
 func (usecase *MockUsecase) GetUserIdFromToken(token string) (string, error) {
-	return "SYSOP", nil
+	return "userID", nil
 }
 
 func (usecase *MockUsecase) CheckPermission(token string, permissionId []usecase.Permission, userInfo map[string]string) error {
