@@ -47,8 +47,8 @@ func (record *bbsUserRecord) Plan() map[string]interface{} {
 	return map[string]interface{}{}
 }
 
-func (repo *repository) GetUsers(_ context.Context) []bbs.UserRecord {
-	return repo.userRecords
+func (repo *repository) GetUsers(_ context.Context) ([]bbs.UserRecord, error) {
+	return repo.userRecords, nil
 }
 
 func (repo *repository) GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error) {

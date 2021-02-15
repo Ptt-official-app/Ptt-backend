@@ -7,12 +7,12 @@ import (
 	"github.com/PichuChen/go-bbs"
 )
 
-func (repo *MockRepository) GetUsers(ctx context.Context) []bbs.UserRecord {
+func (repo *MockRepository) GetUsers(ctx context.Context) ([]bbs.UserRecord, error) {
 	ret := []bbs.UserRecord{}
 	ret = append(ret, &MockUser{
 		userId: "pichu",
 	})
-	return ret
+	return ret, nil
 }
 func (repo *MockRepository) GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error) {
 	return []bbs.FavoriteRecord{}, nil

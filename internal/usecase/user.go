@@ -10,7 +10,11 @@ import (
 )
 
 func (usecase *usecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
-	for _, it := range usecase.repo.GetUsers(ctx) {
+	users, err := usecase.repo.GetUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, it := range users {
 		if userID == it.UserId() {
 			return it, nil
 		}
