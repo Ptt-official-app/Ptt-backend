@@ -9,7 +9,6 @@ import (
 )
 
 func TestGetClassesList(t *testing.T) {
-
 	userID := "id"
 	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
@@ -32,16 +31,16 @@ func TestGetClassesList(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	responsedMap := map[string][]interface{}{}
-	json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	responseMap := map[string][]interface{}{}
+	json.Unmarshal(rr.Body.Bytes(), &responseMap)
 	t.Logf("got response %v", rr.Body.String())
-	responsedSlice := responsedMap["data"]
-	for i, d := range responsedSlice {
-		responsedData := d.(map[string]interface{})
-		expectedId := fmt.Sprintf("%v", i+1)
-		if responsedData["type"] == "class" && responsedData["id"] != expectedId {
+	responseData := responseMap["data"]
+	for i, d := range responseData {
+		board := d.(map[string]interface{})
+		expectedID := fmt.Sprintf("%v", i+1)
+		if board["type"] == "class" && board["id"] != expectedID {
 			t.Errorf("handler returned unexpected body, id not match: got %v want %v",
-				responsedData, expectedId)
+				board, expectedID)
 		}
 	}
 }

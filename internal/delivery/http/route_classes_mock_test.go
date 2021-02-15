@@ -6,23 +6,23 @@ import (
 )
 
 type MockClassBoardRecord struct {
-	boardId string
+	boardID string
 	isClass bool
-	classId string
+	classID string
 }
 
-func NewMockClassBoardRecord(classID, boardId string, isClass bool) *MockClassBoardRecord {
-	return &MockClassBoardRecord{boardId: boardId, isClass: isClass, classId: classID}
+func NewMockClassBoardRecord(classID, boardID string, isClass bool) *MockClassBoardRecord {
+	return &MockClassBoardRecord{boardID: boardID, isClass: isClass, classID: classID}
 }
 
-func (b *MockClassBoardRecord) BoardId() string { return b.boardId }
+func (b *MockClassBoardRecord) BoardId() string { return b.boardID }
 
 func (b *MockClassBoardRecord) Title() string { return "" }
 
 func (b *MockClassBoardRecord) IsClass() bool { return b.isClass }
 
 // ClassId should return the class id to which this board/class belongs.
-func (b *MockClassBoardRecord) ClassId() string { return b.classId }
+func (b *MockClassBoardRecord) ClassId() string { return b.classID }
 
 func (b *MockClassBoardRecord) BM() []string { return make([]string, 0) }
 
