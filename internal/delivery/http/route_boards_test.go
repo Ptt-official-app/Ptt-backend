@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -69,12 +70,36 @@ func TestGetBoardList(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r := http.NewServeMux()
-	r.HandleFunc("/v1/boards", delivery.routeBoards)
+	r.HandleFunc("/v1/boards/", delivery.routeBoards)
 	r.ServeHTTP(w, req)
 
 	if status := w.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
+	}
+
+	actualResponseMap := map[string]interface{}{}
+	json.Unmarshal(w.Body.Bytes(), &actualResponseMap)
+	t.Logf("got response %v", w.Body.String())
+	actualResponseDataList := actualResponseMap["data"].([]interface{})
+	var actualResponseData map[string]interface{}
+	actualResponseData = actualResponseDataList[0].(map[string]interface{})
+
+	if !strings.EqualFold(actualResponseData["title"].(string), "發電 ◎雜七雜八的垃圾") {
+		t.Errorf("Title got %s, but excepted %s",
+			actualResponseData["title"], "發電 ◎雜七雜八的垃圾")
+	}
+	if actualResponseData["number_of_user"] != "0" {
+		t.Errorf("Number of users got %s, but excepted %s",
+			actualResponseData["number_of_user"], "0")
+	}
+	if len(actualResponseData["moderators"].([]interface{})) != 0 {
+		t.Errorf("Number of users got %s, but excepted %d",
+			actualResponseData["moderators"], 0)
+	}
+	if !strings.EqualFold(actualResponseData["type"].(string), "board") {
+		t.Errorf("Type got %s, but excepted %s",
+			actualResponseData["type"], "board")
 	}
 }
 
@@ -83,7 +108,7 @@ func TestGetBoardInformation(t *testing.T) {
 	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
 
-	req, err := http.NewRequest("GET", "/v1/boards/class/information", nil)
+	req, err := http.NewRequest("GET", "/v1/boards/SYSOP/information", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,11 +119,33 @@ func TestGetBoardInformation(t *testing.T) {
 
 	w := httptest.NewRecorder()
 	r := http.NewServeMux()
-	r.HandleFunc("/v1/boards/class/information", delivery.routeBoards)
+	r.HandleFunc("/v1/boards/SYSOP/information", delivery.routeBoards)
 	r.ServeHTTP(w, req)
 
 	if status := w.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
+	}
+
+	actualResponseMap := map[string]interface{}{}
+	json.Unmarshal(w.Body.Bytes(), &actualResponseMap)
+	t.Logf("got response %v", w.Body.String())
+	actualResponseData := actualResponseMap["data"].(map[string]interface{})
+
+	if !strings.EqualFold(actualResponseData["title"].(string), "嘰哩 ◎站長好!") {
+		t.Errorf("Title got %s, but excepted %s",
+			actualResponseData["title"], "嘰哩 ◎站長好!")
+	}
+	if actualResponseData["number_of_user"] != "0" {
+		t.Errorf("Number of users got %s, but excepted %s",
+			actualResponseData["number_of_user"], "0")
+	}
+	if len(actualResponseData["moderators"].([]interface{})) != 0 {
+		t.Errorf("Number of users got %s, but excepted %d",
+			actualResponseData["moderators"], 0)
+	}
+	if !strings.EqualFold(actualResponseData["type"].(string), "board") {
+		t.Errorf("Type got %s, but excepted %s",
+			actualResponseData["type"], "board")
 	}
 }

@@ -8,13 +8,12 @@ import (
 )
 
 func (usecase *MockUsecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
-	BoardRecord := NewMockBoardRecord("SYSOP", boardID, "嘰哩 ◎站長好!", true)
+	BoardRecord := NewMockBoardRecord("SYSOP", boardID, "嘰哩 ◎站長好!", false)
 	return BoardRecord, nil
 }
 
 func (usecase *MockUsecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecord {
 	result := make([]bbs.BoardRecord, 0)
-	result = append(result, NewMockBoardRecord("SYSOP", "", "嘰哩 ◎站長好!", true))
 	result = append(result, NewMockBoardRecord("junk", "TEST", "發電 ◎雜七雜八的垃圾", false))
 	return result
 }
