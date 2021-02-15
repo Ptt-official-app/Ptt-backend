@@ -7,8 +7,8 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-func (usecase *MockUsecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
-	BoardRecord := NewMockBoardRecord(boardID)
+func (usecase *MockUsecase) GetBoardByID(ctx context.Context, BoardID string) (bbs.BoardRecord, error) {
+	BoardRecord := NewMockBoardRecord(BoardID, "")
 	return BoardRecord, nil
 }
 
@@ -33,22 +33,25 @@ func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID strin
 }
 
 type MockBoardRecord struct{
-	boardID string
+	BoardID string
+	ClassID string
 }
 
-func NewMockBoardRecord(boardID string) *MockBoardRecord {
+func NewMockBoardRecord(BoardID string, ClassID string) *MockBoardRecord {
 	return &MockBoardRecord{
-		boardID: boardID,
+		BoardID: BoardID,
+		ClassID: ClassID,
 	}
 }
 
-func (b *MockBoardRecord) BoardId() string { return b.boardID }
+// BoardId will be replaced as BoardID in the future.
+func (b *MockBoardRecord) BoardId() string { return b.BoardID }
 
 func (b *MockBoardRecord) Title() string { return "" }
 
 func (b *MockBoardRecord) IsClass() bool { return true }
 
 // ClassId should return the class id to which this board/class belongs.
-func (b *MockBoardRecord) ClassId() string { return "" }
+func (b *MockBoardRecord) ClassId() string { return b.ClassID }
 
 func (b *MockBoardRecord) BM() []string { return []string{} }
