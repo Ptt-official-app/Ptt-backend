@@ -14,7 +14,12 @@ func TestGetUsers(t *testing.T) {
 		boardRecords: []bbs.BoardRecord{},
 	}
 
-	actual := repo.GetUsers(context.TODO())
+	actual, err := repo.GetUsers(context.TODO())
+	if err != nil {
+		t.Errorf("GetUsers excepted err == nil, got %v", err)
+		return
+	}
+
 	if actual == nil {
 		t.Errorf("GetUsers got %v, expected not equal nil", actual)
 	}
