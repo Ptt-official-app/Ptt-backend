@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	var logger = logging.NewLogger()
+	logger := logging.NewLogger()
 
 	logger.Informationalf("server start")
 
