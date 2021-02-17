@@ -51,10 +51,10 @@ func TestGetBoardList (t *testing.T) {
 		boardType: "class",
 	}
 
-	shouldBeEqualTo(actualResponseData, exceptedBoard, t)
+	marshalBoardHeaderShouldBeTheSame(actualResponseData, exceptedBoard, t)
 }
 
-func shouldBeEqualTo(actualResponseData map[string]interface{}, exceptedBoard *exceptedMarshalBoardHeaderOfClassType, t *testing.T) {
+func marshalBoardHeaderShouldBeTheSame(actualResponseData map[string]interface{}, exceptedBoard *exceptedMarshalBoardHeaderOfClassType, t *testing.T) {
 	if actualResponseData["title"] != exceptedBoard.title {
 		t.Errorf("Title got %s, but excepted %s",
 			actualResponseData["title"], "")
@@ -96,4 +96,17 @@ func TestGetBoardInformation(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
 	}
+
+	actualResponseMap := map[string]interface{}{}
+	json.Unmarshal(w.Body.Bytes(), &actualResponseMap)
+	t.Logf("got response %v", w.Body.String())
+	actualResponseData := actualResponseMap["data"].(map[string]interface{})
+
+	excepted := &exceptedMarshalBoardHeaderOfClassType{
+		title: "",
+		numberOfUser: "0",
+		lenOfModerators: 0,
+		boardType: "class",
+	}
+	marshalBoardHeaderShouldBeTheSame(actualResponseData, excepted, t)
 }
