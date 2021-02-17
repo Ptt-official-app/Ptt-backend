@@ -29,7 +29,7 @@ func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID strin
 	panic("Not implemented")
 }
 
-type MockBoardRecord struct{
+type MockBoardRecord struct {
 	boardID string
 	classID string
 	isClass bool

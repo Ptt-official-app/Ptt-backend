@@ -8,13 +8,13 @@ import (
 )
 
 type exceptedMarshalBoardHeaderOfClassType struct {
-	title string
-	numberOfUser string
+	title           string
+	numberOfUser    string
 	lenOfModerators int
-	boardType string
+	boardType       string
 }
 
-func TestGetBoardList (t *testing.T) {
+func TestGetBoardList(t *testing.T) {
 	req, err := http.NewRequest("GET", "/v1/boards/", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -45,10 +45,10 @@ func TestGetBoardList (t *testing.T) {
 	actualResponseData := actualResponseDataList[0].(map[string]interface{})
 
 	exceptedBoard := &exceptedMarshalBoardHeaderOfClassType{
-		title: "",
-		numberOfUser: "0",
+		title:           "",
+		numberOfUser:    "0",
 		lenOfModerators: 0,
-		boardType: "class",
+		boardType:       "class",
 	}
 
 	marshalBoardHeaderShouldBeTheSame(actualResponseData, exceptedBoard, t)
@@ -103,10 +103,10 @@ func TestGetBoardInformation(t *testing.T) {
 	actualResponseData := actualResponseMap["data"].(map[string]interface{})
 
 	excepted := &exceptedMarshalBoardHeaderOfClassType{
-		title: "",
-		numberOfUser: "0",
+		title:           "",
+		numberOfUser:    "0",
 		lenOfModerators: 0,
-		boardType: "class",
+		boardType:       "class",
 	}
 	marshalBoardHeaderShouldBeTheSame(actualResponseData, excepted, t)
 }
