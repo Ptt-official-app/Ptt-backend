@@ -6,10 +6,15 @@ import (
 	"time"
 
 	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 )
 
 func (usecase *usecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
-	for _, it := range usecase.repo.GetUsers(ctx) {
+	users, err := usecase.repo.GetUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, it := range users {
 		if userID == it.UserId() {
 			return it, nil
 		}
@@ -28,10 +33,11 @@ func (usecase *usecase) GetUserFavorites(ctx context.Context, userID string) ([]
 }
 
 func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
-	user, err := usecase.GetUserByID(ctx, userID)
+	userrec, err := usecase.GetUserByID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get userrec for %s failed", userID)
 	}
+	user := userrec.(repository.BBSUserRecord)
 
 	// TODO: Check Etag or Not-Modified for cache
 
@@ -41,14 +47,16 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 		"realname":             user.RealName(),
 		"number_of_login_days": fmt.Sprintf("%d", user.NumLoginDays()),
 		"number_of_posts":      fmt.Sprintf("%d", user.NumPosts()),
-		// "number_of_badposts":   fmt.Sprintf("%d", user.NumLoginDays),
+		"number_of_badposts":   fmt.Sprintf("%d", user.NumBadPosts()),
 		"money":           fmt.Sprintf("%d", user.Money()),
+		"money_description": getMoneyDiscription(user.Money()),
 		"last_login_time": user.LastLogin().Format(time.RFC3339),
 		"last_login_ipv4": user.LastHost(),
 		"last_login_ip":   user.LastHost(),
-		// "last_login_country": fmt.Sprintf("%d", user.NumLoginDays),
-		"chess_status": map[string]interface{}{},
-		"plan":         map[string]interface{}{},
+		"last_login_country": user.LastCountry(),
+		"mailbox_description": user.MailboxDescription(),
+		"chess_status": user.ChessStatus(),
+		"plan":         user.Plan(),
 	}
 	return result, nil
 }
@@ -81,4 +89,31 @@ func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []int
 		}
 	}
 	return dataItems
+}
+
+func getMoneyDiscription(money int) string {
+	var result string
+	switch {
+	case money <= 9:
+		result = "債台高築"
+	case money <= 109:
+		result = "赤貧"
+	case money <= 1099:
+		result = "清寒"
+	case money <= 10999:
+		result = "普通"
+	case money <= 109999:
+		result = "小康"
+	case money <= 1099999:
+		result = "小富"
+	case money <= 10999999:
+		result = "中富"
+	case money <= 109999999:
+		result = "大富翁"
+	case money <= 1099999999:
+		result = "富可敵國"
+	default:
+		result = "比爾蓋天"
+	}
+	return result
 }
