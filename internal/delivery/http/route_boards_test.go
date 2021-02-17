@@ -7,6 +7,12 @@ import (
 	"testing"
 )
 
+type exceptedMarshalBoardHeaderOfClassType struct {
+	title string
+	numberOfUser string
+	lenOfModerators int
+	boardType string
+}
 
 func TestGetBoardList (t *testing.T) {
 	req, err := http.NewRequest("GET", "/v1/boards/", nil)
@@ -38,22 +44,30 @@ func TestGetBoardList (t *testing.T) {
 	actualResponseDataList := actualResponseMap["data"].([]interface{})
 	actualResponseData := actualResponseDataList[0].(map[string]interface{})
 
-	if actualResponseData["title"] != "" {
+	exceptedBoard := &exceptedMarshalBoardHeaderOfClassType{
+		title: "",
+		numberOfUser: "0",
+		lenOfModerators: 0,
+		boardType: "class",
+	}
+
+	shouldBeEqualTo(actualResponseData, exceptedBoard, t)
+}
+
+func shouldBeEqualTo(actualResponseData map[string]interface{}, exceptedBoard *exceptedMarshalBoardHeaderOfClassType, t *testing.T) {
+	if actualResponseData["title"] != exceptedBoard.title {
 		t.Errorf("Title got %s, but excepted %s",
 			actualResponseData["title"], "")
 	}
-
-	if actualResponseData["number_of_user"] != "0" {
+	if actualResponseData["number_of_user"] != exceptedBoard.numberOfUser {
 		t.Errorf("Number of users got %s, but excepted %s",
 			actualResponseData["number_of_user"], "0")
 	}
-
-	if len(actualResponseData["moderators"].([]interface{})) != 0 {
+	if len(actualResponseData["moderators"].([]interface{})) != exceptedBoard.lenOfModerators {
 		t.Errorf("Number of users got %s, but excepted %d",
 			actualResponseData["moderators"], 0)
 	}
-
-	if actualResponseData["type"] != "class" {
+	if actualResponseData["type"] != exceptedBoard.boardType {
 		t.Errorf("Type got %s, but excepted %s",
 			actualResponseData["type"], "class")
 	}
