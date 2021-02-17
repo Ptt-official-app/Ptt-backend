@@ -2,7 +2,6 @@ package http
 
 import (
 	"context"
-
 	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
@@ -12,10 +11,6 @@ func (usecase *MockUsecase) GetBoardByID(ctx context.Context, boardID string) (b
 }
 
 func (usecase *MockUsecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecord {
-	panic("Not implemented")
-}
-
-func (usecase *MockUsecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
 	panic("Not implemented")
 }
 
