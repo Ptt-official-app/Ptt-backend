@@ -3,9 +3,24 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/PichuChen/go-bbs"
 )
+
+type ArticleSearchCond struct {
+	Title                           string
+	Author                          string
+	RecommendCountValue             int
+	RecommendCountLessThan          int
+	RecommendCountLessEqual         int
+	RecommendCountEqual             int
+	RecommendCountNotEqual          int
+	RecommendCountGreaterThan       int
+	RecommendCountGreaterEqual      int
+	RecommendCountGreaterEqualIsSet bool
+	RecommendCountLessEqualIsSet    bool
+}
 
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
@@ -63,15 +78,25 @@ func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) 
 	return boards
 }
 
-func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string) []interface{} {
+func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, cond *ArticleSearchCond) []interface{} {
+	var articles []bbs.ArticleRecord
 	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
 	if err != nil {
 		usecase.logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
 	}
 
+	if len(strings.TrimSpace(cond.Title)) > 0 ||
+		len(strings.TrimSpace(cond.Author)) > 0 ||
+		cond.RecommendCountGreaterEqualIsSet ||
+		cond.RecommendCountLessEqualIsSet {
+		articles = searchArticles(articleRecords, cond)
+	} else {
+		articles = articleRecords
+	}
+
 	items := []interface{}{}
-	for _, f := range articleRecords {
+	for _, f := range articles {
 		m := map[string]interface{}{
 			"filename": f.Filename(),
 			// Bug(pichu): f.Modified time will be 0 when file is vote
@@ -130,4 +155,29 @@ func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID stri
 
 func getArticleURL(boardId string, filename string) string {
 	return fmt.Sprintf("https://ptt-app-dev-codingman.pichuchen.tw/bbs/%s/%s.html", boardId, filename)
+}
+
+func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []bbs.ArticleRecord {
+	var targetArticles []bbs.ArticleRecord
+
+	for _, f := range fileHeaders {
+		if !strings.Contains(strings.ToLower(f.Title()), strings.ToLower(cond.Title)) {
+			continue
+		}
+
+		if !strings.Contains(strings.ToLower(f.Owner()), strings.ToLower(cond.Author)) {
+			continue
+		}
+
+		if cond.RecommendCountGreaterEqualIsSet && f.Recommend() < cond.RecommendCountGreaterEqual {
+			continue
+		}
+
+		if cond.RecommendCountLessEqualIsSet && f.Recommend() > cond.RecommendCountLessEqual {
+			continue
+		}
+
+		targetArticles = append(targetArticles, f)
+	}
+	return targetArticles
 }
