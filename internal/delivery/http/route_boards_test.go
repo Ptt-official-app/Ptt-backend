@@ -32,25 +32,20 @@ func TestGetPopularBoardList(t *testing.T) {
 	t.Logf("got response %v", rr.Body.String())
 	responseData := responseMap["data"]
 	popularBoards := responseData.(map[string]interface{})["items"].([]interface{})
-	for i := range popularBoards[1:] {
-		prev := popularBoards[i].(map[string]interface{})["number_of_user"]
-		curr := popularBoards[i+1].(map[string]interface{})["number_of_user"]
-		
-		prevNum, err := strconv.Atoi(prev.(string))
-		if err != nil {
-			t.Errorf("handler returned unexpected body, invalid number_of_user: got %v",
-				prevNum)
-		}
 
+	var prevNum int
+	for i := range popularBoards {
+		curr := popularBoards[i].(map[string]interface{})["number_of_user"]
 		currNum, err := strconv.Atoi(curr.(string))
 		if err != nil {
-			t.Errorf("handler returned unexpected body, invalid number_of_user: got %v",
+			t.Fatalf("handler returned unexpected body, invalid number_of_user: got %v",
 				currNum)
 		}
 		
-		if prevNum < currNum {
-			t.Errorf("handler returned unexpected body, invalid order: got %v before %v",
+		if i > 0 && prevNum < currNum {
+			t.Fatalf("handler returned unexpected body, invalid order: got %v before %v",
 				prevNum, currNum)
 		}
+		prevNum = currNum
 	}
 }

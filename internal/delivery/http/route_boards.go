@@ -48,12 +48,12 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	if err != nil {
 		// TODO: record error
 		delivery.logger.Errorf("find popular board failed: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_popular_board_error",
 			"error_description": "get popular board failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
+		w.WriteHeader(http.StatusInternalServerError)
 		w.Write(b)
 		return
 	}
