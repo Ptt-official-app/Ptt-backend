@@ -63,7 +63,8 @@ func NewMockUsecase() usecase.Usecase {
 
 // usecase/user.go
 func (usecase *MockUsecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
-	panic("Not implemented")
+	result := NewMockUserRecord(userID)
+	return result, nil
 }
 
 func (usecase *MockUsecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
