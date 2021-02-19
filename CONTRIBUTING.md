@@ -29,7 +29,7 @@
 
 * 交流時請先確認 g0v 的 [CoC](https://github.com/g0v/coc/blob/master/COC.md)
 * 如果有自己可以做而且沒有被指派的 ISSUE 的話，請在 ISSUE 下方回應「交給我」後再開始開發。
-* 關於 [good first issue](https://github.com/PichuChen/go-bbs/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) 是推薦給新手的
+* 關於 [good first issue](https://github.com/Ptt-official-app/go-bbs/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) 是推薦給新手的
 * 如果您可能要離開作業半天以上的話，請確保其他人可以接續您的工作。（如果長時間佔住 Issue，那麼這個 Issue 會被卡住。）
 * 對於一天以上沒有更新的 ISSUE，我們可能會解除指派，在工作中善用 Draft Pull Request 的話可以讓大家更輕易地瞭解您目前的進度。
 * ISSUE 相關的問題請在 ISSUE 內回應欄討論（而不是 Slack）。

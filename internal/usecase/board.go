@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 type ArticleSearchCond struct {

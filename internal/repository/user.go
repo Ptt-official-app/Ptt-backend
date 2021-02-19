@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 // BBSUserRecord : currently interface `bbs.UserRecord` of go-bbs
