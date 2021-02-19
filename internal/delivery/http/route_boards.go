@@ -47,7 +47,7 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	boards, err := delivery.usecase.GetPopularBoards(context.Background())
 	if err != nil {
 		// TODO: record error
-		delivery.logger.Warningf("find popular board failed: %v", err)
+		delivery.logger.Errorf("find popular board failed: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_popular_board_error",
