@@ -51,7 +51,7 @@ func (delivery *httpDelivery) getClasses(w http.ResponseWriter, r *http.Request)
 	classID, item, err := delivery.parseClassPath(r.URL.Path)
 	delivery.logger.Noticef("query class: %v item: %v err: %v", classID, item, err)
 	if classID == "" {
-		getClassesWithoutClassId(w, r)
+		getClassesWithoutClassID(w, r)
 		return
 	}
 	delivery.getClassesList(w, r, classID)
@@ -64,10 +64,10 @@ func (delivery *httpDelivery) getClasses(w http.ResponseWriter, r *http.Request)
 
 }
 
-// getClassesWithoutClassId handles path don't contain item after class id
+// getClassesWithoutClassID handles path don't contain item after class id
 // eg: `/v1/classes`, it will redirect Client to `/v1/classes/1` which is
 // root class by default.
-func getClassesWithoutClassId(w http.ResponseWriter, r *http.Request) {
+func getClassesWithoutClassID(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/v1/classes/1", 301)
 }
 
@@ -78,7 +78,7 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 	delivery.logger.Debugf("getClassesList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userID, err := delivery.usecase.GetUserIdFromToken(token)
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?

@@ -73,7 +73,9 @@ func TestGetBoardArticlesResponse(t *testing.T) {
 	}
 
 	actualResponseMap := map[string]interface{}{}
-	json.Unmarshal(rr.Body.Bytes(), &actualResponseMap)
+	if err :=json.Unmarshal(rr.Body.Bytes(), &actualResponseMap); err != nil {
+		t.Error(err.Error())
+	}
 	t.Logf("got response: %v", rr.Body.String())
 
 	actualResponseDataList := actualResponseMap["data"].(map[string]interface{})

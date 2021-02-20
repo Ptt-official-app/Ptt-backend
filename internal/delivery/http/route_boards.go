@@ -13,7 +13,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	delivery.logger.Debugf("getBoardList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userID, err := delivery.usecase.GetUserIdFromToken(token)
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?
@@ -21,7 +21,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 
 		if !supportGuest() {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"error":"token_invalid"}`))
+			_, _ = w.Write([]byte(`{"error":"token_invalid"}`))
 			return
 		}
 	}
@@ -38,7 +38,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, _ = w.Write(b)
 }
 
 func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +54,7 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write(b)
+		_, _ = w.Write(b)
 		return
 	}
 
@@ -70,7 +70,7 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, _ = w.Write(b)
 }
 
 func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {

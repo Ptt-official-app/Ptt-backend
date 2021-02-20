@@ -32,7 +32,7 @@ func TestGetClassesList(t *testing.T) {
 	}
 
 	responseMap := map[string][]interface{}{}
-	json.Unmarshal(rr.Body.Bytes(), &responseMap)
+	_ = json.Unmarshal(rr.Body.Bytes(), &responseMap)
 	t.Logf("got response %v", rr.Body.String())
 	responseData := responseMap["data"]
 	for i, d := range responseData {

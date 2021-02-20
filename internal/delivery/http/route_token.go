@@ -12,7 +12,7 @@ import (
 
 func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) {
 
-	r.ParseForm()
+	_ = r.ParseForm()
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")

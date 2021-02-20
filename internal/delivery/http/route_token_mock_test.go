@@ -8,7 +8,7 @@ func (usecase *MockUsecase) CreateAccessTokenWithUsername(username string) strin
 	return "token"
 }
 
-func (usecase *MockUsecase) GetUserIdFromToken(token string) (string, error) {
+func (usecase *MockUsecase) GetUserIDFromToken(token string) (string, error) {
 	return "id", nil
 }
 

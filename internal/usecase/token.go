@@ -42,7 +42,7 @@ func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {
 	return ss
 }
 
-func (usecase *usecase) GetUserIdFromToken(token string) (string, error) {
+func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 	usecase.logger.Debugf("getUserIdFromToken token: %v", token)
 	pem := usecase.globalConfig.AccessTokenPublicKey
 	key, err := jwt.ParseECPublicKeyFromPEM([]byte(pem))

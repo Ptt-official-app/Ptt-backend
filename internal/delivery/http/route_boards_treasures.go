@@ -51,8 +51,8 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 
 }
 
-func (delivery *httpDelivery) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardId string, treasuresId []string, filename string) {
-	delivery.logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresId: %v, filename: %v", r, boardId, treasuresId, filename)
+func (delivery *httpDelivery) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardID string, treasuresID []string, filename string) {
+	delivery.logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresID: %v, filename: %v", r, boardID, treasuresID, filename)
 
 	w.WriteHeader(http.StatusNotImplemented)
 }
