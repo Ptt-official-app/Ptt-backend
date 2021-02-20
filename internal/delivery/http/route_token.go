@@ -40,7 +40,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write(b)
+		_, _ = w.Write(b)
 		return
 	}
 
@@ -53,7 +53,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 
 	b, _ := json.MarshalIndent(m, "", "  ")
 
-	w.Write(b)
+	_, _ = w.Write(b)
 }
 
 func (delivery *httpDelivery) verifyPassword(userec bbs.UserRecord, password string) error {
