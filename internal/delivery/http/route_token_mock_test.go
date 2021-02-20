@@ -12,6 +12,6 @@ func (usecase *MockUsecase) GetUserIdFromToken(token string) (string, error) {
 	return "id", nil
 }
 
-func (usecase *MockUsecase) CheckPermission(token string, permissionId []usecase.Permission, userInfo map[string]string) error {
+func (usecase *MockUsecase) CheckPermission(token string, permissionID []usecase.Permission, userInfo map[string]string) error {
 	return nil
 }
