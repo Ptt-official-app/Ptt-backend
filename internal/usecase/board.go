@@ -46,6 +46,19 @@ func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.Boar
 	return boards
 }
 
+func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error) {
+	boards := usecase.repo.GetBoards(ctx)
+	// TODO: Sort boards in descending order by number_of_user
+
+	// sort.Slice(boards, func(i, j int) bool {
+	// 	return boards[i].UserNum > boards[j].UserNum
+	// })
+	if len(boards) < 100 {
+		return boards, nil
+	}
+	return boards[:100], nil
+}
+
 func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
 	boards := make([]bbs.BoardRecord, 0)
 	for _, board := range usecase.repo.GetBoards(ctx) {

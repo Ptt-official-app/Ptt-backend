@@ -41,7 +41,39 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	w.Write(b)
 }
 
-func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
+func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http.Request) {
+	delivery.logger.Debugf("getPopularBoardList: %v", r)
+
+	boards, err := delivery.usecase.GetPopularBoards(context.Background())
+	if err != nil {
+		// TODO: record error
+		delivery.logger.Errorf("find popular board failed: %v", err)
+		m := map[string]string{
+			"error":             "find_popular_board_error",
+			"error_description": "get popular board failed",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write(b)
+		return
+	}
+
+	dataList := make([]interface{}, 0, len(boards))
+	for _, board := range boards {
+		dataList = append(dataList, marshalBoardHeader(board))
+	}
+
+	responseMap := map[string]interface{}{
+		"data": struct {
+			Items []interface{} `json:"items"`
+		}{ dataList },
+	}
+
+	b, _ := json.MarshalIndent(responseMap, "", "  ")
+	w.Write(b)
+}
+
+func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,

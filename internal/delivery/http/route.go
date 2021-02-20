@@ -9,6 +9,7 @@ func (delivery *httpDelivery) buildRoute(mux *http.ServeMux) {
 	mux.HandleFunc("/v1/token", delivery.routeToken)
 	mux.HandleFunc("/v1/boards", delivery.routeBoards)
 	mux.HandleFunc("/v1/boards/", delivery.routeBoards)
+	mux.HandleFunc("/v1/popular-boards", delivery.routePopularBoards)
 	mux.HandleFunc("/v1/classes/", delivery.routeClasses)
 	mux.HandleFunc("/v1/users/", delivery.routeUsers)
 }
@@ -35,6 +36,15 @@ func (delivery *httpDelivery) routeBoards(w http.ResponseWriter, r *http.Request
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getBoards(w, r)
+	}
+}
+
+
+func (delivery *httpDelivery) routePopularBoards(w http.ResponseWriter, r *http.Request) {
+	// TODO: Check IP Flowspeed
+	switch r.Method {
+	case http.MethodGet:
+		delivery.getPopularBoardList(w, r)
 	}
 }
 
