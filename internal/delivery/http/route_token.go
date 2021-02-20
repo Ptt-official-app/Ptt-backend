@@ -24,7 +24,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 			"error_description": err.Error(),
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, _ = w.Write(b)
 		return
 
 	}

@@ -86,7 +86,7 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 
 		if !supportGuest() {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"error":"token_invalid"}`))
+			_, _ = w.Write([]byte(`{"error":"token_invalid"}`))
 			return
 		}
 	}
@@ -107,5 +107,5 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, _ = w.Write(b)
 }
