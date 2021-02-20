@@ -29,7 +29,6 @@ func NewDefaultConfig() (*Config, error) {
 // return error. it userPath can not be read, it will ignore userPath.
 // user configration will override default configuration.
 func NewConfig(defaultPath, userPath string) (*Config, error) {
-
 	var config *Config
 	config = &Config{}
 	logger.Debugf("load default config")

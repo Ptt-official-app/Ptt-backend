@@ -57,12 +57,12 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 	w.Write(responseByte)
 }
 
-func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
+func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadUserInformation},
 		map[string]string{
-			"user_id": userId,
+			"user_id": userID,
 		})
 
 	if err != nil {
@@ -71,7 +71,7 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userId)
+	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userID)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
 	}

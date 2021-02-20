@@ -39,7 +39,7 @@ type Usecase interface {
 	// GetUserIdFromToken retrieves user id by token
 	GetUserIdFromToken(token string) (string, error)
 	// CheckPermission checks permissions
-	CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error // FIXME: use concrete type rather than map[string]string
+	CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error // FIXME: use concrete type rather than map[string]string
 }
 
 type usecase struct {

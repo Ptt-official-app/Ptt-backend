@@ -40,7 +40,7 @@ func TestPostToken(t *testing.T) {
 
 	expected := "bearer"
 	if responsedMap["token_type"] != expected {
-		t.Errorf("handler returned unexpected body, error is not match: got %v want userId %v",
+		t.Errorf("handler returned unexpected body, error is not match: got %v want userID %v",
 			rr.Body.String(), expected)
 	}
 }

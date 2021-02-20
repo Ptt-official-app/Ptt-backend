@@ -48,14 +48,13 @@ func (delivery *httpDelivery) getClass(w http.ResponseWriter, r *http.Request) {
 // and pass requests to next handle function
 func (delivery *httpDelivery) getClasses(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getClasses: %v", r)
-	classId, item, err := delivery.parseClassPath(r.URL.Path)
-	delivery.logger.Noticef("query class: %v item: %v err: %v", classId, item, err)
-	if classId == "" {
+	classID, item, err := delivery.parseClassPath(r.URL.Path)
+	delivery.logger.Noticef("query class: %v item: %v err: %v", classID, item, err)
+	if classID == "" {
 		getClassesWithoutClassId(w, r)
 		return
 	}
-	delivery.getClassesList(w, r, classId)
-	return
+	delivery.getClassesList(w, r, classID)
 
 	// // get single board
 	// if item == "information" {
@@ -75,24 +74,24 @@ func getClassesWithoutClassId(w http.ResponseWriter, r *http.Request) {
 // getClassesList handle path with class id and will return boards and classes
 // under this class.
 // TODO: What should we return when target class not found?
-func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Request, classId string) {
+func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Request, classID string) {
 	delivery.logger.Debugf("getClassesList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userId, err := delivery.usecase.GetUserIdFromToken(token)
+	userID, err := delivery.usecase.GetUserIdFromToken(token)
 	if err != nil {
 		// user permission error
 		// Support Guest?
+		userID = "guest" // TODO: use const variable
+
 		if !supportGuest() {
 			w.WriteHeader(http.StatusUnauthorized)
 			w.Write([]byte(`{"error":"token_invalid"}`))
 			return
-		} else {
-			userId = "guest" // TODO: use const variable
 		}
 	}
 
-	boards := delivery.usecase.GetClasses(context.Background(), userId, classId)
+	boards := delivery.usecase.GetClasses(context.Background(), userID, classID)
 
 	dataList := []interface{}{}
 	for bid, b := range boards {

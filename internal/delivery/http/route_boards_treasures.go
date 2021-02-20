@@ -13,14 +13,14 @@ import (
 func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
 	delivery.logger.Debugf("getBoardTreasures: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	_, treasuresId, filename, err := delivery.parseBoardTreasurePath(r.URL.Path)
+	_, treasuresID, filename, err := delivery.parseBoardTreasurePath(r.URL.Path)
 	if err != nil {
 		delivery.logger.Warningf("parseBoardTreasurePath error: %v", err)
 		// TODO return 400?
 	}
 	if filename != "" {
 		// get file
-		delivery.getBoardTreasuresFile(w, r, boardId, treasuresId, filename)
+		delivery.getBoardTreasuresFile(w, r, boardId, treasuresID, filename)
 		return
 	}
 
@@ -29,7 +29,7 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 		[]usecase.Permission{usecase.PermissionReadTreasureInformation},
 		map[string]string{
 			"board_id":    boardId,
-			"treasure_id": strings.Join(treasuresId, ","),
+			"treasure_id": strings.Join(treasuresID, ","),
 		})
 	if err != nil {
 		// TODO: record unauthorized access
@@ -37,7 +37,7 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	treasures := delivery.usecase.GetBoardTreasures(context.Background(), boardId, treasuresId)
+	treasures := delivery.usecase.GetBoardTreasures(context.Background(), boardId, treasuresID)
 	delivery.logger.Debugf("fh: %v", treasures)
 
 	responseMap := map[string]interface{}{
