@@ -54,7 +54,7 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 	}
 	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
 
-	w.Write(responseByte)
+	_, _ = w.Write(responseByte)
 }
 
 func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
@@ -84,5 +84,5 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 
 	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
 
-	w.Write(responseByte)
+	_, _ = w.Write(responseByte)
 }
