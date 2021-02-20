@@ -73,7 +73,7 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	w.Write(b)
 }
 
-func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
+func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
