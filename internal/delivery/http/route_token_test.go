@@ -9,7 +9,6 @@ import (
 	"testing"
 )
 
-
 func TestPostToken(t *testing.T) {
 	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
