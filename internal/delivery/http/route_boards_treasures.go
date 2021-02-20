@@ -10,7 +10,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
+func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardTreasures: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	_, treasuresID, filename, err := delivery.parseBoardTreasurePath(r.URL.Path)
@@ -20,7 +20,7 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 	}
 	if filename != "" {
 		// get file
-		delivery.getBoardTreasuresFile(w, r, boardId, treasuresID, filename)
+		delivery.getBoardTreasuresFile(w, r, boardID, treasuresID, filename)
 		return
 	}
 
@@ -28,7 +28,7 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 	err = delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadTreasureInformation},
 		map[string]string{
-			"board_id":    boardId,
+			"board_id":    boardID,
 			"treasure_id": strings.Join(treasuresID, ","),
 		})
 	if err != nil {
@@ -37,7 +37,7 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	treasures := delivery.usecase.GetBoardTreasures(context.Background(), boardId, treasuresID)
+	treasures := delivery.usecase.GetBoardTreasures(context.Background(), boardID, treasuresID)
 	delivery.logger.Debugf("fh: %v", treasures)
 
 	responseMap := map[string]interface{}{

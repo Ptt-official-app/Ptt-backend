@@ -126,13 +126,13 @@ func (delivery *httpDelivery) parseBoardPath(path string) (boardID string, item 
 
 // parseBoardTreasurePath parse covert url path from /v1/boards/SYSOP/article to
 // {SYSOP, article) or /v1/boards to {,}
-func (delivery *httpDelivery) parseBoardTreasurePath(path string) (boardID string, treasuresId []string, filename string, err error) {
+func (delivery *httpDelivery) parseBoardTreasurePath(path string) (boardID string, treasuresID []string, filename string, err error) {
 	pathSegment := strings.Split(path, "/")
 
 	if len(pathSegment) == 6 {
 		// /{{version}}/boards/{{board_id}}/treasures/articles
 		boardID = pathSegment[3]
-		treasuresId = []string{}
+		treasuresID = []string{}
 		filename = ""
 		return
 	} else if len(pathSegment) >= 7 {
@@ -141,10 +141,10 @@ func (delivery *httpDelivery) parseBoardTreasurePath(path string) (boardID strin
 		// /{{version}}/boards/{{board_id}}/treasures/{{treasures_id ... }}/articles/{{filename}}
 		boardID = pathSegment[3]
 		if pathSegment[len(pathSegment)-1] == "articles" {
-			treasuresId = pathSegment[5 : len(pathSegment)-1]
+			treasuresID = pathSegment[5 : len(pathSegment)-1]
 			filename = ""
 		} else {
-			treasuresId = pathSegment[5 : len(pathSegment)-2]
+			treasuresID = pathSegment[5 : len(pathSegment)-2]
 			filename = pathSegment[len(pathSegment)-1]
 		}
 		return
@@ -172,7 +172,7 @@ func (delivery *httpDelivery) parseClassPath(path string) (classID string, item 
 	return "", "", nil
 }
 
-func parseUserPath(path string) (userId string, item string, err error) {
+func parseUserPath(path string) (userID string, item string, err error) {
 	pathSegment := strings.Split(path, "/")
 	// /{{version}}/users/{{user_id}}/{{item}}
 	if len(pathSegment) == 4 {

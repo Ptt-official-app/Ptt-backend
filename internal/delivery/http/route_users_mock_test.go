@@ -27,7 +27,7 @@ type MockUserRecord struct {
 	userID string
 }
 
-func NewMockUserRecord(userId string) *MockUserRecord { return &MockUserRecord{userID: userId} }
+func NewMockUserRecord(userID string) *MockUserRecord { return &MockUserRecord{userID: userID} }
 func (u *MockUserRecord) UserId() string              { return u.userID }
 
 // HashedPassword return user hashed password, it only for debug,
