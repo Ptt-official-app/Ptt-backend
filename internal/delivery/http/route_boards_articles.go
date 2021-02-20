@@ -66,7 +66,7 @@ func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Re
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, _ = w.Write(b)
 
 }
 

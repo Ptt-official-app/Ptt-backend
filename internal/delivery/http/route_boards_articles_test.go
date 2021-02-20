@@ -73,7 +73,7 @@ func TestGetBoardArticlesResponse(t *testing.T) {
 	}
 
 	actualResponseMap := map[string]interface{}{}
-	if err :=json.Unmarshal(rr.Body.Bytes(), &actualResponseMap); err != nil {
+	if err := json.Unmarshal(rr.Body.Bytes(), &actualResponseMap); err != nil {
 		t.Error(err.Error())
 	}
 	t.Logf("got response: %v", rr.Body.String())

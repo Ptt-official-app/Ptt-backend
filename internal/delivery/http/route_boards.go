@@ -98,7 +98,7 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 			"error_description": "get board for " + boardID + " failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, _ = w.Write(b)
 		return
 	}
 
@@ -107,7 +107,7 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, _ = w.Write(b)
 }
 
 // marshal generate board or class metadata object,
