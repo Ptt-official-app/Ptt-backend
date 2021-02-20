@@ -40,7 +40,7 @@ func (delivery *httpDelivery) getClass(w http.ResponseWriter, r *http.Request) {
 	}
 	b, _ := json.MarshalIndent(m, "", "  ")
 
-	w.Write(b)
+	_, _ = w.Write(b)
 
 }
 
