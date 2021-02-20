@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: 'PTT 後端系統協定'
-  description: ''
+  description: '最新版文件請見此處：https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/'
   version: 0.0.1
 
 servers:
