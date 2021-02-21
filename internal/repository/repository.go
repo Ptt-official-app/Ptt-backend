@@ -30,6 +30,10 @@ type Repository interface {
 	GetUsers(ctx context.Context) ([]bbs.UserRecord, error)
 	// GetUserFavoriteRecords returns favorite records of a user
 	GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error)
+
+	// article.go
+	// GetPopularArticles returns all popular articles
+	GetPopularArticles(ctx context.Context) ([]bbs.ArticleRecord, error)
 }
 
 type repository struct {
