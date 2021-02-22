@@ -1,16 +1,10 @@
 package http
 
 import (
-	"github.com/PichuChen/go-bbs"
-
-	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
-
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 )
 
 type MockUserRecord struct {
