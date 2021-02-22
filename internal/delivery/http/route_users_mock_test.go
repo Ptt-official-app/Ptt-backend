@@ -8,11 +8,11 @@ import (
 )
 
 func (usecase *MockUsecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
-	panic("Not implemented")
+	return nil, nil
 }
 
 func (usecase *MockUsecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
-	panic("Not implemented")
+	return nil, nil
 }
 
 func (usecase *MockUsecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {

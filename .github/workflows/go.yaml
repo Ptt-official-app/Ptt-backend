@@ -5,31 +5,31 @@ on:
   - pull_request
 
 jobs:
-  lint:
-    strategy:
-      matrix:
-        platform: [ubuntu-20.04]
-        go-version: [1.14.x]
-    runs-on: ${{ matrix.platform }}
-    name: Linters (Static Analysis) for Go
-    env:
-      GOBIN: /tmp/.bin
-    steps:
-      - name: Checkout code into the Go module directory.
-        uses: actions/checkout@v2
+  # lint:
+  #   strategy:
+  #     matrix:
+  #       platform: [ubuntu-20.04]
+  #       go-version: [1.14.x]
+  #   runs-on: ${{ matrix.platform }}
+  #   name: Linters (Static Analysis) for Go
+  #   env:
+  #     GOBIN: /tmp/.bin
+  #   steps:
+  #     - name: Checkout code into the Go module directory.
+  #       uses: actions/checkout@v2
 
-      - name: Install Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: ${{ matrix.go-version }}
+  #     - name: Install Go
+  #       uses: actions/setup-go@v2
+  #       with:
+  #         go-version: ${{ matrix.go-version }}
 
-      - uses: actions/cache@v1
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+  #     - uses: actions/cache@v1
+  #       with:
+  #         path: ~/go/pkg/mod
+  #         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
-      - name: Linting & vetting.
-        run: ./make.bash lint
+  #     - name: Linting & vetting.
+  #       run: ./make.bash lint
   test:
     strategy:
       matrix:
@@ -53,10 +53,10 @@ jobs:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
 
-      - name: Run tests
-        run: ./make.bash test-integration
-      # - name: test
-      #   run: go test -v ./...
+      # - name: Run tests
+      #   run: ./make.bash test-integration
+      - name: test
+        run: go test -v ./...
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v1
