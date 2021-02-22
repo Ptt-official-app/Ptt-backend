@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
@@ -27,9 +28,40 @@ func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	var recommendCountGreaterEqual, recommendCountLessEqual int
+	var recommendCountGreaterEqualIsSet, recommendCountLessEqualIsSet bool
+	queryParam := r.URL.Query()
+	recommendCountGreaterEqualParam := queryParam.Get("recommend_count_ge")
+	recommendCountGreaterEqualIsSet = recommendCountGreaterEqualParam != ""
+	recommendCountGreaterEqual, err = strconv.Atoi(recommendCountGreaterEqualParam)
+
+	if err != nil && recommendCountGreaterEqualIsSet {
+		delivery.logger.Errorf("recommend_count_ge should be integer")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	recommendCountLessEqualParam := queryParam.Get("recommend_count_le")
+	recommendCountLessEqualIsSet = recommendCountLessEqualParam != ""
+	recommendCountLessEqual, err = strconv.Atoi(recommendCountLessEqualParam)
+	if err != nil && recommendCountLessEqualIsSet {
+		delivery.logger.Errorf("recommend_count_le should be integer")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	searchCond := &usecase.ArticleSearchCond{
+		Title:                           queryParam.Get("title_contain"),
+		Author:                          queryParam.Get("author"),
+		RecommendCountGreaterEqual:      recommendCountGreaterEqual,
+		RecommendCountLessEqual:         recommendCountLessEqual,
+		RecommendCountGreaterEqualIsSet: recommendCountGreaterEqualIsSet,
+		RecommendCountLessEqualIsSet:    recommendCountLessEqualIsSet,
+	}
+
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"items": delivery.usecase.GetBoardArticles(context.Background(), boardId),
+			"items": delivery.usecase.GetBoardArticles(context.Background(), boardId, searchCond),
 		},
 	}
 

@@ -27,7 +27,7 @@ type Repository interface {
 
 	// user.go
 	// GetUsers returns all user reords
-	GetUsers(ctx context.Context) []bbs.UserRecord
+	GetUsers(ctx context.Context) ([]bbs.UserRecord, error)
 	// GetUserFavoriteRecords returns favorite records of a user
 	GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error)
 }

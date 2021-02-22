@@ -9,6 +9,8 @@
 |[Golang](https://golang.org/dl/)|1.14 以上|必要|
 |[GoLand](https://www.jetbrains.com/go/promo/)| |如果使用 GoLand * 推薦給新手|
 |[Sublime Text 3](https://classic.yarnpkg.com/zh-Hant/)| |如果使用 Sublime Text，記得安裝 Gofmt 套件|
+|[docker engine](https://docs.docker.com/engine/install/)| 1.13.0+ | |
+|[docker compose](https://docs.docker.com/compose/install/)| 1.10.0+ |使用 `docker compose` 執行本專案時|
 
 ### Sublime Text 3 的套件
 
@@ -107,3 +109,6 @@ $ ./Ptt-backend
 
 | 目的 | 分支 | 預覽用 URL | 備註 |
 | ---- | -------- | ---- | ---- |
+
+### 測試相關
+請參閱 FOR_TEST_DEVELOPERS.md
