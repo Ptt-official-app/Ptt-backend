@@ -22,13 +22,6 @@ func (delivery *httpDelivery) routeToken(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-func (delivery *httpDelivery) routeClass(w http.ResponseWriter, r *http.Request) {
-	switch r.Method {
-	case http.MethodGet:
-		delivery.getClass(w, r)
-	}
-}
-
 // routeBoards is the handler for `/v1/boards`
 func (delivery *httpDelivery) routeBoards(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("routeBoards: %v", r)

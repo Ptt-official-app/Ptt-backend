@@ -8,41 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 )
-
-func (delivery *httpDelivery) getClass(w http.ResponseWriter, r *http.Request) {
-
-	seg := strings.Split(r.URL.Path, "/")
-
-	classId := "0"
-	if len(seg) > 2 {
-		classId = seg[3]
-	}
-	delivery.logger.Informationalf("user get class: %v", classId)
-
-	list := []interface{}{}
-
-	c := map[string]interface{}{
-		"id":             1,
-		"type":           "class",
-		"title":          "title",
-		"number_of_user": 3,
-		"moderators": []string{
-			"SYSOP",
-			"pichu",
-		},
-	}
-	list = append(list, c)
-
-	m := map[string]interface{}{
-		"data": list,
-	}
-	b, _ := json.MarshalIndent(m, "", "  ")
-
-	w.Write(b)
-
-}
 
 // getClasses HandleFunc handles path start with `/v1/classes`
 // and pass requests to next handle function
@@ -55,7 +21,6 @@ func (delivery *httpDelivery) getClasses(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	delivery.getClassesList(w, r, classId)
-	return
 
 	// // get single board
 	// if item == "information" {
