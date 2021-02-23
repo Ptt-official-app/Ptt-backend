@@ -47,6 +47,8 @@ func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.Boar
 }
 
 func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error) {
+	// TODO: Change to popular GetBoards or get popular board there
+	// Please see: https://github.com/Ptt-official-app/Ptt-backend/issues/51#issuecomment-783895477
 	boards := usecase.repo.GetBoards(ctx)
 	// TODO: Sort boards in descending order by number_of_user
 
