@@ -156,7 +156,7 @@ func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID stri
 }
 
 func getArticleURL(boardId string, filename string) string {
-	return fmt.Sprintf("https://ptt-app-dev-codingman.pichuchen.tw/bbs/%s/%s.html", boardId, filename)
+	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardId, filename)
 }
 
 func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []bbs.ArticleRecord {
