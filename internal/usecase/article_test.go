@@ -8,9 +8,9 @@ import (
 )
 
 func TestGetPopularArticles(t *testing.T) {
-	resp := &MockRepository{}
+	repo := &MockRepository{}
 
-	usecase := NewUsecase(&config.Config{}, resp)
+	usecase := NewUsecase(&config.Config{}, repo)
 	articles, err := usecase.GetPopularArticles(context.TODO())
 
 	if err != nil {
