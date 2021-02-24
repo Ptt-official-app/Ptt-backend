@@ -47,8 +47,10 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
-
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getBoardTreasures write success response err : %w", err)
+	}
 }
 
 func (delivery *httpDelivery) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardId string, treasuresId []string, filename string) {

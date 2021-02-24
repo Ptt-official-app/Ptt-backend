@@ -28,7 +28,10 @@ func TestGetPopularBoardList(t *testing.T) {
 	}
 
 	responseMap := map[string]interface{}{}
-	json.Unmarshal(rr.Body.Bytes(), &responseMap)
+	err = json.Unmarshal(rr.Body.Bytes(), &responseMap)
+	if err != nil {
+		t.Errorf("get unexpect json : %w", err)
+	}
 	t.Logf("got response %v", rr.Body.String())
 	responseData := responseMap["data"]
 	popularBoards := responseData.(map[string]interface{})["items"].([]interface{})
