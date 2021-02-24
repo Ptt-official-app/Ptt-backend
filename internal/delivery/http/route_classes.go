@@ -21,13 +21,6 @@ func (delivery *httpDelivery) getClasses(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	delivery.getClassesList(w, r, classId)
-
-	// // get single board
-	// if item == "information" {
-	// 	getBoardInformation(w, r, boardId)
-	// 	return
-	// }
-
 }
 
 // getClassesWithoutClassId handles path don't contain item after class id
