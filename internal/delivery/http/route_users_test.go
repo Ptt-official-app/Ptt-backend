@@ -33,7 +33,6 @@ func TestGetUserInformation(t *testing.T) {
 
 	responsedMap := map[string]interface{}{}
 	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
-
 	if err != nil {
 		t.Errorf("get unexpect json : %w", err)
 	}

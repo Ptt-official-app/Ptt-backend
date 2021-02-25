@@ -13,9 +13,8 @@ import (
 func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
-
 	if err == nil {
-		delivery.logger.Errorf("postToken parse form err : %w", err)
+		delivery.logger.Errorf("postToken parse form err: %w", err)
 	}
 
 	username := r.FormValue("username")

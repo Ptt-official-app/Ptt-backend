@@ -21,7 +21,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 			w.WriteHeader(http.StatusUnauthorized)
 			_, err := w.Write([]byte(`{"error":"token_invalid"}`))
 			if err != nil {
-				delivery.logger.Errorf("getBoardList write token invalid response err : %w", err)
+				delivery.logger.Errorf("getBoardList write token invalid response err: %w", err)
 			}
 			return
 		} else {
@@ -43,7 +43,7 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getBoardList write response err : %w", err)
+		delivery.logger.Errorf("getBoardList write response err: %w", err)
 	}
 }
 
@@ -62,7 +62,7 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 		w.WriteHeader(http.StatusInternalServerError)
 		_, err := w.Write(b)
 		if err != nil {
-			delivery.logger.Errorf("getPopularBoardList write error response err : %w", err)
+			delivery.logger.Errorf("getPopularBoardList write error response err: %w", err)
 		}
 		return
 	}
@@ -81,7 +81,7 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getPopularBoardList write success response err : %w", err)
+		delivery.logger.Errorf("getPopularBoardList write success response err: %w", err)
 	}
 }
 
@@ -112,7 +112,7 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 		b, _ := json.MarshalIndent(m, "", "  ")
 		_, err = w.Write(b)
 		if err != nil {
-			delivery.logger.Errorf("getBoardInformation write error response err : %w", err)
+			delivery.logger.Errorf("getBoardInformation write error response err: %w", err)
 		}
 		return
 	}
@@ -124,7 +124,7 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getBoardInformation write success response err : %w", err)
+		delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
 	}
 }
 
