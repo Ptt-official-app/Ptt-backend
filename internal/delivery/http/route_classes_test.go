@@ -35,7 +35,7 @@ func TestGetClassesList(t *testing.T) {
 	err = json.Unmarshal(rr.Body.Bytes(), &responseMap)
 
 	if err != nil {
-		t.Errorf("get unexpect json : %w", err)
+		t.Errorf("get unexpect json: %w", err)
 	}
 
 	t.Logf("got response %v", rr.Body.String())

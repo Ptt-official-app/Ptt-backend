@@ -68,7 +68,7 @@ func (delivery *httpDelivery) getBoardArticles(w http.ResponseWriter, r *http.Re
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getBoardArticles write success response err : %w", err)
+		delivery.logger.Errorf("getBoardArticles write success response err: %w", err)
 	}
 }
 
@@ -104,6 +104,6 @@ func (delivery *httpDelivery) getBoardArticlesFile(w http.ResponseWriter, r *htt
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getBoardArticlesFile write success response err : %w", err)
+		delivery.logger.Errorf("getBoardArticlesFile write success response err: %w", err)
 	}
 }

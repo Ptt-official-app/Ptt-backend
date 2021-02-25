@@ -49,7 +49,7 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getBoardTreasures write success response err : %w", err)
+		delivery.logger.Errorf("getBoardTreasures write success response err: %w", err)
 	}
 }
 

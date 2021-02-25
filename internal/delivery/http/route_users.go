@@ -47,7 +47,7 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 		b, _ := json.MarshalIndent(m, "", "  ")
 		_, err = w.Write(b)
 		if err != nil {
-			delivery.logger.Errorf("getUserInformation error response err : %w", err)
+			delivery.logger.Errorf("getUserInformation error response err: %w", err)
 		}
 		return
 	}
@@ -59,7 +59,7 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 
 	_, err = w.Write(responseByte)
 	if err != nil {
-		delivery.logger.Errorf("getUserInformation success response err : %w", err)
+		delivery.logger.Errorf("getUserInformation success response err: %w", err)
 	}
 }
 
@@ -92,6 +92,6 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 
 	_, err = w.Write(responseByte)
 	if err != nil {
-		delivery.logger.Errorf("getUserFavorites success response err : %w", err)
+		delivery.logger.Errorf("getUserFavorites success response err: %w", err)
 	}
 }

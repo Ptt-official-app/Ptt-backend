@@ -35,7 +35,7 @@ func TestGetUserInformation(t *testing.T) {
 	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
 
 	if err != nil {
-		t.Errorf("get unexpect json : %w", err)
+		t.Errorf("get unexpect json: %w", err)
 	}
 
 	t.Logf("got response %v", rr.Body.String())

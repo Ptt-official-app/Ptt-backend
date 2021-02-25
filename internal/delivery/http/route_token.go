@@ -15,7 +15,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 	err := r.ParseForm()
 
 	if err == nil {
-		delivery.logger.Errorf("postToken parse form err : %w", err)
+		delivery.logger.Errorf("postToken parse form err: %w", err)
 	}
 
 	username := r.FormValue("username")
@@ -30,7 +30,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 		b, _ := json.MarshalIndent(m, "", "  ")
 		_, err = w.Write(b)
 		if err != nil {
-			delivery.logger.Errorf("postToken write get user id error response err : %w", err)
+			delivery.logger.Errorf("postToken write get user id error response err: %w", err)
 		}
 		return
 
@@ -49,7 +49,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 		w.WriteHeader(http.StatusUnauthorized)
 		_, err = w.Write(b)
 		if err != nil {
-			delivery.logger.Errorf("postToken write password verify error response err : %w", err)
+			delivery.logger.Errorf("postToken write password verify error response err: %w", err)
 		}
 		return
 	}
@@ -65,7 +65,7 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("postToken success response err : %w", err)
+		delivery.logger.Errorf("postToken success response err: %w", err)
 	}
 }
 

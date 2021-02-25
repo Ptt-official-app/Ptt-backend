@@ -45,7 +45,7 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 			w.WriteHeader(http.StatusUnauthorized)
 			_, err = w.Write([]byte(`{"error":"token_invalid"}`))
 			if err != nil {
-				delivery.logger.Errorf("getClassesList write error response err : %w", err)
+				delivery.logger.Errorf("getClassesList write error response err: %w", err)
 			}
 			return
 		} else {
@@ -71,6 +71,6 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getClassesList write success response err : %w", err)
+		delivery.logger.Errorf("getClassesList write success response err: %w", err)
 	}
 }
