@@ -13,7 +13,6 @@ import (
 func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
-
 	if err == nil {
 		delivery.logger.Errorf("postToken parse form err: %w", err)
 	}
