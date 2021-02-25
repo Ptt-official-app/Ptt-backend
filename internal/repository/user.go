@@ -61,7 +61,7 @@ func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {
 		logger.Errorf("get user rec error: %v", err)
 		return nil, fmt.Errorf("failed to read user records: %w", err)
 	}
-	results := make([] bbs.UserRecord, 0, len(userRecords))
+	results := make([]bbs.UserRecord, 0, len(userRecords))
 	for _, rec := range userRecords {
 		results = append(results, &bbsUserRecord{rec})
 	}

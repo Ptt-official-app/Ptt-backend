@@ -32,7 +32,6 @@ func (delivery *httpDelivery) routeBoards(w http.ResponseWriter, r *http.Request
 	}
 }
 
-
 func (delivery *httpDelivery) routePopularBoards(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
 	switch r.Method {
