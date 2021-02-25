@@ -19,7 +19,10 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 		// Support Guest?
 		if !supportGuest() {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"error":"token_invalid"}`))
+			_, err := w.Write([]byte(`{"error":"token_invalid"}`))
+			if err != nil {
+				delivery.logger.Errorf("getBoardList write token invalid response err: %w", err)
+			}
 			return
 		} else {
 			userId = "guest" // TODO: use const variable
@@ -38,7 +41,10 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getBoardList write response err: %w", err)
+	}
 }
 
 func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http.Request) {
@@ -54,7 +60,10 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write(b)
+		_, err := w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getPopularBoardList write error response err: %w", err)
+		}
 		return
 	}
 
@@ -66,11 +75,14 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	responseMap := map[string]interface{}{
 		"data": struct {
 			Items []interface{} `json:"items"`
-		}{ dataList },
+		}{dataList},
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getPopularBoardList write success response err: %w", err)
+	}
 }
 
 func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
@@ -98,7 +110,10 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 			"error_description": "get board for " + boardId + " failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getBoardInformation write error response err: %w", err)
+		}
 		return
 	}
 
@@ -107,7 +122,10 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+	}
 }
 
 // marshal generate board or class metadata object,

@@ -43,7 +43,10 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 		// Support Guest?
 		if !supportGuest() {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"error":"token_invalid"}`))
+			_, err = w.Write([]byte(`{"error":"token_invalid"}`))
+			if err != nil {
+				delivery.logger.Errorf("getClassesList write error response err: %w", err)
+			}
 			return
 		} else {
 			userId = "guest" // TODO: use const variable
@@ -66,5 +69,8 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getClassesList write success response err: %w", err)
+	}
 }

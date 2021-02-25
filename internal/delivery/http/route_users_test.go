@@ -32,7 +32,11 @@ func TestGetUserInformation(t *testing.T) {
 	}
 
 	responsedMap := map[string]interface{}{}
-	json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
+
 	t.Logf("got response %v", rr.Body.String())
 	responsedData := responsedMap["data"].(map[string]interface{})
 	if responsedData["user_id"] != userID {
