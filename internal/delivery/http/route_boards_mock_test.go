@@ -8,8 +8,8 @@ import (
 )
 
 func (usecase *MockUsecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
-	BoardRecord := NewMockBoardRecord("SYSOP", boardID, "嘰哩 ◎站長好!", false)
-	return BoardRecord, nil
+	boardRecord := NewMockBoardRecord("SYSOP", boardID, "嘰哩 ◎站長好!", false)
+	return boardRecord, nil
 }
 
 func (usecase *MockUsecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecord {
