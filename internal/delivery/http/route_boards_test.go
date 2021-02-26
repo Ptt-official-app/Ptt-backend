@@ -79,11 +79,13 @@ func TestGetBoardList(t *testing.T) {
 	}
 
 	actualResponseMap := map[string]interface{}{}
-	json.Unmarshal(w.Body.Bytes(), &actualResponseMap)
+	err = json.Unmarshal(w.Body.Bytes(), &actualResponseMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
 	t.Logf("got response %v", w.Body.String())
 	actualResponseDataList := actualResponseMap["data"].([]interface{})
-	var actualResponseData map[string]interface{}
-	actualResponseData = actualResponseDataList[0].(map[string]interface{})
+	actualResponseData := actualResponseDataList[0].(map[string]interface{})
 
 	if !strings.EqualFold(actualResponseData["title"].(string), "發電 ◎雜七雜八的垃圾") {
 		t.Errorf("Title got %s, but excepted %s",
@@ -128,7 +130,10 @@ func TestGetBoardInformation(t *testing.T) {
 	}
 
 	actualResponseMap := map[string]interface{}{}
-	json.Unmarshal(w.Body.Bytes(), &actualResponseMap)
+	err = json.Unmarshal(w.Body.Bytes(), &actualResponseMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
 	t.Logf("got response %v", w.Body.String())
 	actualResponseData := actualResponseMap["data"].(map[string]interface{})
 
