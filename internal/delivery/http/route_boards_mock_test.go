@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+
 	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
@@ -56,7 +57,7 @@ func NewMockBoardRecord(classID, boardID, title string, isClass bool) *MockBoard
 }
 
 func (b *MockBoardRecord) BoardId() string { return b.boardID }
-func (b *MockBoardRecord) Title() string { return b.title }
-func (b *MockBoardRecord) IsClass() bool { return b.isClass }
+func (b *MockBoardRecord) Title() string   { return b.title }
+func (b *MockBoardRecord) IsClass() bool   { return b.isClass }
 func (b *MockBoardRecord) ClassId() string { return b.classID }
-func (b *MockBoardRecord) BM() []string { return make([]string, 0) }
+func (b *MockBoardRecord) BM() []string    { return make([]string, 0) }
