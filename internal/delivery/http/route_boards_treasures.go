@@ -10,17 +10,17 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardId string) {
+func (delivery *Delivery) getBoardTreasures(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardTreasures: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	_, treasuresId, filename, err := delivery.parseBoardTreasurePath(r.URL.Path)
+	_, treasuresID, filename, err := delivery.parseBoardTreasurePath(r.URL.Path)
 	if err != nil {
 		delivery.logger.Warningf("parseBoardTreasurePath error: %v", err)
 		// TODO return 400?
 	}
 	if filename != "" {
 		// get file
-		delivery.getBoardTreasuresFile(w, r, boardId, treasuresId, filename)
+		delivery.getBoardTreasuresFile(w, r, boardID, treasuresID, filename)
 		return
 	}
 
@@ -28,8 +28,8 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 	err = delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadTreasureInformation},
 		map[string]string{
-			"board_id":    boardId,
-			"treasure_id": strings.Join(treasuresId, ","),
+			"board_id":    boardID,
+			"treasure_id": strings.Join(treasuresID, ","),
 		})
 	if err != nil {
 		// TODO: record unauthorized access
@@ -37,7 +37,7 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	treasures := delivery.usecase.GetBoardTreasures(context.Background(), boardId, treasuresId)
+	treasures := delivery.usecase.GetBoardTreasures(context.Background(), boardID, treasuresID)
 	delivery.logger.Debugf("fh: %v", treasures)
 
 	responseMap := map[string]interface{}{
@@ -53,8 +53,8 @@ func (delivery *httpDelivery) getBoardTreasures(w http.ResponseWriter, r *http.R
 	}
 }
 
-func (delivery *httpDelivery) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardId string, treasuresId []string, filename string) {
-	delivery.logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresId: %v, filename: %v", r, boardId, treasuresId, filename)
+func (delivery *Delivery) getBoardTreasuresFile(w http.ResponseWriter, r *http.Request, boardID string, treasuresId []string, filename string) {
+	delivery.logger.Debugf("getBoardTreasuresFile %v board: %v, treasuresId: %v, filename: %v", r, boardID, treasuresId, filename)
 
 	w.WriteHeader(http.StatusNotImplemented)
 }

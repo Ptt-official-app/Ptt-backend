@@ -8,26 +8,26 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
-	userId, item, err := parseUserPath(r.URL.Path)
+func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
+	userID, item, err := parseUserPath(r.URL.Path)
 	switch item {
 	case "information":
-		delivery.getUserInformation(w, r, userId)
+		delivery.getUserInformation(w, r, userID)
 	case "favorites":
-		delivery.getUserFavorites(w, r, userId)
+		delivery.getUserFavorites(w, r, userID)
 	default:
-		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
+		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userID, item, err)
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
 
-func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.Request, userId string) {
+func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
 	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadUserInformation},
 		map[string]string{
-			"user_id": userId,
+			"user_id": userID,
 		})
 
 	if err != nil {
@@ -36,7 +36,7 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 		return
 	}
 
-	dataMap, err := delivery.usecase.GetUserInformation(context.Background(), userId)
+	dataMap, err := delivery.usecase.GetUserInformation(context.Background(), userID)
 	if err != nil {
 		// TODO: record error
 		w.WriteHeader(http.StatusInternalServerError)
@@ -63,12 +63,12 @@ func (delivery *httpDelivery) getUserInformation(w http.ResponseWriter, r *http.
 	}
 }
 
-func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userId string) {
+func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadUserInformation},
 		map[string]string{
-			"user_id": userId,
+			"user_id": userID,
 		})
 
 	if err != nil {
@@ -77,7 +77,7 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userId)
+	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userID)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
 	}
