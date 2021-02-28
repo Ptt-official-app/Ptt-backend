@@ -42,6 +42,10 @@ type Usecase interface {
 	GetUserIdFromToken(token string) (string, error)
 	// CheckPermission checks permissions
 	CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error // FIXME: use concrete type rather than map[string]string
+
+	// article.go
+	// GetPopularArticles returns all popular articles
+	GetPopularArticles(ctx context.Context) ([]bbs.ArticleRecord, error)
 }
 
 type usecase struct {
