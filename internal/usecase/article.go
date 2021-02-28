@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 )
 
 // GetPopularArticles returns articles by descending comment_count
-func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]bbs.ArticleRecord, error) {
+func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.PopularArticleRecord, error) {
 	articles, err := usecase.repo.GetPopularArticles(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("GetPopularArticles error: %w", err)
