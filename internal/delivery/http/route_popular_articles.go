@@ -12,7 +12,7 @@ func (delivery *httpDelivery) getPopularArticles(w http.ResponseWriter, r *http.
 	// TODO: replace GetBoardArticles method when GetPopularArticles usecase is ready
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"items": delivery.usecase.GetBoardArticles(context.Background(),"ALLPOST",&usecase.ArticleSearchCond{}),
+			"items": delivery.usecase.GetBoardArticles(context.Background(), "ALLPOST", &usecase.ArticleSearchCond{}),
 		},
 	}
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
