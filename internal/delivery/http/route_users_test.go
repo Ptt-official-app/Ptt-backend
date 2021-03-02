@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+// ref - internal\delivery\http\route_users.go:30
+// desc - 測試取得使用者資訊，包括上次上站位置等
 func TestGetUserInformation(t *testing.T) {
 
 	userID := "id"
@@ -45,6 +47,8 @@ func TestGetUserInformation(t *testing.T) {
 	}
 }
 
+// ref - internal\delivery\http\route_users.go:13
+// desc - 測試取得網址參數資訊
 func TestParseUserPath(t *testing.T) {
 
 	type TestCase struct {

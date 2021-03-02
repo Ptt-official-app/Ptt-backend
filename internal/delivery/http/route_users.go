@@ -8,6 +8,8 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
+// ref - internal\delivery\http\route.go:52
+// route map
 func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	userID, item, err := parseUserPath(r.URL.Path)
 	switch item {
@@ -21,6 +23,10 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// ref - https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__information
+// desc - 取得使用者資訊，包括上次上站位置等
+// route - /v1/users/{user_id}/information
+// parameter - userID : 使用者 id
 func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
@@ -63,6 +69,10 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// ref - https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
+// desc - 我的最愛列表
+// route - /v1/users/{user_id}/favorites
+// parameter - userID : 使用者 id
 func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,

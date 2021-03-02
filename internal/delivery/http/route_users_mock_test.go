@@ -27,6 +27,7 @@ type MockUserRecord struct {
 	userId string
 }
 
+// 產生假的用戶資訊
 func NewMockUserRecord(userId string) *MockUserRecord { return &MockUserRecord{userId: userId} }
 func (u *MockUserRecord) UserId() string              { return u.userId }
 
