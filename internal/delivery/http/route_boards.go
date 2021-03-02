@@ -25,7 +25,7 @@ func (delivery *Delivery) getBoardList(w http.ResponseWriter, r *http.Request) {
 				delivery.logger.Errorf("getBoardList write token invalid response err: %w", err)
 			}
 			return
-		} 
+		}
 	}
 
 	boards := delivery.usecase.GetBoards(context.Background(), userID)

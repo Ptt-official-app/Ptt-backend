@@ -47,6 +47,8 @@ func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.Boar
 }
 
 func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error) {
+	// TODO: Change to popular GetBoards or get popular board there
+	// Please see: https://github.com/Ptt-official-app/Ptt-backend/issues/51#issuecomment-783895477
 	boards := usecase.repo.GetBoards(ctx)
 	// TODO: Sort boards in descending order by number_of_user
 
@@ -154,7 +156,8 @@ func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID stri
 }
 
 func getArticleURL(boardID string, filename string) string {
-	return fmt.Sprintf("https://ptt-app-dev-codingman.pichuchen.tw/bbs/%s/%s.html", boardID, filename)
+	// TODO: generate article url by config file
+	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)
 }
 
 func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []bbs.ArticleRecord {
