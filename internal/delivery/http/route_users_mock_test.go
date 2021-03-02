@@ -13,7 +13,13 @@ func (usecase *MockUsecase) GetUserByID(ctx context.Context, userID string) (bbs
 }
 
 func (usecase *MockUsecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
-	return nil, nil
+	result := []interface{}{
+		map[string]interface{}{
+			"type":     "board",
+			"board_id": "test_board_001",
+		},
+	}
+	return result, nil
 }
 
 func (usecase *MockUsecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
