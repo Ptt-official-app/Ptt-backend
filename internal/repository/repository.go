@@ -33,7 +33,7 @@ type Repository interface {
 
 	// article.go
 	// GetPopularArticles returns all popular articles
-	GetPopularArticles(ctx context.Context) ([]bbs.ArticleRecord, error)
+	GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error)
 }
 
 type repository struct {
