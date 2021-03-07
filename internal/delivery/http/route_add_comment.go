@@ -30,7 +30,7 @@ func (delivery *httpDelivery) appendComment(w http.ResponseWriter, r *http.Reque
 		})
 	if err != nil {
 		// TODO: record unauthorized access
-		w.WriteHeader(502)
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
@@ -42,7 +42,7 @@ func (delivery *httpDelivery) appendComment(w http.ResponseWriter, r *http.Reque
 		text,
 	)
 	if err != nil {
-		w.WriteHeader(503)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
