@@ -15,6 +15,8 @@ func (delivery *httpDelivery) getUsers(w http.ResponseWriter, r *http.Request) {
 		delivery.getUserInformation(w, r, userId)
 	case "favorites":
 		delivery.getUserFavorites(w, r, userId)
+	case "articles":
+		delivery.getUserArticles(w, r, userId)
 	default:
 		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userId, item, err)
 		w.WriteHeader(http.StatusNotFound)
@@ -74,6 +76,45 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userId)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
+	}
+
+	responseMap := map[string]interface{}{
+		"data": map[string]interface{}{
+			"items": dataItems,
+		},
+	}
+
+	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
+
+	w.Write(responseByte)
+}
+
+func (delivery *httpDelivery) getUserArticles(w http.ResponseWriter, r *http.Request, userID string) {
+	token := delivery.getTokenFromRequest(r)
+	err := delivery.usecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadUserInformation},
+		map[string]string{
+			"user_id": userID,
+		})
+
+	if err != nil {
+		// TODO: record unauthorized access
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// First get all board ID
+	// and then search user's articles
+	boards := delivery.usecase.GetBoards(context.Background(), userID)
+	boardIDs := []string{}
+	for _, board := range boards {
+		boardIDs = append(boardIDs, board.BoardId())
+	}
+
+	// return need fix
+	dataItems, err := delivery.usecase.GetUserArticles(context.Background(), boardIDs, userID)
+	if err != nil {
+		delivery.logger.Errorf("failed to get user's articles: %s\n", err)
 	}
 
 	responseMap := map[string]interface{}{

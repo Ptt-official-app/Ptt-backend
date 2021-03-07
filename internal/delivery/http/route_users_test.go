@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 func TestGetUserInformation(t *testing.T) {
@@ -87,4 +89,39 @@ func TestParseUserPath(t *testing.T) {
 
 	}
 
+}
+
+func TestGetUserArticles(t *testing.T) {
+
+	userID := "userID"
+	var mockUsecase usecase.Usecase // FIXME: use concrete mock rather than mockUsecase
+	mockDelivery := NewHTTPDelivery(mockUsecase)
+
+	req, err := http.NewRequest("GET", "/v1/users/userID/articles", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := mockUsecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/users/", mockDelivery.routeUsers)
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	responsedMap := map[string]interface{}{}
+	json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	t.Logf("got response %v", rr.Body.String())
+	responsedData := responsedMap["data"].(map[string]interface{})
+	if responsedData["owner"] != userID {
+		t.Errorf("handler returned unexpected body, user_id not match: got %v want userId %v",
+			rr.Body.String(), userID)
+	}
 }

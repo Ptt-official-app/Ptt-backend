@@ -48,17 +48,48 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 		"number_of_login_days": fmt.Sprintf("%d", user.NumLoginDays()),
 		"number_of_posts":      fmt.Sprintf("%d", user.NumPosts()),
 		"number_of_badposts":   fmt.Sprintf("%d", user.NumBadPosts()),
-		"money":           fmt.Sprintf("%d", user.Money()),
-		"money_description": getMoneyDiscription(user.Money()),
-		"last_login_time": user.LastLogin().Format(time.RFC3339),
-		"last_login_ipv4": user.LastHost(),
-		"last_login_ip":   user.LastHost(),
-		"last_login_country": user.LastCountry(),
-		"mailbox_description": user.MailboxDescription(),
-		"chess_status": user.ChessStatus(),
-		"plan":         user.Plan(),
+		"money":                fmt.Sprintf("%d", user.Money()),
+		"money_description":    getMoneyDiscription(user.Money()),
+		"last_login_time":      user.LastLogin().Format(time.RFC3339),
+		"last_login_ipv4":      user.LastHost(),
+		"last_login_ip":        user.LastHost(),
+		"last_login_country":   user.LastCountry(),
+		"mailbox_description":  user.MailboxDescription(),
+		"chess_status":         user.ChessStatus(),
+		"plan":                 user.Plan(),
 	}
 	return result, nil
+}
+
+func (usecase *usecase) GetUserArticles(ctx context.Context, boardIDs []string, userID string) ([]interface{}, error) {
+	dataItems := []interface{}{}
+
+	for _, boardID := range boardIDs {
+		articleRecords, err := usecase.repo.GetUserArticles(ctx, boardID)
+		if err != nil {
+			return nil, err
+		}
+
+		for index := range articleRecords {
+			if articleRecords[index].Owner() == userID {
+				dataItems = append(dataItems, map[string]interface{}{
+					"board_id":        boardID,
+					"filename":        articleRecords[index].Filename(),
+					"modified_time":   articleRecords[index].Modified(),
+					"recommend_count": articleRecords[index].Recommend(),
+					"comment_count":   0,  // FIXME: use concrete value rather than 0
+					"post_date":       "", // FIXME: use concrete value rather than ""
+					"title":           articleRecords[index].Title(),
+					"money":           articleRecords[index].Money(),
+					"owner":           articleRecords[index].Owner(),
+					"aid":             "", // FIXME: use concrete value rather than ""
+					"url":             "", // FIXME: use concrete value rather than ""
+				})
+			}
+		}
+	}
+
+	return dataItems, nil
 }
 
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
