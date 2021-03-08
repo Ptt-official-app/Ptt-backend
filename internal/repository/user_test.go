@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func TestGetUsers(t *testing.T) {

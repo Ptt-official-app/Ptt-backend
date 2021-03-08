@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) {

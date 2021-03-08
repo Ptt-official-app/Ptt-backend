@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 // TODO: go-bbs lacks following interfaces, remove when go-bbs will have implemented functions

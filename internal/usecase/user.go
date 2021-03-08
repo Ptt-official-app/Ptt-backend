@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func (usecase *usecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
@@ -48,15 +48,15 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 		"number_of_login_days": fmt.Sprintf("%d", user.NumLoginDays()),
 		"number_of_posts":      fmt.Sprintf("%d", user.NumPosts()),
 		"number_of_badposts":   fmt.Sprintf("%d", user.NumBadPosts()),
-		"money":           fmt.Sprintf("%d", user.Money()),
-		"money_description": getMoneyDiscription(user.Money()),
-		"last_login_time": user.LastLogin().Format(time.RFC3339),
-		"last_login_ipv4": user.LastHost(),
-		"last_login_ip":   user.LastHost(),
-		"last_login_country": user.LastCountry(),
-		"mailbox_description": user.MailboxDescription(),
-		"chess_status": user.ChessStatus(),
-		"plan":         user.Plan(),
+		"money":                fmt.Sprintf("%d", user.Money()),
+		"money_description":    getMoneyDiscription(user.Money()),
+		"last_login_time":      user.LastLogin().Format(time.RFC3339),
+		"last_login_ipv4":      user.LastHost(),
+		"last_login_ip":        user.LastHost(),
+		"last_login_country":   user.LastCountry(),
+		"mailbox_description":  user.MailboxDescription(),
+		"chess_status":         user.ChessStatus(),
+		"plan":                 user.Plan(),
 	}
 	return result, nil
 }
