@@ -8,8 +8,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-// ref - internal\delivery\http\route.go:52
-// desc - route user map
+// getUsers is a http handler function which will rewrite to correct route
 func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	userID, item, err := parseUserPath(r.URL.Path)
 	switch item {
@@ -23,10 +22,11 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// ref - https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__information
-// desc - get user information , include last visit
-// route - /v1/users/{user_id}/information
-// parameter - userID : 使用者 id
+/*
+	getUserInformation is a http handler function which will writes the information including last visit time of user with userID 
+	to w. request path should be /v1/users/{{user_id}}/information
+	Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__information
+*/
 func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
@@ -69,10 +69,11 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-// ref - https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
-// desc - get user favorite list
-// route - /v1/users/{user_id}/favorites
-// parameter - userID : 使用者 id
+/*
+	getUserFavorites is a http handler function which will get favorite list of user with userID 
+	to w. request path should be /v1/users/{{user_id}}/favorites
+	Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
+*/
 func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,

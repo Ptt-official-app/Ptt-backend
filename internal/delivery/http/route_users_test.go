@@ -7,8 +7,10 @@ import (
 	"testing"
 )
 
-// ref - internal\delivery\http\route_users.go:30
-// desc - test get user information
+/*
+	TestGetUserInformation is a test function which will test getUserInformation (/v1/users/{{user_id}}/favorites)
+	Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
+*/
 func TestGetUserInformation(t *testing.T) {
 
 	userID := "id"
@@ -47,8 +49,9 @@ func TestGetUserInformation(t *testing.T) {
 	}
 }
 
-// ref - internal\delivery\http\route_users.go:13
-// desc - test parse route user url
+/*
+	TestParseUserPath is a test function which will test getUsers route mapping
+*/
 func TestParseUserPath(t *testing.T) {
 
 	type TestCase struct {
