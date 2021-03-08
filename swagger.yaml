@@ -717,7 +717,7 @@ paths:
                   enum: [ 'append_comment' ]
                 type:
                   type: string
-                  enum: [ 'like', 'dislike' ]
+                  enum: [ '推', '噓', '→' ]
                   description: '推 or 噓文'
                 text:
                   type: string
