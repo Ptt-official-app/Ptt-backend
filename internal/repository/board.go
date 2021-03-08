@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func (repo *repository) GetBoards(_ context.Context) []bbs.BoardRecord {

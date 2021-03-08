@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func (repo *MockRepository) GetBoards(ctx context.Context) []bbs.BoardRecord {
@@ -53,7 +53,7 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 			date:           "",
 			title:          "Popular Article 1",
 			money:          0,
-			boardID: "Gossiping",
+			boardID:        "Gossiping",
 		},
 		{
 			filename:       "",
@@ -63,7 +63,7 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 			date:           "",
 			title:          "Popular Article 2",
 			money:          0,
-			boardID: "Gossiping",
+			boardID:        "Gossiping",
 		},
 		{
 			filename:       "",
@@ -73,7 +73,7 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 			date:           "",
 			title:          "Popular Article 3",
 			money:          0,
-			boardID: "Joke",
+			boardID:        "Joke",
 		},
 	}
 	result := make([]repository.PopularArticleRecord, len(articleRecords))

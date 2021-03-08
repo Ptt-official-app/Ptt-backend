@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 // PopularArticleRecord is an ArticleRecord which has boardID information.

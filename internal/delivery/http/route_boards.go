@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +66,7 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	responseMap := map[string]interface{}{
 		"data": struct {
 			Items []interface{} `json:"items"`
-		}{ dataList },
+		}{dataList},
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")

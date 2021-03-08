@@ -3,10 +3,10 @@ package usecase
 import (
 	"context"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 // Usecase is the implementation of backend business logic.

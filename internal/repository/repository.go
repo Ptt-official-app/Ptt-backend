@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 var (
