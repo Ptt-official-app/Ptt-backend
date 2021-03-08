@@ -47,7 +47,7 @@ type Usecase interface {
 
 	// article.go
 	// GetPopularArticles returns all popular articles
-	GetPopularArticles(ctx context.Context) ([]bbs.ArticleRecord, error)
+	GetPopularArticles(ctx context.Context) ([]repository.PopularArticleRecord, error)
 }
 
 type usecase struct {
