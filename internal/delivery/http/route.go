@@ -1,18 +1,39 @@
 package http
 
 import (
+	"github.com/gorilla/mux"
 	"net/http"
 	"strings"
 )
 
-func (delivery *httpDelivery) buildRoute(mux *http.ServeMux) {
-	mux.HandleFunc("/v1/token", delivery.routeToken)
-	mux.HandleFunc("/v1/boards", delivery.routeBoards)
-	mux.HandleFunc("/v1/boards/", delivery.routeBoards)
-	mux.HandleFunc("/v1/popular-boards", delivery.routePopularBoards)
-	mux.HandleFunc("/v1/popular-articles", delivery.routePopularArticles)
-	mux.HandleFunc("/v1/classes/", delivery.routeClasses)
-	mux.HandleFunc("/v1/users/", delivery.routeUsers)
+//func (delivery *httpDelivery) buildRoute(mux *http.ServeMux) {
+//	mux.HandleFunc("/v1/token", delivery.routeToken)
+//	mux.HandleFunc("/v1/boards", delivery.routeBoards)
+//	mux.HandleFunc("/v1/boards/", delivery.routeBoards)
+//	mux.HandleFunc("/v1/popular-boards", delivery.routePopularBoards)
+//	mux.HandleFunc("/v1/popular-articles", delivery.routePopularArticles)
+//	mux.HandleFunc("/v1/classes/", delivery.routeClasses)
+//	mux.HandleFunc("/v1/users/", delivery.routeUsers)
+//}
+
+func (delivery *httpDelivery) buildRoute() {
+	delivery.Post("/v1/token", delivery.postToken)
+	delivery.Get("/v1/boards", delivery.getBoardList)
+	delivery.Get("/v1/boards/{boardID}/information", delivery.getBoardInformation)
+	delivery.Get("/v1/boards/{boardID}/articles", delivery.getBoardArticles)
+	delivery.Get("/v1/boards/{boardID}/articles/{filename}", delivery.getBoardArticlesFile)
+	delivery.Get("/v1/boards/{boardID}/treasures/{filename}", delivery.getBoardTreasures)
+}
+
+func (delivery httpDelivery) Params(r *http.Request) map[string]string {
+	return mux.Vars(r)
+}
+
+func (delivery httpDelivery) Post(path string, handlerFunc http.HandlerFunc) {
+	delivery.Router.HandleFunc(path, handlerFunc).Methods(http.MethodPost)
+}
+func (delivery httpDelivery) Get(path string, handlerFunc http.HandlerFunc) {
+	delivery.Router.HandleFunc(path, handlerFunc).Methods(http.MethodGet)
 }
 
 func (delivery *httpDelivery) routeToken(w http.ResponseWriter, r *http.Request) {
@@ -30,15 +51,15 @@ func (delivery *httpDelivery) routeClass(w http.ResponseWriter, r *http.Request)
 	}
 }
 
-// routeBoards is the handler for `/v1/boards`
-func (delivery *httpDelivery) routeBoards(w http.ResponseWriter, r *http.Request) {
-	delivery.logger.Debugf("routeBoards: %v", r)
-	// TODO: Check IP Flowspeed
-	switch r.Method {
-	case http.MethodGet:
-		delivery.getBoards(w, r)
-	}
-}
+//// routeBoards is the handler for `/v1/boards`
+//func (delivery *httpDelivery) routeBoards(w http.ResponseWriter, r *http.Request) {
+//	delivery.logger.Debugf("routeBoards: %v", r)
+//	// TODO: Check IP Flowspeed
+//	switch r.Method {
+//	case http.MethodGet:
+//		delivery.getBoards(w, r)
+//	}
+//}
 
 func (delivery *httpDelivery) routePopularBoards(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
@@ -74,34 +95,34 @@ func (delivery *httpDelivery) routeUsers(w http.ResponseWriter, r *http.Request)
 }
 
 // getBoards is the handler for `/v1/boards` with GET method
-func (delivery *httpDelivery) getBoards(w http.ResponseWriter, r *http.Request) {
-	delivery.logger.Debugf("getBoards: %v", r)
-	boardId, item, filename, err := delivery.parseBoardPath(r.URL.Path)
-	if boardId == "" {
-		delivery.getBoardList(w, r)
-		return
-	}
-	// get single board
-	if item == "information" {
-		delivery.getBoardInformation(w, r, boardId)
-		return
-	} else if item == "articles" {
-		if filename == "" {
-			delivery.getBoardArticles(w, r, boardId)
-		} else {
-			delivery.getBoardArticlesFile(w, r, boardId, filename)
-		}
-		return
-	} else if item == "treasures" {
-		delivery.getBoardTreasures(w, r, boardId)
-		return
-	}
-
-	// 404
-	w.WriteHeader(http.StatusNotFound)
-
-	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
-}
+//func (delivery *httpDelivery) getBoards(w http.ResponseWriter, r *http.Request) {
+//	delivery.logger.Debugf("getBoards: %v", r)
+//	boardId, item, filename, err := delivery.parseBoardPath(r.URL.Path)
+//	if boardId == "" {
+//		delivery.getBoardList(w, r)
+//		return
+//	}
+//	// get single board
+//	if item == "information" {
+//		delivery.getBoardInformation(w, r, boardId)
+//		return
+//	} else if item == "articles" {
+//		if filename == "" {
+//			delivery.getBoardArticles(w, r, boardId)
+//		} else {
+//			delivery.getBoardArticlesFile(w, r, boardId, filename)
+//		}
+//		return
+//	} else if item == "treasures" {
+//		delivery.getBoardTreasures(w, r, boardId)
+//		return
+//	}
+//
+//	// 404
+//	w.WriteHeader(http.StatusNotFound)
+//
+//	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
+//}
 
 // parseBoardPath covert url path from /v1/boards/SYSOP/article to
 // {SYSOP, article) or /v1/boards to {,}

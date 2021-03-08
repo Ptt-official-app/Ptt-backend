@@ -73,13 +73,15 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 	w.Write(b)
 }
 
-func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
+func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request) {
+	params := delivery.Params(r)
+	boardID := params["boardID"]
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadBoardInformation},
 		map[string]string{
-			"board_id": boardId,
+			"board_id": boardID,
 		})
 
 	if err != nil {
@@ -88,14 +90,14 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 		return
 	}
 
-	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardId)
+	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardID)
 	if err != nil {
 		// TODO: record error
-		delivery.logger.Warningf("find board %s failed: %v", boardId, err)
+		delivery.logger.Warningf("find board %s failed: %v", boardID, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_board_error",
-			"error_description": "get board for " + boardId + " failed",
+			"error_description": "get board for " + boardID + " failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.Write(b)

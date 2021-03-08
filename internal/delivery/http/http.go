@@ -2,6 +2,7 @@ package http
 
 import (
 	"fmt"
+	"github.com/gorilla/mux"
 	"net/http"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
@@ -9,12 +10,14 @@ import (
 )
 
 type httpDelivery struct {
+	*mux.Router
 	logger  logging.Logger
 	usecase usecase.Usecase
 }
 
 func NewHTTPDelivery(usecase usecase.Usecase) *httpDelivery {
 	delivery := &httpDelivery{
+		Router:  mux.NewRouter(),
 		logger:  logging.NewLogger(),
 		usecase: usecase,
 	}
@@ -22,9 +25,8 @@ func NewHTTPDelivery(usecase usecase.Usecase) *httpDelivery {
 }
 
 func (delivery *httpDelivery) Run(port int16) error {
-	mux := http.NewServeMux()
-	delivery.buildRoute(mux)
+	delivery.buildRoute()
 
 	delivery.logger.Informationalf("listen port on %v", port)
-	return http.ListenAndServe(fmt.Sprintf(":%v", port), mux)
+	return http.ListenAndServe(fmt.Sprintf(":%v", port), delivery)
 }
