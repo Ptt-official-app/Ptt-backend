@@ -53,7 +53,7 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 			date:           "",
 			title:          "Popular Article 1",
 			money:          0,
-			boardID: "Gossiping",
+			boardID:        "Gossiping",
 		},
 		{
 			filename:       "",
@@ -63,7 +63,7 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 			date:           "",
 			title:          "Popular Article 2",
 			money:          0,
-			boardID: "Gossiping",
+			boardID:        "Gossiping",
 		},
 		{
 			filename:       "",
@@ -73,7 +73,7 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 			date:           "",
 			title:          "Popular Article 3",
 			money:          0,
-			boardID: "Joke",
+			boardID:        "Joke",
 		},
 	}
 	result := make([]repository.PopularArticleRecord, len(articleRecords))
@@ -85,6 +85,18 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 
 func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {
 	return []bbs.ArticleRecord{}, nil
+}
+
+func (repo *MockRepository) GetBoardPostsLimited(ctx context.Context, boardID string) (repository.PostsLimitedBoardRecord, error) {
+	return &MockPostsLimitedBoardRecord{}, nil
+}
+
+func (repo *MockRepository) GetBoardLoginsLimited(ctx context.Context, boardID string) (repository.LoginsLimitedBoardRecord, error) {
+	return &MockLoginsLimitedBoardRecord{}, nil
+}
+
+func (repo *MockRepository) GetBoardBadPostLimited(ctx context.Context, boardID string) (repository.BadPostLimitedBoardRecord, error) {
+	return &MockBadPostLimitedBoardRecord{}, nil
 }
 
 type MockArticleRecord struct {
@@ -124,3 +136,15 @@ func (m MockPopularArticle) Title() string       { return m.title }
 func (m MockPopularArticle) Money() int          { return 0 }
 func (m MockPopularArticle) Owner() string       { return "" }
 func (m MockPopularArticle) BoardID() string     { return m.boardID }
+
+type MockPostsLimitedBoardRecord struct{}
+
+func (m *MockPostsLimitedBoardRecord) PostLimitPosts() uint8 { return 0 }
+
+type MockLoginsLimitedBoardRecord struct{}
+
+func (m *MockLoginsLimitedBoardRecord) PostLimitLogins() uint8 { return 0 }
+
+type MockBadPostLimitedBoardRecord struct{}
+
+func (m *MockBadPostLimitedBoardRecord) PostLimitBadPost() uint8 { return 0 }
