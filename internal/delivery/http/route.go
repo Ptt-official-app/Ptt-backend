@@ -10,6 +10,7 @@ func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
 	mux.HandleFunc("/v1/boards", delivery.routeBoards)
 	mux.HandleFunc("/v1/boards/", delivery.routeBoards)
 	mux.HandleFunc("/v1/popular-boards", delivery.routePopularBoards)
+	mux.HandleFunc("/v1/popular-articles", delivery.routePopularArticles)
 	mux.HandleFunc("/v1/classes/", delivery.routeClasses)
 	mux.HandleFunc("/v1/users/", delivery.routeUsers)
 }
@@ -37,6 +38,14 @@ func (delivery *Delivery) routePopularBoards(w http.ResponseWriter, r *http.Requ
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getPopularBoardList(w, r)
+	}
+}
+
+// routePopularArticles a handler for `/v1/popular-articles`
+func (delivery *Delivery) routePopularArticles(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		delivery.getPopularArticles(w, r)
 	}
 }
 

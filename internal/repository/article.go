@@ -3,10 +3,19 @@ package repository
 import (
 	"context"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
-func (repo *repository) GetPopularArticles(ctx context.Context) ([]bbs.ArticleRecord, error) {
-	// TODO: should implement popular articles there
-	return []bbs.ArticleRecord{}, nil
+// PopularArticleRecord is an ArticleRecord which has boardID information.
+type PopularArticleRecord interface {
+	// Note: go-bbs has not implemented this yet
+	// TODO: use bbs.PopularArticleRecord or something when it is ready
+	bbs.ArticleRecord
+	BoardID() string
+}
+
+func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error) {
+	// Note: go-bbs has not implemented this yet
+	// TODO: delegate to repo.db when it is ready
+	return []PopularArticleRecord{}, nil
 }

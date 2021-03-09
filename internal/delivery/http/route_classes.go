@@ -2,8 +2,8 @@ package http
 
 import (
 	"context"
-	// "github.com/PichuChen/go-bbs"
-	// "github.com/PichuChen/go-bbs/crypt"
+	// "github.com/Ptt-official-app/go-bbs"
+	// "github.com/Ptt-official-app/go-bbs/crypt"
 	// "log"
 	"encoding/json"
 	"fmt"

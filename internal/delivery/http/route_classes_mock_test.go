@@ -3,7 +3,7 @@ package http
 import (
 	"context"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 type MockClassBoardRecord struct {
