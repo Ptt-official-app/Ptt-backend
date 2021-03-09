@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
-	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 )
 
 func TestGetUserByID(t *testing.T) {
@@ -40,20 +39,19 @@ func TestGetUserByID(t *testing.T) {
 
 func TestGetUserArticles(t *testing.T) {
 
-	userID := "userID"
-	boardIDs := []string{"softjob", "techjob"}
-	var mockRepository repository.Repository // FIXME: use concrete mock rather than mockRepository
+	userID := "user"
+	mockRepository := &MockRepository{}
 	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
 
-	dataItems, err := mockUsecase.GetUserArticles(context.TODO(), boardIDs, userID)
+	dataItems, err := mockUsecase.GetUserArticles(context.TODO(), userID)
 
-	if err == nil {
-		t.Errorf("getUserByID with userID excepted not nil error, got nil")
+	if err != nil {
+		t.Errorf("GetUserArticles with userID excepted nil error, got %v", err)
 		return
 	}
 
-	if dataItems != nil {
-		t.Errorf("getUserByID with userID excepted nil, got %v", dataItems)
+	if dataItems == nil {
+		t.Errorf("GetUserArticles with userID excepted not nil, got %v", dataItems)
 		return
 	}
 

@@ -19,7 +19,7 @@ type Usecase interface {
 	// GetUserInformation returns user info of a user
 	GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) // FIXME: use concrete type rather than map[string]interface{}
 	// GetUserArticles returns user's articles
-	GetUserArticles(ctx context.Context, boardIDs []string, userID string) ([]interface{}, error) // FIXME: use concrete type rather than []interface{}
+	GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) // FIXME: use concrete type rather than []interface{}
 
 	// board.go
 	// GetBoardByID returns board record of board id

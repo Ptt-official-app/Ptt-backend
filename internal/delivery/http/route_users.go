@@ -103,16 +103,8 @@ func (delivery *httpDelivery) getUserArticles(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	// First get all board ID
-	// and then search user's articles
-	boards := delivery.usecase.GetBoards(context.Background(), userID)
-	boardIDs := []string{}
-	for _, board := range boards {
-		boardIDs = append(boardIDs, board.BoardId())
-	}
-
 	// return need fix
-	dataItems, err := delivery.usecase.GetUserArticles(context.Background(), boardIDs, userID)
+	dataItems, err := delivery.usecase.GetUserArticles(context.Background(), userID)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user's articles: %s\n", err)
 	}

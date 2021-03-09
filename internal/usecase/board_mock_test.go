@@ -148,3 +148,31 @@ func (m *MockLoginsLimitedBoardRecord) PostLimitLogins() uint8 { return 0 }
 type MockBadPostLimitedBoardRecord struct{}
 
 func (m *MockBadPostLimitedBoardRecord) PostLimitBadPost() uint8 { return 0 }
+
+func (repo *MockRepository) GetUserArticles(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error) {
+	articleRecords := []MockArticleRecord{
+		{
+			filename:       "",
+			modified:       time.Time{},
+			recommendCount: 10,
+			owner:          "user",
+			date:           "",
+			title:          "[討論] 薪水太少",
+			money:          0,
+		},
+		{
+			filename:       "",
+			modified:       time.Time{},
+			recommendCount: -20,
+			owner:          "9487",
+			date:           "",
+			title:          "[問題] 我不會寫程式",
+			money:          0,
+		},
+	}
+	result := make([]bbs.ArticleRecord, len(articleRecords))
+	for i, v := range articleRecords {
+		result[i] = v
+	}
+	return result, nil
+}

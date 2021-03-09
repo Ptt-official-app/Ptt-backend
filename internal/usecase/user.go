@@ -61,11 +61,13 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 	return result, nil
 }
 
-func (usecase *usecase) GetUserArticles(ctx context.Context, boardIDs []string, userID string) ([]interface{}, error) {
+func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) {
 	dataItems := []interface{}{}
 
-	for _, boardID := range boardIDs {
-		articleRecords, err := usecase.repo.GetUserArticles(ctx, boardID)
+	boards := usecase.GetBoards(ctx, userID)
+
+	for _, v := range boards {
+		articleRecords, err := usecase.repo.GetUserArticles(ctx, v.BoardId())
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +75,7 @@ func (usecase *usecase) GetUserArticles(ctx context.Context, boardIDs []string, 
 		for index := range articleRecords {
 			if articleRecords[index].Owner() == userID {
 				dataItems = append(dataItems, map[string]interface{}{
-					"board_id":        boardID,
+					"board_id":        "", // FIXME: use concrete value rather than ""
 					"filename":        articleRecords[index].Filename(),
 					"modified_time":   articleRecords[index].Modified(),
 					"recommend_count": articleRecords[index].Recommend(),

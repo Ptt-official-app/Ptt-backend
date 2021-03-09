@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 func TestGetUserInformation(t *testing.T) {
@@ -93,11 +91,11 @@ func TestParseUserPath(t *testing.T) {
 
 func TestGetUserArticles(t *testing.T) {
 
-	userID := "userID"
-	var mockUsecase usecase.Usecase // FIXME: use concrete mock rather than mockUsecase
+	userID := "id"
+	mockUsecase := NewMockUsecase()
 	mockDelivery := NewHTTPDelivery(mockUsecase)
 
-	req, err := http.NewRequest("GET", "/v1/users/userID/articles", nil)
+	req, err := http.NewRequest("GET", "/v1/users/user/articles", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -119,9 +117,8 @@ func TestGetUserArticles(t *testing.T) {
 	responsedMap := map[string]interface{}{}
 	json.Unmarshal(rr.Body.Bytes(), &responsedMap)
 	t.Logf("got response %v", rr.Body.String())
-	responsedData := responsedMap["data"].(map[string]interface{})
-	if responsedData["owner"] != userID {
-		t.Errorf("handler returned unexpected body, user_id not match: got %v want userId %v",
-			rr.Body.String(), userID)
+	if responsedMap["data"] == nil {
+		t.Errorf("handler returned unexpected body, got %v want not nil",
+			rr.Body.String())
 	}
 }
