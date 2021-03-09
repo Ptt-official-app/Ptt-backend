@@ -13,7 +13,7 @@ func (delivery *Delivery) getBoardList(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getBoardList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userID, err := delivery.usecase.GetUserIdFromToken(token)
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		userID = "guest" // TODO: use const variable
 		// user permission error

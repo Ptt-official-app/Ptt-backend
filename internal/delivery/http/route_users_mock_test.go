@@ -30,11 +30,11 @@ func (usecase *MockUsecase) GetUserInformation(ctx context.Context, userID strin
 }
 
 type MockUserRecord struct {
-	userId string
+	userID string
 }
 
-func NewMockUserRecord(userId string) *MockUserRecord { return &MockUserRecord{userId: userId} }
-func (u *MockUserRecord) UserId() string              { return u.userId }
+func NewMockUserRecord(userID string) *MockUserRecord { return &MockUserRecord{userID: userID} }
+func (u *MockUserRecord) UserId() string              { return u.userID }
 
 // HashedPassword return user hashed password, it only for debug,
 // If you want to check is user password correct, please use
