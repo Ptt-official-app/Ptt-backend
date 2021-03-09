@@ -42,7 +42,7 @@ func TestAppendCommentResponse(t *testing.T) {
 
 	v := url.Values{}
 	v.Set("action", "append_comment")
-	v.Set("type", "like")
+	v.Set("type", "推")
 	v.Set("text", "頭香")
 	t.Logf("testing body: %v", v)
 	req, err := http.NewRequest("POST", "/v1/boards/test/articles/test", strings.NewReader(v.Encode()))
