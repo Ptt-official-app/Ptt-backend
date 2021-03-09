@@ -17,6 +17,6 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 }
 
 // AppendComment append comment to specific article
-func (usecase *usecase) AppendComment(ctx context.Context, boardID, filename, appendType, text string) (map[string]interface{}, error) {
+func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
 	return map[string]interface{}{}, nil
 }

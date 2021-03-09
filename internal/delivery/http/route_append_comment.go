@@ -34,8 +34,15 @@ func (delivery *httpDelivery) appendComment(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
+	userID, err := delivery.usecase.GetUserIdFromToken(token)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
 	res, err := delivery.usecase.AppendComment(
 		context.Background(),
+		userID,
 		boardID,
 		filename,
 		appendType,
@@ -48,7 +55,7 @@ func (delivery *httpDelivery) appendComment(w http.ResponseWriter, r *http.Reque
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"raw":    text,
+			"raw":    r.PostForm.Encode(),
 			"parsed": res,
 		},
 	}
