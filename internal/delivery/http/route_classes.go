@@ -2,8 +2,8 @@ package http
 
 import (
 	"context"
-	// "github.com/PichuChen/go-bbs"
-	// "github.com/PichuChen/go-bbs/crypt"
+	// "github.com/Ptt-official-app/go-bbs"
+	// "github.com/Ptt-official-app/go-bbs/crypt"
 	// "log"
 	"encoding/json"
 	"fmt"
@@ -37,7 +37,7 @@ func (delivery *Delivery) getClassesList(w http.ResponseWriter, r *http.Request,
 	delivery.logger.Debugf("getClassesList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userID, err := delivery.usecase.GetUserIdFromToken(token)
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		userID = "guest" // TODO: use const variable
 		// user permission error

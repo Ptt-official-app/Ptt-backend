@@ -3,10 +3,10 @@ package usecase
 import (
 	"context"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 // Usecase is the implementation of backend business logic.
@@ -38,14 +38,14 @@ type Usecase interface {
 	// token.go
 	// CreateAccessTokenWithUsername creates access token for a user
 	CreateAccessTokenWithUsername(username string) string
-	// GetUserIdFromToken retrieves user id by token
-	GetUserIdFromToken(token string) (string, error)
+	// GetUserIDFromToken retrieves user id by token
+	GetUserIDFromToken(token string) (string, error)
 	// CheckPermission checks permissions
-	CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error // FIXME: use concrete type rather than map[string]string
+	CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error // FIXME: use concrete type rather than map[string]string
 
 	// article.go
 	// GetPopularArticles returns all popular articles
-	GetPopularArticles(ctx context.Context) ([]bbs.ArticleRecord, error)
+	GetPopularArticles(ctx context.Context) ([]repository.PopularArticleRecord, error)
 }
 
 type usecase struct {

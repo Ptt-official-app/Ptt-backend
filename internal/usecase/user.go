@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func (usecase *usecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {

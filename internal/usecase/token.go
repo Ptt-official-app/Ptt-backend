@@ -42,8 +42,8 @@ func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {
 	return ss
 }
 
-func (usecase *usecase) GetUserIdFromToken(token string) (string, error) {
-	usecase.logger.Debugf("getUserIdFromToken token: %v", token)
+func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
+	usecase.logger.Debugf("GetUserIDFromToken token: %v", token)
 	pem := usecase.globalConfig.AccessTokenPublicKey
 	key, err := jwt.ParseECPublicKeyFromPEM([]byte(pem))
 	if err != nil {
@@ -65,7 +65,7 @@ func (usecase *usecase) GetUserIdFromToken(token string) (string, error) {
 		return "", nil
 	}
 
-	// logger.Debugf("getUserIdFromToken jwtToken: %v %v", jwtToken, err)
+	// logger.Debugf("GetUserIDFromToken jwtToken: %v %v", jwtToken, err)
 	if claim, ok := jwtToken.Claims.(*jwt.StandardClaims); ok && jwtToken.Valid {
 		usecase.logger.Debugf("subject: %v %v", claim, jwtToken.Valid)
 		return claim.Subject, nil

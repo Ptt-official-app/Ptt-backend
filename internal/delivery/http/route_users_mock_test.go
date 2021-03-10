@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func (usecase *MockUsecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
@@ -30,11 +30,11 @@ func (usecase *MockUsecase) GetUserInformation(ctx context.Context, userID strin
 }
 
 type MockUserRecord struct {
-	userId string
+	userID string
 }
 
-func NewMockUserRecord(userId string) *MockUserRecord { return &MockUserRecord{userId: userId} }
-func (u *MockUserRecord) UserId() string              { return u.userId }
+func NewMockUserRecord(userID string) *MockUserRecord { return &MockUserRecord{userID: userID} }
+func (u *MockUserRecord) UserId() string              { return u.userID }
 
 // HashedPassword return user hashed password, it only for debug,
 // If you want to check is user password correct, please use
