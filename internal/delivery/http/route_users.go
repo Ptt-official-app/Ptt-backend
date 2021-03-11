@@ -76,6 +76,8 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userId)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
 
 	responseMap := map[string]interface{}{

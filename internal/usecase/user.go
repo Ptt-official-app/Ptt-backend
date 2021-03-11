@@ -64,10 +64,11 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) {
 	dataItems := []interface{}{}
 
+	// Because there is no user’s historical article data stored, first get all public boards, and then get user articles
 	boards := usecase.GetBoards(ctx, userID)
 
-	for _, v := range boards {
-		articleRecords, err := usecase.repo.GetUserArticles(ctx, v.BoardId())
+	for _, board := range boards {
+		articleRecords, err := usecase.repo.GetUserArticles(ctx, board.BoardId())
 		if err != nil {
 			return nil, err
 		}
