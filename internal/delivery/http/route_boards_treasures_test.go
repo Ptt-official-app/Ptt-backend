@@ -13,4 +13,9 @@ func TestFetchBoardsTreasures(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("v1/boards/", delivery.routeBoards)
+	r.ServeHTTP(rr, req)
 }
