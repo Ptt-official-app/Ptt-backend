@@ -18,4 +18,11 @@ func TestFetchBoardsTreasures(t *testing.T) {
 	r := http.NewServeMux()
 	r.HandleFunc("v1/boards/", delivery.routeBoards)
 	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+
 }
