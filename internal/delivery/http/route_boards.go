@@ -141,7 +141,7 @@ func marshalBoardHeader(b bbs.BoardRecord) map[string]interface{} {
 		ret["type"] = "class"
 	} else {
 		// board
-		ret["id"] = b.BoardId()
+		ret["id"] = b.BoardID()
 		ret["type"] = "board"
 	}
 	return ret

@@ -24,7 +24,7 @@ type ArticleSearchCond struct {
 
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
-		if boardID == it.BoardId() {
+		if boardID == it.BoardID() {
 			return it, nil
 		}
 	}
@@ -68,7 +68,7 @@ func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) 
 		if !usecase.shouldShowOnUserLevel(board, userID) {
 			continue
 		}
-		if board.ClassId() != classID {
+		if board.ClassID() != classID {
 			continue
 		}
 		// m := marshalBoardHeader(board)
