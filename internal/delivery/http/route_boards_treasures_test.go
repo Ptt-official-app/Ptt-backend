@@ -26,7 +26,9 @@ func TestFetchBoardsTreasures(t *testing.T) {
 	}
 
 	responseMap := map[string]interface{}{}
-	json.Unmarshal(rr.Body.Bytes(), &responseMap)
+	if err := json.Unmarshal(rr.Body.Bytes(), &responseMap); err != nil{
+		t.Errorf("response body unmarshal error: %v", err)
+	}
 	responseData := responseMap["data"].(map[string]interface{})
 	responseItems := responseData["items"].([]interface{})
 
