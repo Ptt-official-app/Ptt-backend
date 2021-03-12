@@ -1,6 +1,6 @@
 module github.com/Ptt-official-app/Ptt-backend
 
-go 1.14
+go 1.16
 
 require (
 	github.com/Ptt-official-app/go-bbs v0.2.6
