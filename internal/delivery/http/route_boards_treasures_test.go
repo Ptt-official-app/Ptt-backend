@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestFetchBoardsTreasures(t *testing.T) {
+func TestFetchBoardTreasures(t *testing.T) {
 	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
 	req, err := http.NewRequest(http.MethodGet, "/v1/boards/1/treasures", nil)
