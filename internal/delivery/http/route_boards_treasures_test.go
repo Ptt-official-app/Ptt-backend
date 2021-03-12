@@ -27,24 +27,22 @@ func TestFetchBoardsTreasures(t *testing.T) {
 
 	responseMap := map[string]interface{}{}
 	json.Unmarshal(rr.Body.Bytes(), &responseMap)
-	responseData := responseMap["data"]
-	for _, treasures := range responseData {
+	responseData := responseMap["data"].(map[string]interface{})
+	responseItems := responseData["items"].([]interface{})
+
+	for _, treasures := range responseItems {
 		treasure := treasures.(map[string]interface{})
 		if _, ok := treasure["filename"]; !ok {
 			t.Errorf("returned body filename not found.")
-			return
 		}
 		if _, ok := treasure["post_date"]; !ok {
 			t.Errorf("returned body post_date not found.")
-			return
 		}
 		if _, ok := treasure["title"]; !ok {
 			t.Errorf("returned body title not found.")
-			return 
 		}
 		if _, ok := treasure["owner"]; !ok {
 			t.Errorf("returned body owner not found")
-			return
 		}
 		if _, ok := treasure["url"]; !ok {
 			t.Errorf("returned body url not found")
