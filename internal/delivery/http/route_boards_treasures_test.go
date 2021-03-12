@@ -25,7 +25,7 @@ func TestFetchBoardsTreasures(t *testing.T) {
 			status, http.StatusOK)
 	}
 
-	responseMap := map[string][]interface{}{}
+	responseMap := map[string]interface{}{}
 	json.Unmarshal(rr.Body.Bytes(), &responseMap)
 	responseData := responseMap["data"]
 	for _, treasures := range responseData {
