@@ -96,7 +96,7 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 
 	dataList := []interface{}{}
 	for bid, b := range boards {
-		m := marshalBoardHeader(b)
+		m := marshalBoardHeaderWithoutInfo(b)
 		if b.IsClass() {
 			m["id"] = fmt.Sprintf("%v", bid+1)
 		}
