@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
-	"testing"
 	"strconv"
+	"testing"
 )
 
 func TestGetPopularBoardList(t *testing.T) {
@@ -41,7 +41,7 @@ func TestGetPopularBoardList(t *testing.T) {
 			t.Fatalf("handler returned unexpected body, invalid number_of_user: got %v",
 				currNum)
 		}
-		
+
 		if i > 0 && prevNum < currNum {
 			t.Fatalf("handler returned unexpected body, invalid order: got %v before %v",
 				prevNum, currNum)
