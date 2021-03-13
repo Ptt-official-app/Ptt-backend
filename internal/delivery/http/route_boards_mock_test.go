@@ -45,7 +45,15 @@ func (usecase *MockUsecase) GetBoardArticle(ctx context.Context, boardID, filena
 }
 
 func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} {
-	panic("Not implemented")
+	return []interface{}{
+		map[string]interface{}{
+			"filename": "testBoardTreasures",
+			"post_date": "2020-03-12",
+			"title": "testing",
+			"owner": "ptt",
+			"url": "https://google.com",
+		},
+	}
 }
 
 type MockBoardRecord struct {

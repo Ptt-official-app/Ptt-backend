@@ -6,7 +6,7 @@
 
 | 應用程式名稱 | 應用程式版本(有特定版本才填寫) | 安裝要求 |
 | ------- | ------- | ------- |
-|[Golang](https://golang.org/dl/)|1.14 以上|必要|
+|[Golang](https://golang.org/dl/)|1.16 以上|必要|
 |[GoLand](https://www.jetbrains.com/go/promo/)| |如果使用 GoLand * 推薦給新手|
 |[Sublime Text 3](https://classic.yarnpkg.com/zh-Hant/)| |如果使用 Sublime Text，記得安裝 Gofmt 套件|
 |[docker engine](https://docs.docker.com/engine/install/)| 1.13.0+ | |
