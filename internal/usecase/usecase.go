@@ -26,6 +26,8 @@ type Usecase interface {
 	GetBoards(ctx context.Context, userID string) []bbs.BoardRecord
 	// GetPopularBoards returns top 100 popular board records
 	GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error)
+	// GetBoardPostsLimition returns all posts limit of a board
+	GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error)
 	// GetClasses returns board records in a class
 	GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord
 	// GetBoardArticles returns articles of a board

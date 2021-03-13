@@ -87,15 +87,15 @@ func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID
 	return []bbs.ArticleRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardPostsLimited(ctx context.Context, boardID string) (repository.PostsLimitedBoardRecord, error) {
+func (repo *MockRepository) GetBoardPostsLimit(ctx context.Context, boardID string) (repository.PostsLimitedBoardRecord, error) {
 	return &MockPostsLimitedBoardRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardLoginsLimited(ctx context.Context, boardID string) (repository.LoginsLimitedBoardRecord, error) {
+func (repo *MockRepository) GetBoardLoginsLimit(ctx context.Context, boardID string) (repository.LoginsLimitedBoardRecord, error) {
 	return &MockLoginsLimitedBoardRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardBadPostLimited(ctx context.Context, boardID string) (repository.BadPostLimitedBoardRecord, error) {
+func (repo *MockRepository) GetBoardBadPostLimit(ctx context.Context, boardID string) (repository.BadPostLimitedBoardRecord, error) {
 	return &MockBadPostLimitedBoardRecord{}, nil
 }
 

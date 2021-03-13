@@ -33,6 +33,18 @@ func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID strin
 	panic("Not implemented")
 }
 
+func (usecase *MockUsecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*usecase.BoardPostLimitation, error) {
+	return NewMockBoardPostLimitation(0, 0, 0), nil
+}
+
+func NewMockBoardPostLimitation(postsLimit uint8, loginsLimit uint8, badPostLimit uint8) *usecase.BoardPostLimitation {
+	return &usecase.BoardPostLimitation{
+		PostsLimit:   postsLimit,
+		LoginsLimit:  loginsLimit,
+		BadPostLimit: badPostLimit,
+	}
+}
+
 type MockBoardRecord struct {
 	boardID string
 	title   string
