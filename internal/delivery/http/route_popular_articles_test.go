@@ -17,7 +17,7 @@ func TestGetPopularArticles(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	r := http.NewServeMux()
-	r.HandleFunc("/v1/popular-articles", delivery.routePopularArticles)
+	r.HandleFunc("/v1/popular-articles", delivery.getPopularArticles)
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {

@@ -110,3 +110,21 @@ func (delivery *httpDelivery) getClassesList(w http.ResponseWriter, r *http.Requ
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	w.Write(b)
 }
+
+// parseClassPath covert url path from /v1/classes/1/information to
+// {1, information) or /v1/classes to {,}
+func (delivery *httpDelivery) parseClassPath(path string) (classId string, item string, err error) {
+	pathSegment := strings.Split(path, "/")
+	if len(pathSegment) == 5 {
+		// /{{version}}/classes/{{class_id}}/{{item}}
+		return pathSegment[3], pathSegment[4], nil
+	} else if len(pathSegment) == 4 {
+		// /{{version}}/classes/{{class_id}}
+		return pathSegment[3], "", nil
+	} else if len(pathSegment) == 3 {
+		// /{{version}}/classes
+		return "", "", nil
+	}
+	delivery.logger.Warningf("parseClassPath got malform path: %v", path)
+	return "", "", nil
+}

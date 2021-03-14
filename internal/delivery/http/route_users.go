@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
@@ -85,4 +86,14 @@ func (delivery *httpDelivery) getUserFavorites(w http.ResponseWriter, r *http.Re
 	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
 
 	w.Write(responseByte)
+}
+
+func parseUserPath(path string) (userId string, item string, err error) {
+	pathSegment := strings.Split(path, "/")
+	// /{{version}}/users/{{user_id}}/{{item}}
+	if len(pathSegment) == 4 {
+		// /{{version}}/users/{{user_id}}
+		return pathSegment[3], "", nil
+	}
+	return pathSegment[3], pathSegment[4], nil
 }

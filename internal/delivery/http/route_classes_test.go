@@ -23,7 +23,7 @@ func TestGetClassesList(t *testing.T) {
 
 	rr := httptest.NewRecorder()
 	r := http.NewServeMux()
-	r.HandleFunc("/v1/classes/", delivery.routeClasses)
+	r.HandleFunc("/v1/classes/", delivery.getClasses)
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
