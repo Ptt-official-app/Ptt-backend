@@ -67,8 +67,8 @@ func NewMockBoardRecord(classID, boardID, title string, isClass bool) *MockBoard
 	return &MockBoardRecord{boardID: boardID, title: title, isClass: isClass, classID: classID}
 }
 
-func (b *MockBoardRecord) BoardId() string { return b.boardID }
+func (b *MockBoardRecord) BoardID() string { return b.boardID }
 func (b *MockBoardRecord) Title() string   { return b.title }
 func (b *MockBoardRecord) IsClass() bool   { return b.isClass }
-func (b *MockBoardRecord) ClassId() string { return b.classID }
+func (b *MockBoardRecord) ClassID() string { return b.classID }
 func (b *MockBoardRecord) BM() []string    { return make([]string, 0) }

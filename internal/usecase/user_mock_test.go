@@ -22,7 +22,7 @@ type MockUser struct {
 	userID string
 }
 
-func (u *MockUser) UserId() string                       { return u.userID }
+func (u *MockUser) UserID() string                       { return u.userID }
 func (u *MockUser) HashedPassword() string               { return "" }
 func (u *MockUser) VerifyPassword(password string) error { return nil }
 func (u *MockUser) Nickname() string                     { return "" }

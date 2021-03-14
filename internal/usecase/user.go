@@ -15,7 +15,7 @@ func (usecase *usecase) GetUserByID(ctx context.Context, userID string) (bbs.Use
 		return nil, err
 	}
 	for _, it := range users {
-		if userID == it.UserId() {
+		if userID == it.UserID() {
 			return it, nil
 		}
 	}
@@ -42,7 +42,7 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 	// TODO: Check Etag or Not-Modified for cache
 
 	result := map[string]interface{}{
-		"user_id":              user.UserId(),
+		"user_id":              user.UserID(),
 		"nickname":             user.Nickname(),
 		"realname":             user.RealName(),
 		"number_of_login_days": fmt.Sprintf("%d", user.NumLoginDays()),
@@ -70,7 +70,7 @@ func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []int
 		case bbs.FavoriteTypeBoard:
 			dataItems = append(dataItems, map[string]interface{}{
 				"type":     "board",
-				"board_id": item.BoardId(),
+				"board_id": item.BoardID(),
 			})
 
 		case bbs.FavoriteTypeFolder:

@@ -34,7 +34,7 @@ type MockUserRecord struct {
 }
 
 func NewMockUserRecord(userID string) *MockUserRecord { return &MockUserRecord{userID: userID} }
-func (u *MockUserRecord) UserId() string              { return u.userID }
+func (u *MockUserRecord) UserID() string              { return u.userID }
 
 // HashedPassword return user hashed password, it only for debug,
 // If you want to check is user password correct, please use

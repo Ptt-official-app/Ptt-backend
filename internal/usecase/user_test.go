@@ -30,8 +30,8 @@ func TestGetUserByID(t *testing.T) {
 		return
 	}
 
-	if rec.UserId() != "pichu" {
-		t.Errorf("getUserByID with pichu excepted userid: pichu, got %v", rec.UserId())
+	if rec.UserID() != "pichu" {
+		t.Errorf("getUserByID with pichu excepted userid: pichu, got %v", rec.UserID())
 		return
 	}
 
