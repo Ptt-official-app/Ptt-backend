@@ -21,12 +21,11 @@ func NewHTTPDelivery(usecase usecase.Usecase) *httpDelivery {
 		logger:  logging.NewLogger(),
 		usecase: usecase,
 	}
+	delivery.buildRoute()
 	return delivery
 }
 
 func (delivery *httpDelivery) Run(port int16) error {
-	delivery.buildRoute()
-
 	delivery.logger.Informationalf("listen port on %v", port)
 	return http.ListenAndServe(fmt.Sprintf(":%v", port), delivery)
 }

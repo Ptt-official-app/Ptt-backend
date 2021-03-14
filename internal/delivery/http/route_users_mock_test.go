@@ -17,7 +17,7 @@ func (usecase *MockUsecase) GetUserFavorites(ctx context.Context, userID string)
 
 func (usecase *MockUsecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
 	result := map[string]interface{}{
-		"user_id": "id",
+		"user_id": userID,
 	}
 	return result, nil
 }
