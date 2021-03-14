@@ -20,7 +20,8 @@ func (delivery *httpDelivery) buildRoute() {
 	// TODO: Check IP Flowspeed
 	delivery.Get("/v1/classes/", delivery.getClasses)
 	// TODO: Check IP Flowspeed
-	delivery.Get("/v1/users/", delivery.getUsers)
+	delivery.Get("/v1/users/{userID}/information", delivery.getUserInformation)
+	delivery.Get("/v1/users/{userID}/favorites", delivery.getUserFavorites)
 }
 
 func (delivery *httpDelivery) Params(r *http.Request) map[string]string {
