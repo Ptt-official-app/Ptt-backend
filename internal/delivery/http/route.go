@@ -23,14 +23,14 @@ func (delivery *httpDelivery) buildRoute() {
 	delivery.Get("/v1/users/", delivery.getUsers)
 }
 
-func (delivery httpDelivery) Params(r *http.Request) map[string]string {
+func (delivery *httpDelivery) Params(r *http.Request) map[string]string {
 	return mux.Vars(r)
 }
 
-func (delivery httpDelivery) Post(path string, handlerFunc http.HandlerFunc) {
+func (delivery *httpDelivery) Post(path string, handlerFunc http.HandlerFunc) {
 	delivery.Router.HandleFunc(path, handlerFunc).Methods(http.MethodPost)
 }
-func (delivery httpDelivery) Get(path string, handlerFunc http.HandlerFunc) {
+func (delivery *httpDelivery) Get(path string, handlerFunc http.HandlerFunc) {
 	delivery.Router.HandleFunc(path, handlerFunc).Methods(http.MethodGet)
 }
 
