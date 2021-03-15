@@ -94,7 +94,10 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 
 	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
 
-	w.Write(responseByte)
+	_, err = w.Write(responseByte)
+	if err != nil {
+		delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+	}
 }
 
 func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request, userID string) {

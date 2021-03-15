@@ -126,7 +126,10 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 			"error_description": "get board post_limitation for " + boardID + " failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+		}
 		return
 	}
 

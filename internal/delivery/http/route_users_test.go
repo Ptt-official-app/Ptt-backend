@@ -160,7 +160,10 @@ func TestGetUserArticles(t *testing.T) {
 	}
 
 	responsedMap := map[string]interface{}{}
-	json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
 	t.Logf("got response %v", rr.Body.String())
 	if responsedMap["data"] == nil {
 		t.Errorf("handler returned unexpected body, got %v want not nil",
