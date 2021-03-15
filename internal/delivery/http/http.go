@@ -9,7 +9,7 @@ import (
 )
 
 type httpDelivery struct {
-	logger  logging.Logger
+	logger  *logging.Logger
 	usecase usecase.Usecase
 }
 

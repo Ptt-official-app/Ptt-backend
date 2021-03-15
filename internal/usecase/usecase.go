@@ -53,7 +53,7 @@ type Usecase interface {
 }
 
 type usecase struct {
-	logger       logging.Logger
+	logger       *logging.Logger
 	globalConfig *config.Config
 	repo         repository.Repository
 }

@@ -4,70 +4,58 @@ import (
 	"log"
 )
 
-// Logger is the interface that wraps the basic Logging methods.
-//
-// Logger follows the Syslog Message Severities in RFC5424.
-type Logger interface {
-	// Emergency: system is unusable
-	Emergencyf(f string, v ...interface{})
-	// Alert: action must be taken immediately
-	Alertf(f string, v ...interface{})
-	// Critical: critical conditions
-	Criticalf(f string, v ...interface{})
-	// Error: error conditions
-	Errorf(f string, v ...interface{})
-	// Warning: warning conditions
-	Warningf(f string, v ...interface{})
-	// Notice: normal but significant condition
-	Noticef(f string, v ...interface{})
-	// Informational: informational messages
-	Informationalf(f string, v ...interface{})
-	// Debug: debug-level messages
-	Debugf(f string, v ...interface{})
+// Logger provides the basic Logging methods, following the Syslog Message Severities defined in RFC5424.
+// https://tools.ietf.org/html/rfc5424#section-6.2.1
+type Logger struct {}
+
+func NewLogger() *Logger {
+	return &Logger{}
 }
 
-type logger struct{}
-
-func NewLogger() Logger {
-	return &logger{}
-}
-
-// Emergencyf implements Logger.Emergencyf by printing Emergency level messages to standard output.
-func (l *logger) Emergencyf(f string, v ...interface{}) {
+// Emergencyf prints Emergency level messages to standard output.
+// RFC5424 definition: "system is unusable"
+func (l *Logger) Emergencyf(f string, v ...interface{}) {
 	log.Printf(f, v...)
 }
 
-// Alertf implements Logger.Alertf by printing Alert level messages to standard output.
-func (l *logger) Alertf(f string, v ...interface{}) {
+// Alertf prints Alert level messages to standard output.
+// RFC5424 definition: "action must be taken immediately"
+func (l *Logger) Alertf(f string, v ...interface{}) {
 	log.Printf(f, v...)
 }
 
-// Criticalf implements Logger.Criticalf by printing Critical level messages to standard output.
-func (l *logger) Criticalf(f string, v ...interface{}) {
+// Criticalf prints Critical level messages to standard output.
+// RFC5424 definition: "critical conditions"
+func (l *Logger) Criticalf(f string, v ...interface{}) {
 	log.Printf(f, v...)
 }
 
-// Errorf implements Logger.Errorf by printing Error level messages to standard output.
-func (l *logger) Errorf(f string, v ...interface{}) {
+// Errorf prints Error level messages to standard output.
+// RFC5424 definition: "error conditions"
+func (l *Logger) Errorf(f string, v ...interface{}) {
 	log.Printf(f, v...)
 }
 
-// Warningf implements Logger.Warningf by printing Warning level messages to standard output.
-func (l *logger) Warningf(f string, v ...interface{}) {
+// Warningf prints Warning level messages to standard output.
+// RFC5424 definition: "warning conditions"
+func (l *Logger) Warningf(f string, v ...interface{}) {
 	log.Printf(f, v...)
 }
 
-// Noticef implements Logger.Noticef by printing Notice level messages to standard output.
-func (l *logger) Noticef(f string, v ...interface{}) {
+// Noticef prints Notice level messages to standard output.
+// RFC5424 definition: "normal but significant condition"
+func (l *Logger) Noticef(f string, v ...interface{}) {
 	log.Printf(f, v...)
 }
 
-// Informationalf implements Logger.Informationalf by printing Informational level messages to standard output.
-func (l *logger) Informationalf(f string, v ...interface{}) {
+// Informationalf prints Informational level messages to standard output.
+// RFC5424 definition: "informational messages"
+func (l *Logger) Informationalf(f string, v ...interface{}) {
 	log.Printf(f, v...)
 }
 
-// Debugf implements Logger.Debugf by printing Debug level messages to standard output.
-func (l *logger) Debugf(f string, v ...interface{}) {
+// Debugf prints Debug level messages to standard output.
+// RFC5424 definition: "debug-level messages"
+func (l *Logger) Debugf(f string, v ...interface{}) {
 	log.Printf(f, v...)
 }
