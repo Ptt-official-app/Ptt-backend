@@ -8,11 +8,18 @@ import (
 )
 
 func (usecase *MockUsecase) GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error) {
-	return nil, nil
+	result := NewMockUserRecord(userID)
+	return result, nil
 }
 
 func (usecase *MockUsecase) GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) {
-	return nil, nil
+	result := []interface{}{
+		map[string]interface{}{
+			"type":     "board",
+			"board_id": "test_board_001",
+		},
+	}
+	return result, nil
 }
 
 func (usecase *MockUsecase) GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) {
@@ -27,11 +34,11 @@ func (usecase *MockUsecase) GetUserArticles(ctx context.Context, userID string) 
 }
 
 type MockUserRecord struct {
-	userId string
+	userID string
 }
 
-func NewMockUserRecord(userId string) *MockUserRecord { return &MockUserRecord{userId: userId} }
-func (u *MockUserRecord) UserId() string              { return u.userId }
+func NewMockUserRecord(userID string) *MockUserRecord { return &MockUserRecord{userID: userID} }
+func (u *MockUserRecord) UserID() string              { return u.userID }
 
 // HashedPassword return user hashed password, it only for debug,
 // If you want to check is user password correct, please use

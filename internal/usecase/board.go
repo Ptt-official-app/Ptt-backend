@@ -30,7 +30,7 @@ type BoardPostLimitation struct {
 
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
-		if boardID == it.BoardId() {
+		if boardID == it.BoardID() {
 			return it, nil
 		}
 	}
@@ -97,7 +97,7 @@ func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) 
 		if !usecase.shouldShowOnUserLevel(board, userID) {
 			continue
 		}
-		if board.ClassId() != classID {
+		if board.ClassID() != classID {
 			continue
 		}
 		// m := marshalBoardHeader(board)
@@ -184,9 +184,9 @@ func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID stri
 	return true
 }
 
-func getArticleURL(boardId string, filename string) string {
+func getArticleURL(boardID string, filename string) string {
 	// TODO: generate article url by config file
-	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardId, filename)
+	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)
 }
 
 func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []bbs.ArticleRecord {

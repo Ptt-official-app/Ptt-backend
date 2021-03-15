@@ -74,7 +74,7 @@ func loadBoardFile(db *bbs.DB) ([]bbs.BoardRecord, error) {
 		return nil, fmt.Errorf("failed to read board records: %w", err)
 	}
 	for index, board := range boardRecords {
-		logger.Debugf("loaded %d %v", index, board.BoardId())
+		logger.Debugf("loaded %d %v", index, board.BoardID())
 	}
 	return boardRecords, nil
 }

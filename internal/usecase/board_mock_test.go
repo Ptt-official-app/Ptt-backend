@@ -128,13 +128,13 @@ type MockPopularArticle struct {
 	boardID        string
 }
 
-func (m MockPopularArticle) Filename() string    { return "" }
-func (m MockPopularArticle) Modified() time.Time { return time.Unix(0, 0) }
-func (m MockPopularArticle) Recommend() int      { return 0 }
-func (m MockPopularArticle) Date() string        { return "" }
+func (m MockPopularArticle) Filename() string    { return m.filename }
+func (m MockPopularArticle) Modified() time.Time { return m.modified }
+func (m MockPopularArticle) Recommend() int      { return m.recommendCount }
+func (m MockPopularArticle) Date() string        { return m.date }
 func (m MockPopularArticle) Title() string       { return m.title }
-func (m MockPopularArticle) Money() int          { return 0 }
-func (m MockPopularArticle) Owner() string       { return "" }
+func (m MockPopularArticle) Money() int          { return m.money }
+func (m MockPopularArticle) Owner() string       { return m.owner }
 func (m MockPopularArticle) BoardID() string     { return m.boardID }
 
 type MockPostsLimitedBoardRecord struct{}
