@@ -1,10 +1,10 @@
 package usecase
 
 import (
-	"github.com/Ptt-official-app/Ptt-backend/internal/config"
-
 	"context"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 )
 
 func TestGetUserByID(t *testing.T) {
@@ -32,6 +32,26 @@ func TestGetUserByID(t *testing.T) {
 
 	if rec.UserID() != "pichu" {
 		t.Errorf("getUserByID with pichu excepted userid: pichu, got %v", rec.UserID())
+		return
+	}
+
+}
+
+func TestGetUserArticles(t *testing.T) {
+
+	userID := "user"
+	mockRepository := &MockRepository{}
+	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
+
+	dataItems, err := mockUsecase.GetUserArticles(context.TODO(), userID)
+
+	if err != nil {
+		t.Errorf("GetUserArticles with userID excepted nil error, got %v", err)
+		return
+	}
+
+	if dataItems == nil {
+		t.Errorf("GetUserArticles with userID excepted not nil, got %v", dataItems)
 		return
 	}
 

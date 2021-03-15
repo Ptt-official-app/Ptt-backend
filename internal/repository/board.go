@@ -52,17 +52,17 @@ func (repo *repository) GetBoardTreasureRecords(_ context.Context, boardID strin
 	return repo.db.ReadBoardTreasureRecordsFile(boardID, treasureIDs)
 }
 
-func (repo *repository) GetBoardPostsLimited(_ context.Context, boardID string) (PostsLimitedBoardRecord, error) {
+func (repo *repository) GetBoardPostsLimit(_ context.Context, boardID string) (PostsLimitedBoardRecord, error) {
 	// TODO: replace postsLimitedBoardRecord to real bbs record
 	return &postsLimitedBoardRecord{}, nil
 }
 
-func (repo *repository) GetBoardLoginsLimited(_ context.Context, boardID string) (LoginsLimitedBoardRecord, error) {
+func (repo *repository) GetBoardLoginsLimit(_ context.Context, boardID string) (LoginsLimitedBoardRecord, error) {
 	// TODO: replace loginsLimitedBoardRecord to real bbs record
 	return &loginsLimitedBoardRecord{}, nil
 }
 
-func (repo *repository) GetBoardBadPostLimited(_ context.Context, boardID string) (BadPostLimitedBoardRecord, error) {
+func (repo *repository) GetBoardBadPostLimit(_ context.Context, boardID string) (BadPostLimitedBoardRecord, error) {
 	// TODO: replace badPostLimitedBoardRecord to real bbs record
 	return &badPostLimitedBoardRecord{}, nil
 }

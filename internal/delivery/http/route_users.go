@@ -15,6 +15,8 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 		delivery.getUserInformation(w, r, userID)
 	case "favorites":
 		delivery.getUserFavorites(w, r, userID)
+	case "articles":
+		delivery.getUserArticles(w, r, userID)
 	default:
 		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userID, item, err)
 		w.WriteHeader(http.StatusNotFound)
@@ -80,6 +82,42 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userID)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	responseMap := map[string]interface{}{
+		"data": map[string]interface{}{
+			"items": dataItems,
+		},
+	}
+
+	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
+
+	_, err = w.Write(responseByte)
+	if err != nil {
+		delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+	}
+}
+
+func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request, userID string) {
+	token := delivery.getTokenFromRequest(r)
+	err := delivery.usecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadUserInformation},
+		map[string]string{
+			"user_id": userID,
+		})
+
+	if err != nil {
+		// TODO: record unauthorized access
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// return need fix
+	dataItems, err := delivery.usecase.GetUserArticles(context.Background(), userID)
+	if err != nil {
+		delivery.logger.Errorf("failed to get user's articles: %s\n", err)
 	}
 
 	responseMap := map[string]interface{}{

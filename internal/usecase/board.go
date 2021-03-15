@@ -22,6 +22,12 @@ type ArticleSearchCond struct {
 	RecommendCountLessEqualIsSet    bool
 }
 
+type BoardPostLimitation struct {
+	PostsLimit   uint8
+	LoginsLimit  uint8
+	BadPostLimit uint8
+}
+
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
 		if boardID == it.BoardID() {
@@ -59,6 +65,29 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 		return boards, nil
 	}
 	return boards[:100], nil
+}
+
+func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error) {
+	postLimit, err := usecase.repo.GetBoardPostsLimit(ctx, boardID)
+	if err != nil {
+		return nil, fmt.Errorf("get board %s posts limit error: %w", boardID, err)
+	}
+
+	loginsLimit, err := usecase.repo.GetBoardLoginsLimit(ctx, boardID)
+	if err != nil {
+		return nil, fmt.Errorf("get board %s logins limit error: %w", boardID, err)
+	}
+
+	badPostLimit, err := usecase.repo.GetBoardBadPostLimit(ctx, boardID)
+	if err != nil {
+		return nil, fmt.Errorf("get board %s bad posts limit error: %w", boardID, err)
+	}
+
+	return &BoardPostLimitation{
+		PostsLimit:   postLimit.PostLimitPosts(),
+		LoginsLimit:  loginsLimit.PostLimitLogins(),
+		BadPostLimit: badPostLimit.PostLimitBadPost(),
+	}, nil
 }
 
 func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {

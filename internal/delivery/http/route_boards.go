@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	"github.com/Ptt-official-app/go-bbs"
@@ -32,7 +33,7 @@ func (delivery *Delivery) getBoardList(w http.ResponseWriter, r *http.Request) {
 
 	dataList := make([]interface{}, 0, len(boards))
 	for _, board := range boards {
-		dataList = append(dataList, marshalBoardHeader(board))
+		dataList = append(dataList, marshalBoardHeaderWithoutInfo(board))
 	}
 
 	responseMap := map[string]interface{}{
@@ -68,7 +69,7 @@ func (delivery *Delivery) getPopularBoardList(w http.ResponseWriter, r *http.Req
 
 	dataList := make([]interface{}, 0, len(boards))
 	for _, board := range boards {
-		dataList = append(dataList, marshalBoardHeader(board))
+		dataList = append(dataList, marshalBoardHeaderWithoutInfo(board))
 	}
 
 	responseMap := map[string]interface{}{
@@ -116,8 +117,24 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 		return
 	}
 
+	limitation, err := delivery.usecase.GetBoardPostsLimitation(context.Background(), boardID)
+	if err != nil {
+		delivery.logger.Warningf("get board %s post_limitation failed: %v", boardID, err)
+		w.WriteHeader(http.StatusInternalServerError)
+		m := map[string]string{
+			"error":             "get_board_post_limitation_error",
+			"error_description": "get board post_limitation for " + boardID + " failed",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+		}
+		return
+	}
+
 	responseMap := map[string]interface{}{
-		"data": marshalBoardHeader(brd),
+		"data": marshalBoardHeader(brd, limitation),
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
@@ -129,7 +146,11 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 
 // marshal generate board or class metadata object,
 // b is input header
-func marshalBoardHeader(b bbs.BoardRecord) map[string]interface{} {
+func marshalBoardHeaderWithoutInfo(b bbs.BoardRecord) map[string]interface{} {
+	return marshalBoardHeader(b, nil)
+}
+
+func marshalBoardHeader(b bbs.BoardRecord, l *usecase.BoardPostLimitation) map[string]interface{} {
 	ret := map[string]interface{}{
 		"title":          b.Title(),
 		"number_of_user": "0",
@@ -143,6 +164,13 @@ func marshalBoardHeader(b bbs.BoardRecord) map[string]interface{} {
 		// board
 		ret["id"] = b.BoardID()
 		ret["type"] = "board"
+	}
+	if l != nil {
+		ret["post_limitation"] = map[string]interface{}{
+			"posts":   strconv.Itoa(int(l.PostsLimit)),
+			"logins":  strconv.Itoa(int(l.LoginsLimit)),
+			"badpost": strconv.Itoa(int(l.BadPostLimit)),
+		}
 	}
 	return ret
 }

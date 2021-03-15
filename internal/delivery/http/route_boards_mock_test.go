@@ -47,12 +47,24 @@ func (usecase *MockUsecase) GetBoardArticle(ctx context.Context, boardID, filena
 func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} {
 	return []interface{}{
 		map[string]interface{}{
-			"filename": "testBoardTreasures",
+			"filename":  "testBoardTreasures",
 			"post_date": "2020-03-12",
-			"title": "testing",
-			"owner": "ptt",
-			"url": "https://google.com",
+			"title":     "testing",
+			"owner":     "ptt",
+			"url":       "https://google.com",
 		},
+	}
+}
+
+func (usecase *MockUsecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*usecase.BoardPostLimitation, error) {
+	return NewMockBoardPostLimitation(0, 0, 0), nil
+}
+
+func NewMockBoardPostLimitation(postsLimit uint8, loginsLimit uint8, badPostLimit uint8) *usecase.BoardPostLimitation {
+	return &usecase.BoardPostLimitation{
+		PostsLimit:   postsLimit,
+		LoginsLimit:  loginsLimit,
+		BadPostLimit: badPostLimit,
 	}
 }
 
