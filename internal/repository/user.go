@@ -55,6 +55,10 @@ func (repo *repository) GetUserFavoriteRecords(ctx context.Context, userID strin
 	return repo.db.ReadUserFavoriteRecords(userID)
 }
 
+func (repo *repository) GetUserArticles(_ context.Context, boardID string) ([]bbs.ArticleRecord, error) {
+	return repo.db.ReadBoardArticleRecordsFile(boardID)
+}
+
 func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {
 	userRecords, err := db.ReadUserRecords()
 	if err != nil {

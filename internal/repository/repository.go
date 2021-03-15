@@ -24,21 +24,23 @@ type Repository interface {
 	GetBoardArticleRecords(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error)
 	// GetBoardTreasureRecords returns treasure article records of a board
 	GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error)
-	// GetBoardPostsLimited returns posts limited record of a board
+	// GetBoardPostsLimit returns posts limited record of a board
 	// TODO: replace PostsLimitedBoardRecord with real bbs record
-	GetBoardPostsLimited(ctx context.Context, boardID string) (PostsLimitedBoardRecord, error)
-	// GetBoardLoginsLimited returns logins limited record of a board
+	GetBoardPostsLimit(ctx context.Context, boardID string) (PostsLimitedBoardRecord, error)
+	// GetBoardLoginsLimit returns logins limited record of a board
 	// TODO: replace LoginsLimitedBoardRecord with real bbs record
-	GetBoardLoginsLimited(ctx context.Context, boardID string) (LoginsLimitedBoardRecord, error)
-	// GetBoardBadPostLimited returns bad posts limited record of a board
+	GetBoardLoginsLimit(ctx context.Context, boardID string) (LoginsLimitedBoardRecord, error)
+	// GetBoardBadPostLimit returns bad posts limited record of a board
 	// TODO: replace BadPostLimitedBoardRecord with real bbs record
-	GetBoardBadPostLimited(ctx context.Context, boardID string) (BadPostLimitedBoardRecord, error)
+	GetBoardBadPostLimit(ctx context.Context, boardID string) (BadPostLimitedBoardRecord, error)
 
 	// user.go
 	// GetUsers returns all user reords
 	GetUsers(ctx context.Context) ([]bbs.UserRecord, error)
 	// GetUserFavoriteRecords returns favorite records of a user
 	GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error)
+	// GetUserArticles returns user's articles
+	GetUserArticles(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error)
 
 	// article.go
 	// GetPopularArticles returns all popular articles

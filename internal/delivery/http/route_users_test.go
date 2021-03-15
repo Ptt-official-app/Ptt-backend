@@ -133,3 +133,37 @@ func TestGetUserFavorite(t *testing.T) {
 			firstItem["board_id"], expectBoardID)
 	}
 }
+
+func TestGetUserArticles(t *testing.T) {
+
+	userID := "id"
+	mockUsecase := NewMockUsecase()
+	mockDelivery := NewHTTPDelivery(mockUsecase)
+
+	req, err := http.NewRequest("GET", "/v1/users/user/articles", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := mockUsecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/users/", mockDelivery.routeUsers)
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	responsedMap := map[string]interface{}{}
+	json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	t.Logf("got response %v", rr.Body.String())
+	if responsedMap["data"] == nil {
+		t.Errorf("handler returned unexpected body, got %v want not nil",
+			rr.Body.String())
+	}
+}
