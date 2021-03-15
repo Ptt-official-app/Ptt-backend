@@ -45,6 +45,8 @@ func TestGetUserInformation(t *testing.T) {
 	}
 }
 
+
+
 func TestParseUserPath(t *testing.T) {
 
 	type TestCase struct {
@@ -133,6 +135,48 @@ func TestGetUserFavorite(t *testing.T) {
 			firstItem["board_id"], expectBoardID)
 	}
 }
+
+
+func TestGetUserPreference(t *testing.T) {
+	userID := "id"
+	usecase := NewMockUsecase()
+	delivery := NewHTTPDelivery(usecase)
+	req, err := http.NewRequest("GET", "/v1/users/SYSOP/preferences", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := usecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer"+token)
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/users/", delivery.routeUsers)
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+	}
+
+	responsedMap := map[string]interface{}{}
+	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	if err != nil {
+		t.Errorf("get unexpected json: %w", err)
+	}
+
+	t.Logf("got response %v", rr.Body.String())
+	responsedData := responsedMap["data"].(map[string]interface{})
+	firstItem := responsedData["favorite_no_highlight"]
+
+	expectedValue := "false"
+	if firstItem != expectedValue {
+		t.Errorf("handler returned unexpected body, favorite_no_highlight not match: got %v want value %v",
+		firstItem, expectedValue)
+	}
+
+}
+
 
 func TestGetUserArticles(t *testing.T) {
 
