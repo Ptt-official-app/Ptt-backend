@@ -45,6 +45,7 @@ type MockUserRecord struct {
 	userID string
 }
 
+// NewMockUserRecord generates fake user record for developing
 func NewMockUserRecord(userID string) *MockUserRecord { return &MockUserRecord{userID: userID} }
 func (u *MockUserRecord) UserID() string              { return u.userID }
 
