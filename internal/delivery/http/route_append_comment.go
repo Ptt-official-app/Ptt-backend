@@ -3,8 +3,9 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	"net/http"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 // appendComment handles request with `/v1/boards/{boardID}/articles/{filename}` and will
