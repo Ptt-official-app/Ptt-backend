@@ -25,14 +25,17 @@ type loginsLimitedBoardRecord struct{}
 type badPostLimitedBoardRecord struct{}
 
 func (r *postsLimitedBoardRecord) PostLimitPosts() uint8 {
+	// TODO: connect go-bbs
 	return 0
 }
 
 func (r *loginsLimitedBoardRecord) PostLimitLogins() uint8 {
+	// TODO: connect go-bbs
 	return 0
 }
 
 func (r *badPostLimitedBoardRecord) PostLimitBadPost() uint8 {
+	// TODO: connect go-bbs
 	return 0
 }
 
