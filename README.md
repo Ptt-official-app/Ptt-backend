@@ -133,7 +133,8 @@ ASCII 圖片產圖引擎
 ## 文件檔案部分
 
 * [RESTful API 文件](https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit?usp=sharing)
-* [go-bbs Package](https://github.com/PichuChen/go-bbs)
-* [Openapi](http://localhost:8081/swagger) 使用 docker-compose 啟動     
-  `sudo docker-compose up -d`
+* [go-bbs Package](https://github.com/Ptt-official-app/go-bbs)
+* [Openapi](http://localhost:8081/swagger) 使用 docker-compose 啟動，docker rootless 設定請參閱 [Manage Docker as a non-root user
+  ](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+  `docker-compose up -d`
 

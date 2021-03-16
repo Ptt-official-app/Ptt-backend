@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 var (
@@ -24,12 +24,23 @@ type Repository interface {
 	GetBoardArticleRecords(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error)
 	// GetBoardTreasureRecords returns treasure article records of a board
 	GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error)
+	// GetBoardPostsLimit returns posts limited record of a board
+	// TODO: replace PostsLimitedBoardRecord with real bbs record
+	GetBoardPostsLimit(ctx context.Context, boardID string) (PostsLimitedBoardRecord, error)
+	// GetBoardLoginsLimit returns logins limited record of a board
+	// TODO: replace LoginsLimitedBoardRecord with real bbs record
+	GetBoardLoginsLimit(ctx context.Context, boardID string) (LoginsLimitedBoardRecord, error)
+	// GetBoardBadPostLimit returns bad posts limited record of a board
+	// TODO: replace BadPostLimitedBoardRecord with real bbs record
+	GetBoardBadPostLimit(ctx context.Context, boardID string) (BadPostLimitedBoardRecord, error)
 
 	// user.go
 	// GetUsers returns all user reords
 	GetUsers(ctx context.Context) ([]bbs.UserRecord, error)
 	// GetUserFavoriteRecords returns favorite records of a user
 	GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error)
+	// GetUserArticles returns user's articles
+	GetUserArticles(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error)
 
 	// article.go
 	// GetPopularArticles returns all popular articles

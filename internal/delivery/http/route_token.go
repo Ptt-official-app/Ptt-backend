@@ -7,12 +7,15 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/PichuChen/go-bbs"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
-func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 
-	r.ParseForm()
+	err := r.ParseForm()
+	if err == nil {
+		delivery.logger.Errorf("postToken parse form err: %w", err)
+	}
 
 	username := r.FormValue("username")
 	password := r.FormValue("password")
@@ -24,7 +27,10 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 			"error_description": err.Error(),
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("postToken write get user id error response err: %w", err)
+		}
 		return
 
 	}
@@ -40,7 +46,10 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("postToken write password verify error response err: %w", err)
+		}
 		return
 	}
 
@@ -53,15 +62,18 @@ func (delivery *httpDelivery) postToken(w http.ResponseWriter, r *http.Request) 
 
 	b, _ := json.MarshalIndent(m, "", "  ")
 
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("postToken success response err: %w", err)
+	}
 }
 
-func (delivery *httpDelivery) verifyPassword(userec bbs.UserRecord, password string) error {
+func (delivery *Delivery) verifyPassword(userec bbs.UserRecord, password string) error {
 	log.Println("password", userec.HashedPassword())
 	return userec.VerifyPassword(password)
 }
 
-func (delivery *httpDelivery) getTokenFromRequest(r *http.Request) string {
+func (delivery *Delivery) getTokenFromRequest(r *http.Request) string {
 	a := r.Header.Get("Authorization")
 	s := strings.Split(a, " ")
 	if len(s) < 2 {

@@ -4,33 +4,36 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 
-	"github.com/PichuChen/go-bbs"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
-func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) getBoardList(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getBoardList: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	userId, err := delivery.usecase.GetUserIdFromToken(token)
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
+		userID = "guest" // TODO: use const variable
 		// user permission error
 		// Support Guest?
 		if !supportGuest() {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(`{"error":"token_invalid"}`))
+			_, err := w.Write([]byte(`{"error":"token_invalid"}`))
+			if err != nil {
+				delivery.logger.Errorf("getBoardList write token invalid response err: %w", err)
+			}
 			return
-		} else {
-			userId = "guest" // TODO: use const variable
 		}
 	}
 
-	boards := delivery.usecase.GetBoards(context.Background(), userId)
+	boards := delivery.usecase.GetBoards(context.Background(), userID)
 
 	dataList := make([]interface{}, 0, len(boards))
 	for _, board := range boards {
-		dataList = append(dataList, marshalBoardHeader(board))
+		dataList = append(dataList, marshalBoardHeaderWithoutInfo(board))
 	}
 
 	responseMap := map[string]interface{}{
@@ -38,10 +41,13 @@ func (delivery *httpDelivery) getBoardList(w http.ResponseWriter, r *http.Reques
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getBoardList write response err: %w", err)
+	}
 }
 
-func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) getPopularBoardList(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getPopularBoardList: %v", r)
 
 	boards, err := delivery.usecase.GetPopularBoards(context.Background())
@@ -54,32 +60,38 @@ func (delivery *httpDelivery) getPopularBoardList(w http.ResponseWriter, r *http
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write(b)
+		_, err := w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getPopularBoardList write error response err: %w", err)
+		}
 		return
 	}
 
 	dataList := make([]interface{}, 0, len(boards))
 	for _, board := range boards {
-		dataList = append(dataList, marshalBoardHeader(board))
+		dataList = append(dataList, marshalBoardHeaderWithoutInfo(board))
 	}
 
 	responseMap := map[string]interface{}{
 		"data": struct {
 			Items []interface{} `json:"items"`
-		}{ dataList },
+		}{dataList},
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getPopularBoardList write success response err: %w", err)
+	}
 }
 
-func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardId string) {
+func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadBoardInformation},
 		map[string]string{
-			"board_id": boardId,
+			"board_id": boardID,
 		})
 
 	if err != nil {
@@ -88,31 +100,57 @@ func (delivery *httpDelivery) getBoardInformation(w http.ResponseWriter, r *http
 		return
 	}
 
-	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardId)
+	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardID)
 	if err != nil {
 		// TODO: record error
-		delivery.logger.Warningf("find board %s failed: %v", boardId, err)
+		delivery.logger.Warningf("find board %s failed: %v", boardID, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_board_error",
-			"error_description": "get board for " + boardId + " failed",
+			"error_description": "get board for " + boardID + " failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getBoardInformation write error response err: %w", err)
+		}
+		return
+	}
+
+	limitation, err := delivery.usecase.GetBoardPostsLimitation(context.Background(), boardID)
+	if err != nil {
+		delivery.logger.Warningf("get board %s post_limitation failed: %v", boardID, err)
+		w.WriteHeader(http.StatusInternalServerError)
+		m := map[string]string{
+			"error":             "get_board_post_limitation_error",
+			"error_description": "get board post_limitation for " + boardID + " failed",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+		}
 		return
 	}
 
 	responseMap := map[string]interface{}{
-		"data": marshalBoardHeader(brd),
+		"data": marshalBoardHeader(brd, limitation),
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+	}
 }
 
 // marshal generate board or class metadata object,
 // b is input header
-func marshalBoardHeader(b bbs.BoardRecord) map[string]interface{} {
+func marshalBoardHeaderWithoutInfo(b bbs.BoardRecord) map[string]interface{} {
+	return marshalBoardHeader(b, nil)
+}
+
+func marshalBoardHeader(b bbs.BoardRecord, l *usecase.BoardPostLimitation) map[string]interface{} {
 	ret := map[string]interface{}{
 		"title":          b.Title(),
 		"number_of_user": "0",
@@ -124,8 +162,15 @@ func marshalBoardHeader(b bbs.BoardRecord) map[string]interface{} {
 		ret["type"] = "class"
 	} else {
 		// board
-		ret["id"] = b.BoardId()
+		ret["id"] = b.BoardID()
 		ret["type"] = "board"
+	}
+	if l != nil {
+		ret["post_limitation"] = map[string]interface{}{
+			"posts":   strconv.Itoa(int(l.PostsLimit)),
+			"logins":  strconv.Itoa(int(l.LoginsLimit)),
+			"badpost": strconv.Itoa(int(l.BadPostLimit)),
+		}
 	}
 	return ret
 }

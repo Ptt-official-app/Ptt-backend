@@ -43,12 +43,12 @@ func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {
 	return ss
 }
 
-func (t *usecase) GetUserIdFromToken(token string) (string, error) {
-	t.logger.Debugf("getUserIdFromToken token: %v", token)
-	pem := t.globalConfig.AccessTokenPublicKey
+func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
+	usecase.logger.Debugf("GetUserIDFromToken token: %v", token)
+	pem := usecase.globalConfig.AccessTokenPublicKey
 	key, err := jwt.ParseECPublicKeyFromPEM([]byte(pem))
 	if err != nil {
-		t.logger.Criticalf("parse public key failed: %v", err)
+		usecase.logger.Criticalf("parse public key failed: %v", err)
 		return "", err
 	}
 
@@ -57,24 +57,25 @@ func (t *usecase) GetUserIdFromToken(token string) (string, error) {
 			return key, nil
 		})
 	if err != nil {
-		t.logger.Warningf("parse token failed: %v", err)
+		usecase.logger.Warningf("parse token failed: %v", err)
 		return "", err
 	}
 
 	if jwtToken == nil {
-		t.logger.Warningf("jwtToken == nil")
+		usecase.logger.Warningf("jwtToken == nil")
 		return "", nil
 	}
 
-	// logger.Debugf("getUserIdFromToken jwtToken: %v %v", jwtToken, err)
+	// logger.Debugf("GetUserIDFromToken jwtToken: %v %v", jwtToken, err)
 	if claim, ok := jwtToken.Claims.(*jwt.StandardClaims); ok && jwtToken.Valid {
-		t.logger.Debugf("subject: %v %v", claim, jwtToken.Valid)
+		usecase.logger.Debugf("subject: %v %v", claim, jwtToken.Valid)
 		return claim.Subject, nil
 		// return "", nil
 	}
-	t.logger.Debugf("subject: %v", jwtToken.Valid)
+	usecase.logger.Debugf("subject: %v", jwtToken.Valid)
 	return "", fmt.Errorf("token not valid")
 }
+
 
 func (usecase *usecase) CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error {
 

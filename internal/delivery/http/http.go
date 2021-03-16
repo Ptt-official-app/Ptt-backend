@@ -8,20 +8,20 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
-type httpDelivery struct {
+type Delivery struct {
 	logger  logging.Logger
 	usecase usecase.Usecase
 }
 
-func NewHTTPDelivery(usecase usecase.Usecase) *httpDelivery {
-	delivery := &httpDelivery{
+func NewHTTPDelivery(usecase usecase.Usecase) *Delivery {
+	delivery := &Delivery{
 		logger:  logging.NewLogger(),
 		usecase: usecase,
 	}
 	return delivery
 }
 
-func (delivery *httpDelivery) Run(port int16) error {
+func (delivery *Delivery) Run(port int16) error {
 	mux := http.NewServeMux()
 	delivery.buildRoute(mux)
 
