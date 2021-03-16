@@ -99,7 +99,7 @@ func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 }
 
 // postBoards is the handler for `/v1/boards` with POST method
-func (delivery *httpDelivery) postBoards(w http.ResponseWriter, r *http.Request) {
+func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("postBoards: %v", r)
 	boardId, item, filename, err := delivery.parseBoardPath(r.URL.Path)
 
