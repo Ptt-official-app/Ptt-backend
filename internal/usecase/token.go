@@ -76,7 +76,6 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 	return "", fmt.Errorf("token not valid")
 }
 
-
 func (usecase *usecase) CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error {
 
 	// todo: for PermissionAppendComment should check
