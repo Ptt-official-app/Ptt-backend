@@ -9,7 +9,7 @@ import (
 
 // appendComment handles request with `/v1/boards/{boardID}/articles/{filename}` and will
 // add comment to the article
-func (delivery *httpDelivery) appendComment(w http.ResponseWriter, r *http.Request, boardID, filename string) {
+func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, boardID, filename string) {
 	delivery.logger.Debugf("appendComment: %v", r)
 
 	appendType := r.PostFormValue("type")
@@ -34,7 +34,7 @@ func (delivery *httpDelivery) appendComment(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	userID, err := delivery.usecase.GetUserIdFromToken(token)
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
