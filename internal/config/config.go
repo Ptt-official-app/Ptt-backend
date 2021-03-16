@@ -27,7 +27,7 @@ func NewDefaultConfig() (*Config, error) {
 // NewConfig load and return global config from config files, it will load
 // defaultPath first, then userPath. if defaultPath can not be read, it will
 // return error. it userPath can not be read, it will ignore userPath.
-// user configration will override default configuration.
+// user configuration will override default configuration.
 func NewConfig(defaultPath, userPath string) (*Config, error) {
 	config := &Config{}
 	logger.Debugf("load default config")
