@@ -77,7 +77,7 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 }
 
 
-func (usecase *usecase) CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error {
+func (usecase *usecase) CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error {
 
 	// todo: for PermissionAppendComment should check
 	// 1. if board can append comment

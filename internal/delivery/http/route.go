@@ -101,7 +101,7 @@ func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 // postBoards is the handler for `/v1/boards` with POST method
 func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("postBoards: %v", r)
-	boardId, item, filename, err := delivery.parseBoardPath(r.URL.Path)
+	boardID, item, filename, err := delivery.parseBoardPath(r.URL.Path)
 
 	action := r.PostFormValue("action")
 	if action == "" {
@@ -109,9 +109,9 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if item == "articles" && boardId != "" && filename != "" {
+	if item == "articles" && boardID != "" && filename != "" {
 		if action == "append_comment" {
-			delivery.appendComment(w, r, boardId, filename)
+			delivery.appendComment(w, r, boardID, filename)
 			return
 		}
 	}
@@ -119,7 +119,7 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 	// 404
 	w.WriteHeader(http.StatusNotFound)
 
-	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardId, item, err)
+	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardID, item, err)
 }
 
 // parseBoardPath covert url path from /v1/boards/SYSOP/article to

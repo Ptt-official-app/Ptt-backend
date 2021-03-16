@@ -61,5 +61,8 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getBoardTreasures write success response err: %w", err)
+	}
 }
