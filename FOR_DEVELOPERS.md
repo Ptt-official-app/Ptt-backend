@@ -110,5 +110,25 @@ $ ./Ptt-backend
 | 目的 | 分支 | 預覽用 URL | 備註 |
 | ---- | -------- | ---- | ---- |
 
-### 測試相關
-請參閱 FOR_TEST_DEVELOPERS.md
+### 基本規則
+
+1. 不接受 go test  不通過的 pr
+2. 不接受 route test 沒對 responseData assert 
+3. 不接受跟 issue 無相關的 pr，可以先開 issue 再來討論
+4. 不接受 golang-ci 不通過的 pr
+
+### 開發流程
+
+1. 在 slack 或者 github 上認領 issue
+2. fork 專案
+3. 參照他人開立 branch
+4. 在 issue 底下訂下完成時間，完成時間訂在何時可以 slack 討論
+5. 進行開發
+6. 開發完後推送 pr
+7. pr assign 給你自己
+8. 增加 reviewer
+
+### Q&A
+
+1. Q:有測試相關問題想請教怎辦? A: slack 找 陳昱廷
+2. Q: A: slack 找 陳昱廷
