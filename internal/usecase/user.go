@@ -102,29 +102,28 @@ func (usecase *usecase) GetUserPreferences(ctx context.Context, userID string) (
 	}
 	user := userrec.(repository.BBSUserRecord)
 
-	
 	// TODO: Create a mock repository to pass the values
 	result := map[string]string{
-		"favorite_no_highlight":        user.Nickname(),
-		"favorite_add_new":             "No value",
-		"friend":             		"No value",
-		"board_sort": 	      		"No value",
-		"ad_banner":          		"No value",
-		"ad_banner_user_song":   	"No value",
-		"dbcs_aware":                	"No value",
-		"dbcs_no_interupting_escape":   "No value",
-		"dbcs_drop_repeat":      	"No value",
-		"no_modification_mark":      	"No value",
-		"colored_modification_mark":    "No value",
-		"default_backup":   		"No value",
-		"new_angel_pager":  		"No value",
-		"reject_outside_mail":          "No value",
-		"secure_login":                 "No value",
-		"foreign":			"No value",
-		"live_right":			"No value",
-		"menu_lightbar":		"No value",
-		"cursor_ascii":			"No value",
-		"pager_ui":			"No value",
+		"favorite_no_highlight":      user.Nickname(),
+		"favorite_add_new":           "No value",
+		"friend":                     "No value",
+		"board_sort":                 "No value",
+		"ad_banner":                  "No value",
+		"ad_banner_user_song":        "No value",
+		"dbcs_aware":                 "No value",
+		"dbcs_no_interupting_escape": "No value",
+		"dbcs_drop_repeat":           "No value",
+		"no_modification_mark":       "No value",
+		"colored_modification_mark":  "No value",
+		"default_backup":             "No value",
+		"new_angel_pager":            "No value",
+		"reject_outside_mail":        "No value",
+		"secure_login":               "No value",
+		"foreign":                    "No value",
+		"live_right":                 "No value",
+		"menu_lightbar":              "No value",
+		"cursor_ascii":               "No value",
+		"pager_ui":                   "No value",
 	}
 	return result, nil
 }

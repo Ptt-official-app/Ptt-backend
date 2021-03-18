@@ -136,7 +136,6 @@ func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request
 	}
 }
 
-
 func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
@@ -178,4 +177,3 @@ func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Requ
 		delivery.logger.Errorf("getUserPreferences success response err: %w", err)
 	}
 }
-

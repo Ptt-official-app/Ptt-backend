@@ -37,7 +37,6 @@ func (usecase *MockUsecase) GetUserPreferences(ctx context.Context, userID strin
 	return result, nil
 }
 
-
 func (usecase *MockUsecase) GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) {
 	return nil, nil
 }

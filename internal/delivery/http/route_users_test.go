@@ -45,8 +45,6 @@ func TestGetUserInformation(t *testing.T) {
 	}
 }
 
-
-
 func TestParseUserPath(t *testing.T) {
 
 	type TestCase struct {
@@ -136,7 +134,6 @@ func TestGetUserFavorite(t *testing.T) {
 	}
 }
 
-
 func TestGetUserPreference(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
@@ -172,11 +169,10 @@ func TestGetUserPreference(t *testing.T) {
 	expectedValue := "false"
 	if firstItem != expectedValue {
 		t.Errorf("handler returned unexpected body, favorite_no_highlight not match: got %v want value %v",
-		firstItem, expectedValue)
+			firstItem, expectedValue)
 	}
 
 }
-
 
 func TestGetUserArticles(t *testing.T) {
 
