@@ -70,6 +70,20 @@ components:
           type: array
           items:
             type: string
+    PushRecord:
+      type: object
+      properties:
+        type:
+          type: string
+        id:
+          type: string
+        ip_address:
+          type: string
+        text:
+          type: string
+        time:
+          type: string
+          format: date-time
 
 paths:
   /v1/token:
@@ -639,18 +653,8 @@ paths:
                           push_records:
                             type: array
                             items:
-                              properties:
-                                type:
-                                  type: string
-                                id:
-                                  type: string
-                                ip_address:
-                                  type: string
-                                text:
-                                  type: string
-                                time:
-                                  type: string
-                                  format: date-time
+                              anyOf:
+                                - $ref: '#/components/schemas/PushRecord'
       tags:
         - 文章列表部分
 
@@ -680,6 +684,111 @@ paths:
                 properties:
                   data:
                     type: object
+      tags:
+        - 單篇文章部分
+
+    post:
+      summary: '新增評論推文或是噓文'
+      description: ''
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: board_id
+          in: path
+          required: true
+          description: 'board_id'
+          schema:
+            type: string
+        - name: filename
+          in: path
+          required: true
+          description: 'filename'
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum: [ 'append_comment' ]
+                type:
+                  type: string
+                  enum: [ '推', '噓', '→' ]
+                  description: '推 or 噓文'
+                text:
+                  type: string
+                  description: '內文'
+              required:
+                - action
+                - type
+                - text
+      responses:
+        '200':
+          description: 'ok'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      raw:
+                        type: string
+                      parsed:
+                        type: object
+                        properties:
+                          is_header_modify:
+                            type: string
+                          author_id:
+                            type: string
+                          author_name:
+                            type: string
+                          title:
+                            type: string
+                          post_time:
+                            type: string
+                            format: date-time
+                          board_name:
+                            type: string
+                          text:
+                            type: object
+                            properties:
+                              text:
+                                type: string
+                              color_map:
+                                type: string
+                          signature:
+                            type: object
+                            properties:
+                              text:
+                                type: string
+                              color_map:
+                                type: string
+                          sender_info:
+                            type: object
+                            properties:
+                              site:
+                                type: string
+                              ip_address:
+                                type: string
+                              ip_country:
+                                type: string
+                          edit_records:
+                            type: array
+                            items:
+                              type: string
+                          push_records:
+                            type: array
+                            items:
+                              anyOf:
+                                - $ref: '#/components/schemas/PushRecord'
+        '400':
+          description: 'permission denied or parameters required'
       tags:
         - 單篇文章部分
 

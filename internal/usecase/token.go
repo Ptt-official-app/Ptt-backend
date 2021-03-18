@@ -14,6 +14,7 @@ const (
 	PermissionReadBoardInformation    Permission = "READ_BOARD_INFORMATION"
 	PermissionReadTreasureInformation Permission = "READ_TREASURE_INFORMATION"
 	PermissionReadFavorite            Permission = "READ_FAVORITE"
+	PermissionAppendComment           Permission = "APPEND_COMMENT"
 )
 
 func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {
@@ -76,5 +77,11 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 }
 
 func (usecase *usecase) CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error {
+
+	// todo: for PermissionAppendComment should check
+	// 1. if board can append comment
+	// 2. if use can response in such board
+	// 3. if article locked
+
 	return nil
 }

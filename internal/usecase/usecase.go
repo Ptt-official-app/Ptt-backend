@@ -50,6 +50,7 @@ type Usecase interface {
 	// article.go
 	// GetPopularArticles returns all popular articles
 	GetPopularArticles(ctx context.Context) ([]repository.PopularArticleRecord, error)
+	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error)
 }
 
 type usecase struct {

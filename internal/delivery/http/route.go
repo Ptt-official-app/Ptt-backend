@@ -30,6 +30,8 @@ func (delivery *Delivery) routeBoards(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getBoards(w, r)
+	case http.MethodPost:
+		delivery.postBoards(w, r)
 	}
 }
 
@@ -88,6 +90,30 @@ func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 	} else if item == "treasures" {
 		delivery.getBoardTreasures(w, r, boardID)
 		return
+	}
+
+	// 404
+	w.WriteHeader(http.StatusNotFound)
+
+	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardID, item, err)
+}
+
+// postBoards is the handler for `/v1/boards` with POST method
+func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
+	delivery.logger.Debugf("postBoards: %v", r)
+	boardID, item, filename, err := delivery.parseBoardPath(r.URL.Path)
+
+	action := r.PostFormValue("action")
+	if action == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if item == "articles" && boardID != "" && filename != "" {
+		if action == "append_comment" {
+			delivery.appendComment(w, r, boardID, filename)
+			return
+		}
 	}
 
 	// 404
