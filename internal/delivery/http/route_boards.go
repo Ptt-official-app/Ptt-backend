@@ -128,7 +128,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 		b, _ := json.MarshalIndent(m, "", "  ")
 		_, err = w.Write(b)
 		if err != nil {
-			delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+			delivery.logger.Errorf("getBoardInformation write error response err: %w", err)
 		}
 		return
 	}
@@ -138,16 +138,19 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
-	w.Write(b)
+	_, err = w.Write(b)
+	if err != nil {
+		delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+	}
 }
 
-func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Request, boardId string) {
+func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardSettings: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
 		[]usecase.Permission{usecase.PermissionReadBoardInformation},
 		map[string]string{
-			"board_id": boardId,
+			"board_id": boardID,
 		})
 
 	if err != nil {
@@ -156,17 +159,20 @@ func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardId)
+	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardID)
 	if err != nil {
 		// TODO: record error
-		delivery.logger.Warningf("find board %s failed: %v", boardId, err)
+		delivery.logger.Warningf("find board %s failed: %v", boardID, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_board_error",
-			"error_description": "get board for " + boardId + " failed",
+			"error_description": "get board for " + boardID + " failed",
 		}
 		b, _ := json.MarshalIndent(m, "", "  ")
-		w.Write(b)
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getBoardSettings write error response err: %w", err)
+		}
 		return
 	}
 
@@ -177,7 +183,7 @@ func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Reques
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
+		delivery.logger.Errorf("getBoardSettings write success response err: %w", err)
 	}
 }
 
