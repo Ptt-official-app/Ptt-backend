@@ -141,7 +141,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 	w.Write(b)
 }
 
-func (delivery *httpDelivery) getBoardSettings(w http.ResponseWriter, r *http.Request, boardId string) {
+func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Request, boardId string) {
 	delivery.logger.Debugf("getBoardSettings: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
