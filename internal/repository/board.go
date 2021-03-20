@@ -25,14 +25,17 @@ type loginsLimitedBoardRecord struct{}
 type badPostLimitedBoardRecord struct{}
 
 func (r *postsLimitedBoardRecord) PostLimitPosts() uint8 {
+	// TODO: connect go-bbs
 	return 0
 }
 
 func (r *loginsLimitedBoardRecord) PostLimitLogins() uint8 {
+	// TODO: connect go-bbs
 	return 0
 }
 
 func (r *badPostLimitedBoardRecord) PostLimitBadPost() uint8 {
+	// TODO: connect go-bbs
 	return 0
 }
 
@@ -74,7 +77,7 @@ func loadBoardFile(db *bbs.DB) ([]bbs.BoardRecord, error) {
 		return nil, fmt.Errorf("failed to read board records: %w", err)
 	}
 	for index, board := range boardRecords {
-		logger.Debugf("loaded %d %v", index, board.BoardId())
+		logger.Debugf("loaded %d %v", index, board.BoardID())
 	}
 	return boardRecords, nil
 }

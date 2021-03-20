@@ -1,28 +1,21 @@
 package http
 
 import (
-	"encoding/json"
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
+	"strings"
 	"testing"
 )
 
-func TestGetBoardArticlesBadRequest(t *testing.T) {
+// TestAppendCommentBadRequest test request post `/v1/boards/{}/articles/{}` post
+// with no body
+func TestAppendCommentBadRequest(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
 
-	title := ""
-	author := ""
-	recommendCountGe := "qwerty"
-	v := url.Values{}
-	v.Set("title", title)
-	v.Set("author", author)
-	v.Set("recommend_count_ge", recommendCountGe)
-	uri := fmt.Sprintf("/v1/boards/test/articles?%s", v.Encode())
-	req, err := http.NewRequest("GET", uri, nil)
+	req, err := http.NewRequest("POST", "/v1/boards/test/articles/test", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -42,18 +35,17 @@ func TestGetBoardArticlesBadRequest(t *testing.T) {
 	}
 }
 
-func TestGetBoardArticlesResponse(t *testing.T) {
+func TestAppendCommentResponse(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
 
-	titleContain := "test_posts"
-	author := "test01"
 	v := url.Values{}
-	v.Set("title_contain", titleContain)
-	v.Set("author", author)
-	uri := fmt.Sprintf("/v1/boards/test/articles?%s", v.Encode())
-	req, err := http.NewRequest("GET", uri, nil)
+	v.Set("action", "append_comment")
+	v.Set("type", "推")
+	v.Set("text", "頭香")
+	t.Logf("testing body: %v", v)
+	req, err := http.NewRequest("POST", "/v1/boards/test/articles/test", strings.NewReader(v.Encode()))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -61,6 +53,7 @@ func TestGetBoardArticlesResponse(t *testing.T) {
 	token := usecase.CreateAccessTokenWithUsername(userID)
 	t.Logf("testing token: %v", token)
 	req.Header.Add("Authorization", "bearer "+token)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	rr := httptest.NewRecorder()
 	r := http.NewServeMux()
@@ -70,19 +63,5 @@ func TestGetBoardArticlesResponse(t *testing.T) {
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusOK)
-	}
-
-	actualResponseMap := map[string]interface{}{}
-	if err := json.Unmarshal(rr.Body.Bytes(), &actualResponseMap); err != nil {
-		t.Error(err.Error())
-	}
-	t.Logf("got response: %v", rr.Body.String())
-
-	actualResponseDataList := actualResponseMap["data"].(map[string]interface{})
-	actualResponseItems := actualResponseDataList["items"].([]interface{})
-
-	actualResponseData := actualResponseItems[0].(map[string]interface{})
-	if _, ok := actualResponseData["title"]; !ok {
-		t.Error("expect response has index \"title\"")
 	}
 }

@@ -15,7 +15,7 @@ func (usecase *usecase) GetUserByID(ctx context.Context, userID string) (bbs.Use
 		return nil, err
 	}
 	for _, it := range users {
-		if userID == it.UserId() {
+		if userID == it.UserID() {
 			return it, nil
 		}
 	}
@@ -42,7 +42,7 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 	// TODO: Check Etag or Not-Modified for cache
 
 	result := map[string]interface{}{
-		"user_id":              user.UserId(),
+		"user_id":              user.UserID(),
 		"nickname":             user.Nickname(),
 		"realname":             user.RealName(),
 		"number_of_login_days": fmt.Sprintf("%d", user.NumLoginDays()),
@@ -61,6 +61,40 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 	return result, nil
 }
 
+func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) {
+	dataItems := []interface{}{}
+
+	// Because there is no user’s historical article data stored, first get all public boards, and then get user articles
+	boards := usecase.GetBoards(ctx, userID)
+
+	for _, board := range boards {
+		articleRecords, err := usecase.repo.GetUserArticles(ctx, board.BoardID())
+		if err != nil {
+			return nil, err
+		}
+
+		for index := range articleRecords {
+			if articleRecords[index].Owner() == userID {
+				dataItems = append(dataItems, map[string]interface{}{
+					"board_id":        "", // FIXME: use concrete value rather than ""
+					"filename":        articleRecords[index].Filename(),
+					"modified_time":   articleRecords[index].Modified(),
+					"recommend_count": articleRecords[index].Recommend(),
+					"comment_count":   0,  // FIXME: use concrete value rather than 0
+					"post_date":       "", // FIXME: use concrete value rather than ""
+					"title":           articleRecords[index].Title(),
+					"money":           articleRecords[index].Money(),
+					"owner":           articleRecords[index].Owner(),
+					"aid":             "", // FIXME: use concrete value rather than ""
+					"url":             "", // FIXME: use concrete value rather than ""
+				})
+			}
+		}
+	}
+
+	return dataItems, nil
+}
+
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {
@@ -70,7 +104,7 @@ func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []int
 		case bbs.FavoriteTypeBoard:
 			dataItems = append(dataItems, map[string]interface{}{
 				"type":     "board",
-				"board_id": item.BoardId(),
+				"board_id": item.BoardID(),
 			})
 
 		case bbs.FavoriteTypeFolder:
