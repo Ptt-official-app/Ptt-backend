@@ -95,6 +95,39 @@ func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]i
 	return dataItems, nil
 }
 
+func (usecase *usecase) GetUserPreferences(ctx context.Context, userID string) (map[string]string, error) {
+	userrec, err := usecase.GetUserByID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get userrec for %s failed", userID)
+	}
+	user := userrec.(repository.BBSUserRecord)
+
+	// TODO: Create a mock repository to pass the values
+	result := map[string]string{
+		"favorite_no_highlight":      user.Nickname(),
+		"favorite_add_new":           "No value",
+		"friend":                     "No value",
+		"board_sort":                 "No value",
+		"ad_banner":                  "No value",
+		"ad_banner_user_song":        "No value",
+		"dbcs_aware":                 "No value",
+		"dbcs_no_interupting_escape": "No value",
+		"dbcs_drop_repeat":           "No value",
+		"no_modification_mark":       "No value",
+		"colored_modification_mark":  "No value",
+		"default_backup":             "No value",
+		"new_angel_pager":            "No value",
+		"reject_outside_mail":        "No value",
+		"secure_login":               "No value",
+		"foreign":                    "No value",
+		"live_right":                 "No value",
+		"menu_lightbar":              "No value",
+		"cursor_ascii":               "No value",
+		"pager_ui":                   "No value",
+	}
+	return result, nil
+}
+
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {

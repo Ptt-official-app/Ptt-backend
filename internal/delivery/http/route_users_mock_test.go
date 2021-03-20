@@ -29,6 +29,14 @@ func (usecase *MockUsecase) GetUserInformation(ctx context.Context, userID strin
 	return result, nil
 }
 
+func (usecase *MockUsecase) GetUserPreferences(ctx context.Context, userID string) (map[string]string, error) {
+	result := map[string]string{
+		"favorite_no_highlight": "false",
+	}
+
+	return result, nil
+}
+
 func (usecase *MockUsecase) GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) {
 	return nil, nil
 }
