@@ -128,7 +128,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 		b, _ := json.MarshalIndent(m, "", "  ")
 		_, err = w.Write(b)
 		if err != nil {
-			delivery.logger.Errorf("getBoardInformation write error response err: %w", err)
+			delivery.logger.Errorf("getBoardInformation write success response err: %w", err)
 		}
 		return
 	}
