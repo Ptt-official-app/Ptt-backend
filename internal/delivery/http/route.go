@@ -18,7 +18,8 @@ func (delivery *httpDelivery) buildRoute() {
 	delivery.Get("/v1/popular-boards", delivery.getPopularBoardList)
 	delivery.Get("/v1/popular-articles", delivery.getPopularArticles)
 	// TODO: Check IP Flowspeed
-	delivery.Get("/v1/classes/", delivery.getClasses)
+	delivery.Get("/v1/classes", delivery.getClassesWithoutClassId)
+	delivery.Get("/v1/classes/{classID}", delivery.getClassesList)
 	// TODO: Check IP Flowspeed
 	delivery.Get("/v1/users/{userID}/information", delivery.getUserInformation)
 	delivery.Get("/v1/users/{userID}/favorites", delivery.getUserFavorites)

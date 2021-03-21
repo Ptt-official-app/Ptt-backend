@@ -22,9 +22,7 @@ func TestGetClassesList(t *testing.T) {
 	req.Header.Add("Authorization", "bearer "+token)
 
 	rr := httptest.NewRecorder()
-	r := http.NewServeMux()
-	r.HandleFunc("/v1/classes/", delivery.getClasses)
-	r.ServeHTTP(rr, req)
+	delivery.Router.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -42,5 +40,27 @@ func TestGetClassesList(t *testing.T) {
 			t.Errorf("handler returned unexpected body, id not match: got %v want %v",
 				board, expectedID)
 		}
+	}
+}
+
+func TestGetClassWithoutClassID(t *testing.T) {
+	userID := "id"
+	usecase := NewMockUsecase()
+	delivery := NewHTTPDelivery(usecase)
+	req, err := http.NewRequest("GET", "/v1/classes/", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := usecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer "+token)
+
+	rr := httptest.NewRecorder()
+	delivery.Router.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusMovedPermanently {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
 	}
 }

@@ -17,7 +17,7 @@ type httpDelivery struct {
 
 func NewHTTPDelivery(usecase usecase.Usecase) *httpDelivery {
 	delivery := &httpDelivery{
-		Router:  mux.NewRouter(),
+		Router:  mux.NewRouter().StrictSlash(true), // redirect /path/ to /path
 		logger:  logging.NewLogger(),
 		usecase: usecase,
 	}
