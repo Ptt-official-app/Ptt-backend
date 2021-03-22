@@ -145,6 +145,8 @@ func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// getUserPreferences is a http handler function which will get user's preferences list of user with userID
+// to w. request path should be /v1/users/{{user_id}}/preferences
 func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 

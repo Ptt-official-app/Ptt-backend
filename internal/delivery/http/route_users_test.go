@@ -139,7 +139,7 @@ func TestGetUserFavorite(t *testing.T) {
 	}
 }
 
-// TestGetUserArticles is a test function which will test getUserArticles (/v1/users/{{user_id}}/articles)
+// TestGetUserPreference is a test function which will test getUserPreferences (/v1/users/{{user_id}}/preferences)
 func TestGetUserPreference(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
