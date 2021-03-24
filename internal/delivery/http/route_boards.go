@@ -134,7 +134,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 	}
 
 	responseMap := map[string]interface{}{
-		"data": marshalBoardHeaderInfo(brd, limitation),
+		"data": marshalBoardHeaderWithInfo(brd, limitation),
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
@@ -177,7 +177,7 @@ func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Reques
 	}
 
 	responseMap := map[string]interface{}{
-		"data": marshalBoardHeaderSettings(brd),
+		"data": marshalBoardSettings(brd),
 	}
 
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
@@ -190,10 +190,10 @@ func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Reques
 // marshal generate board or class metadata object,
 // b is input header
 func marshalBoardHeader(b bbs.BoardRecord) map[string]interface{} {
-	return marshalBoardHeaderInfo(b, nil)
+	return marshalBoardHeaderWithInfo(b, nil)
 }
 
-func marshalBoardHeaderInfo(b bbs.BoardRecord, l *usecase.BoardPostLimitation) map[string]interface{} {
+func marshalBoardHeaderWithInfo(b bbs.BoardRecord, l *usecase.BoardPostLimitation) map[string]interface{} {
 	ret := map[string]interface{}{
 		"title":          b.Title(),
 		"number_of_user": "0",
@@ -218,7 +218,7 @@ func marshalBoardHeaderInfo(b bbs.BoardRecord, l *usecase.BoardPostLimitation) m
 	return ret
 }
 
-func marshalBoardHeaderSettings(b bbs.BoardRecord) map[string]interface{} {
+func marshalBoardSettings(b bbs.BoardRecord) map[string]interface{} {
 	ret := map[string]interface{}{
 		// "hide":                               b.IsHide(),
 		// "restricted_post_or_read_permission": b.IsPostMask(),
