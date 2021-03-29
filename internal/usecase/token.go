@@ -78,9 +78,31 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 
 func (usecase *usecase) CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error {
 
+	for _, permission := range permissionID {
+		switch permission {
+		case PermissionAppendComment:
+			if err:= usecase.checkAppendCommentPermission(token, userInfo); err != nil {
+				return err
+			}
+			break
+		case PermissionReadBoardInformation:
+		case PermissionReadFavorite:
+		case PermissionReadTreasureInformation:
+		case PermissionReadUserInformation:
+			break
+		default:
+			return fmt.Errorf("undefined permission id:%s", permission)
+		}
+	}
+
+	return nil
+}
+
+func (usecase *usecase) checkAppendCommentPermission(token string, userInfo map[string]string) error {
+
 	// todo: for PermissionAppendComment should check
 	// 1. if board can append comment
-	// 2. if use can response in such board
+	// 2. if user can response in this board
 	// 3. if article locked
 
 	return nil
