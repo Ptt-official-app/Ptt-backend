@@ -34,7 +34,7 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 		map[string]string{
 			"board_id":   boardID,
 			"article_id": filename,
-			"user_id": userID,
+			"user_id":    userID,
 		})
 	if err != nil {
 		// TODO: record unauthorized access
