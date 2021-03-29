@@ -83,6 +83,18 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 	return result, nil
 }
 
+func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
+	return nil, nil
+}
+
+func (repo *MockRepository) CanUserCommentAtBoard(boardID, userID string) bool {
+	return true
+}
+
+func (repo *MockRepository) CanCommentOnArticle(articleID string) bool {
+	return true
+}
+
 func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {
 	return []bbs.ArticleRecord{}, nil
 }

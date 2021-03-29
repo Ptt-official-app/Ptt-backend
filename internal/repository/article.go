@@ -19,3 +19,15 @@ func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticl
 	// TODO: delegate to repo.db when it is ready
 	return []PopularArticleRecord{}, nil
 }
+
+func (repo *repository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
+	return nil, nil
+}
+
+func (repo *repository) CanUserCommentAtBoard(boardID, userID string) bool {
+	return true
+}
+
+func (repo *repository) CanCommentOnArticle(articleID string) bool {
+	return true
+}

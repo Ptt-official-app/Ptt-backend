@@ -45,6 +45,12 @@ type Repository interface {
 	// article.go
 	// GetPopularArticles returns all popular articles
 	GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error)
+	// AppendComment returns comment details
+	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error)
+	// CanUserCommentAtBoard returns whether the user can comment at this board
+	CanUserCommentAtBoard(boardID, userID string) bool
+	// CanCommentOnArticle returns whether this article commentable
+	CanCommentOnArticle(articleID string) bool
 }
 
 type repository struct {

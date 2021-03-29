@@ -77,11 +77,10 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 }
 
 func (usecase *usecase) CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error {
-
 	for _, permission := range permissionID {
 		switch permission {
 		case PermissionAppendComment:
-			if err:= usecase.checkAppendCommentPermission(token, userInfo); err != nil {
+			if err := usecase.checkAppendCommentPermission(token, userInfo); err != nil {
 				return err
 			}
 			break
@@ -99,11 +98,16 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 }
 
 func (usecase *usecase) checkAppendCommentPermission(token string, userInfo map[string]string) error {
+	boardID := userInfo["board_id"]
+	userID := userInfo["user_id"]
+	if !usecase.repo.CanUserCommentAtBoard(boardID, userID) {
+		return fmt.Errorf("user %s can not comment at board %s", userID, boardID)
+	}
 
-	// todo: for PermissionAppendComment should check
-	// 1. if board can append comment
-	// 2. if user can response in this board
-	// 3. if article locked
+	articleID := userInfo["article_id"]
+	if !usecase.repo.CanCommentOnArticle(articleID) {
+		return fmt.Errorf("can not comment in article: %s", articleID)
+	}
 
 	return nil
 }
