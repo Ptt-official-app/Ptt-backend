@@ -83,12 +83,10 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 			if err := usecase.checkAppendCommentPermission(token, userInfo); err != nil {
 				return err
 			}
-			break
 		case PermissionReadBoardInformation:
 		case PermissionReadFavorite:
 		case PermissionReadTreasureInformation:
 		case PermissionReadUserInformation:
-			break
 		default:
 			return fmt.Errorf("undefined permission id:%s", permission)
 		}
