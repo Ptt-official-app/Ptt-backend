@@ -80,6 +80,9 @@ func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 	if item == "information" {
 		delivery.getBoardInformation(w, r, boardID)
 		return
+	} else if item == "settings" {
+		delivery.getBoardSettings(w, r, boardID)
+		return
 	} else if item == "articles" {
 		if filename == "" {
 			delivery.getBoardArticles(w, r, boardID)
