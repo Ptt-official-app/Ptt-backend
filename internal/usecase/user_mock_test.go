@@ -18,6 +18,10 @@ func (repo *MockRepository) GetUserFavoriteRecords(ctx context.Context, userID s
 	return []bbs.FavoriteRecord{}, nil
 }
 
+func (repo *MockRepository) GetUserPreferences(ctx context.Context, userID string) (map[string]string, error) {
+	return map[string]string{"favorite_no_highlight": "YES"}, nil
+}
+
 type MockUser struct {
 	userID string
 }
