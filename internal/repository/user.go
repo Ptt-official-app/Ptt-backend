@@ -59,6 +59,33 @@ func (repo *repository) GetUserArticles(_ context.Context, boardID string) ([]bb
 	return repo.db.ReadBoardArticleRecordsFile(boardID)
 }
 
+// TODO: mock method for usecase.GetUserPreferences, replace it with real bbs record
+func (repo *repository) GetUserPreferences(_ context.Context, userID string) (map[string]string, error) {
+	result := map[string]string{
+		"favorite_no_highlight":      "No value",
+		"favorite_add_new":           "No value",
+		"friend":                     "No value",
+		"board_sort":                 "No value",
+		"ad_banner":                  "No value",
+		"ad_banner_user_song":        "No value",
+		"dbcs_aware":                 "No value",
+		"dbcs_no_interupting_escape": "No value",
+		"dbcs_drop_repeat":           "No value",
+		"no_modification_mark":       "No value",
+		"colored_modification_mark":  "No value",
+		"default_backup":             "No value",
+		"new_angel_pager":            "No value",
+		"reject_outside_mail":        "No value",
+		"secure_login":               "No value",
+		"foreign":                    "No value",
+		"live_right":                 "No value",
+		"menu_lightbar":              "No value",
+		"cursor_ascii":               "No value",
+		"pager_ui":                   "No value",
+	}
+	return result, nil
+}
+
 func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {
 	userRecords, err := db.ReadUserRecords()
 	if err != nil {
