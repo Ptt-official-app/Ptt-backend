@@ -96,12 +96,12 @@ func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]i
 }
 
 func (usecase *usecase) GetUserPreferences(ctx context.Context, userID string) (map[string]string, error) {
-	preferencesRec, err := usecase.repo.GetUserPreferences(ctx, userID)
+	rec, err := usecase.repo.GetUserPreferences(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("get preferences_rec for %s failed", userID)
 	}
 
-	return preferencesRec, nil
+	return rec, nil
 }
 
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {

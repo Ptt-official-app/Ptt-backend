@@ -19,7 +19,7 @@ func (repo *MockRepository) GetUserFavoriteRecords(ctx context.Context, userID s
 }
 
 func (repo *MockRepository) GetUserPreferences(ctx context.Context, userID string) (map[string]string, error) {
-	return map[string]string{"favorite_no_highlight": "YES"}, nil
+	return map[string]string{"favorite_no_highlight": "true"}, nil
 }
 
 type MockUser struct {

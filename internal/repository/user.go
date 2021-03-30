@@ -59,7 +59,7 @@ func (repo *repository) GetUserArticles(_ context.Context, boardID string) ([]bb
 	return repo.db.ReadBoardArticleRecordsFile(boardID)
 }
 
-// TODO: mock method for usecase.GetUserPreferences, replace it with real bbs record
+// TODO: no required method in go-bbs and we use a mock, replace it when available
 func (repo *repository) GetUserPreferences(_ context.Context, userID string) (map[string]string, error) {
 	result := map[string]string{
 		"favorite_no_highlight":      "No value",
