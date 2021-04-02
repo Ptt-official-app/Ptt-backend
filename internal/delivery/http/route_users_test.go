@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+// TestGetUserInformation is a test function which will test getUserInformation (/v1/users/{{user_id}}/favorites)
+// Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__information
 func TestGetUserInformation(t *testing.T) {
 
 	userID := "id"
@@ -45,6 +47,7 @@ func TestGetUserInformation(t *testing.T) {
 	}
 }
 
+// TestParseUserPath is a test function which will test getUsers route mapping
 func TestParseUserPath(t *testing.T) {
 
 	type TestCase struct {
@@ -93,6 +96,8 @@ func TestParseUserPath(t *testing.T) {
 
 }
 
+// TestGetUserInformation is a test function which will test getUserInformation (/v1/users/{{user_id}}/favorites)
+// Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
 func TestGetUserFavorite(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
@@ -134,6 +139,7 @@ func TestGetUserFavorite(t *testing.T) {
 	}
 }
 
+// TestGetUserPreference is a test function which will test getUserPreferences (/v1/users/{{user_id}}/preferences)
 func TestGetUserPreference(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
@@ -174,6 +180,7 @@ func TestGetUserPreference(t *testing.T) {
 
 }
 
+// TestGetUserArticles is a test function which will test getUserArticles (/v1/users/{{user_id}}/articles)
 func TestGetUserArticles(t *testing.T) {
 
 	userID := "id"

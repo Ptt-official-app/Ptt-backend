@@ -8,6 +8,7 @@ import (
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
+// getUsers is a http handler function which will rewrite to correct route
 func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	userID, item, err := parseUserPath(r.URL.Path)
 	switch item {
@@ -25,6 +26,9 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getUserInformation is a http handler function which will writes the information including last visit time of user with userID
+// to w. request path should be /v1/users/{{user_id}}/information
+// Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__information
 func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
@@ -67,6 +71,9 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// getUserFavorites is a http handler function which will get favorite list of user with userID
+// to w. request path should be /v1/users/{{user_id}}/favorites
+// Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
 func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
@@ -102,6 +109,8 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+// getUserArticles is a http handler function which will get user's articles list of user with userID
+// to w. request path should be /v1/users/{{user_id}}/articles
 func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	err := delivery.usecase.CheckPermission(token,
@@ -136,6 +145,8 @@ func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// getUserPreferences is a http handler function which will get user's preferences list of user with userID
+// to w. request path should be /v1/users/{{user_id}}/preferences
 func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
