@@ -44,7 +44,7 @@ func (usecase *MockUsecase) GetUserArticles(ctx context.Context, userID string) 
 func (usecase *MockUsecase) GetUserComments(ctx context.Context, userID string) ([]interface{}, error) {
 	result := []interface{}{
 		map[string]interface{}{
-			"board_id": "id",
+			"board_id": "SYSOP",
 		},
 	}
 	return result, nil

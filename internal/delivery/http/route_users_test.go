@@ -254,7 +254,7 @@ func TestGetUserComments(t *testing.T) {
 	items := responsedData["items"].([]interface{})
 	firstItem := items[0].(map[string]interface{})
 
-	expectedValue := "id"
+	expectedValue := "SYSOP"
 	if firstItem["board_id"].(string) != expectedValue {
 		t.Errorf("handler returned unexpected body, favorite_no_highlight not match: got %v want value %v",
 			firstItem, expectedValue)
