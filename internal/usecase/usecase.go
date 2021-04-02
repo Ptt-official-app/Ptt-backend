@@ -18,6 +18,9 @@ type Usecase interface {
 	GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) // FIXME: use concrete type rather than []interface{}
 	// GetUserInformation returns user info of a user
 	GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) // FIXME: use concrete type rather than map[string]interface{}
+	// GetUserArticles returns user's articles
+	GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) // FIXME: use concrete type rather than []interface{}
+	GetUserPreferences(ctx context.Context, userID string) (map[string]string, error)
 
 	// board.go
 	// GetBoardByID returns board record of board id
@@ -26,6 +29,8 @@ type Usecase interface {
 	GetBoards(ctx context.Context, userID string) []bbs.BoardRecord
 	// GetPopularBoards returns top 100 popular board records
 	GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error)
+	// GetBoardPostsLimition returns all posts limit of a board
+	GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error)
 	// GetClasses returns board records in a class
 	GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord
 	// GetBoardArticles returns articles of a board
@@ -38,14 +43,15 @@ type Usecase interface {
 	// token.go
 	// CreateAccessTokenWithUsername creates access token for a user
 	CreateAccessTokenWithUsername(username string) string
-	// GetUserIdFromToken retrieves user id by token
-	GetUserIdFromToken(token string) (string, error)
+	// GetUserIDFromToken retrieves user id by token
+	GetUserIDFromToken(token string) (string, error)
 	// CheckPermission checks permissions
-	CheckPermission(token string, permissionId []Permission, userInfo map[string]string) error // FIXME: use concrete type rather than map[string]string
+	CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error // FIXME: use concrete type rather than map[string]string
 
 	// article.go
 	// GetPopularArticles returns all popular articles
 	GetPopularArticles(ctx context.Context) ([]repository.PopularArticleRecord, error)
+	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error)
 }
 
 type usecase struct {

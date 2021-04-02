@@ -22,9 +22,15 @@ type ArticleSearchCond struct {
 	RecommendCountLessEqualIsSet    bool
 }
 
+type BoardPostLimitation struct {
+	PostsLimit   uint8
+	LoginsLimit  uint8
+	BadPostLimit uint8
+}
+
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
-		if boardID == it.BoardId() {
+		if boardID == it.BoardID() {
 			return it, nil
 		}
 	}
@@ -61,6 +67,29 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 	return boards[:100], nil
 }
 
+func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error) {
+	postLimit, err := usecase.repo.GetBoardPostsLimit(ctx, boardID)
+	if err != nil {
+		return nil, fmt.Errorf("get board %s posts limit error: %w", boardID, err)
+	}
+
+	loginsLimit, err := usecase.repo.GetBoardLoginsLimit(ctx, boardID)
+	if err != nil {
+		return nil, fmt.Errorf("get board %s logins limit error: %w", boardID, err)
+	}
+
+	badPostLimit, err := usecase.repo.GetBoardBadPostLimit(ctx, boardID)
+	if err != nil {
+		return nil, fmt.Errorf("get board %s bad posts limit error: %w", boardID, err)
+	}
+
+	return &BoardPostLimitation{
+		PostsLimit:   postLimit.PostLimitPosts(),
+		LoginsLimit:  loginsLimit.PostLimitLogins(),
+		BadPostLimit: badPostLimit.PostLimitBadPost(),
+	}, nil
+}
+
 func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
 	boards := make([]bbs.BoardRecord, 0)
 	for _, board := range usecase.repo.GetBoards(ctx) {
@@ -68,7 +97,7 @@ func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) 
 		if !usecase.shouldShowOnUserLevel(board, userID) {
 			continue
 		}
-		if board.ClassId() != classID {
+		if board.ClassID() != classID {
 			continue
 		}
 		// m := marshalBoardHeader(board)
@@ -155,9 +184,9 @@ func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID stri
 	return true
 }
 
-func getArticleURL(boardId string, filename string) string {
+func getArticleURL(boardID string, filename string) string {
 	// TODO: generate article url by config file
-	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardId, filename)
+	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)
 }
 
 func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []bbs.ArticleRecord {

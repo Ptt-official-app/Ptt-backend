@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -75,5 +76,32 @@ func TestSearchArticles(t *testing.T) {
 				t.Errorf("article not match on index %d, expected: %v, got: %v", index, expectedItems[i], v)
 			}
 		}
+	}
+}
+
+func TestGetBoardPostsLimitation(t *testing.T) {
+	resp := &MockRepository{}
+
+	usecase := NewUsecase(&config.Config{}, resp)
+
+	limitation, err := usecase.GetBoardPostsLimitation(context.TODO(), "board-id")
+	if err != nil {
+		t.Errorf("getBoardPostsLimitation with board-id excepted not nil error, got nil")
+		return
+	}
+
+	if limitation.PostsLimit != 0 {
+		t.Errorf("limitation.PostsLimit is excepted 0, got %d", limitation.PostsLimit)
+		return
+	}
+
+	if limitation.LoginsLimit != 0 {
+		t.Errorf("limitation.LoginsLimit is excepted 0, got %d", limitation.LoginsLimit)
+		return
+	}
+
+	if limitation.BadPostLimit != 0 {
+		t.Errorf("limitation.BadPostLimit is excepted 0, got %d", limitation.BadPostLimit)
+		return
 	}
 }

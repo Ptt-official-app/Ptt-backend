@@ -15,7 +15,7 @@ func (usecase *usecase) GetUserByID(ctx context.Context, userID string) (bbs.Use
 		return nil, err
 	}
 	for _, it := range users {
-		if userID == it.UserId() {
+		if userID == it.UserID() {
 			return it, nil
 		}
 	}
@@ -42,7 +42,7 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 	// TODO: Check Etag or Not-Modified for cache
 
 	result := map[string]interface{}{
-		"user_id":              user.UserId(),
+		"user_id":              user.UserID(),
 		"nickname":             user.Nickname(),
 		"realname":             user.RealName(),
 		"number_of_login_days": fmt.Sprintf("%d", user.NumLoginDays()),
@@ -61,6 +61,73 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 	return result, nil
 }
 
+func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) {
+	dataItems := []interface{}{}
+
+	// Because there is no user’s historical article data stored, first get all public boards, and then get user articles
+	boards := usecase.GetBoards(ctx, userID)
+
+	for _, board := range boards {
+		articleRecords, err := usecase.repo.GetUserArticles(ctx, board.BoardID())
+		if err != nil {
+			return nil, err
+		}
+
+		for index := range articleRecords {
+			if articleRecords[index].Owner() == userID {
+				dataItems = append(dataItems, map[string]interface{}{
+					"board_id":        "", // FIXME: use concrete value rather than ""
+					"filename":        articleRecords[index].Filename(),
+					"modified_time":   articleRecords[index].Modified(),
+					"recommend_count": articleRecords[index].Recommend(),
+					"comment_count":   0,  // FIXME: use concrete value rather than 0
+					"post_date":       "", // FIXME: use concrete value rather than ""
+					"title":           articleRecords[index].Title(),
+					"money":           articleRecords[index].Money(),
+					"owner":           articleRecords[index].Owner(),
+					"aid":             "", // FIXME: use concrete value rather than ""
+					"url":             "", // FIXME: use concrete value rather than ""
+				})
+			}
+		}
+	}
+
+	return dataItems, nil
+}
+
+func (usecase *usecase) GetUserPreferences(ctx context.Context, userID string) (map[string]string, error) {
+	userrec, err := usecase.GetUserByID(ctx, userID)
+	if err != nil {
+		return nil, fmt.Errorf("get userrec for %s failed", userID)
+	}
+	user := userrec.(repository.BBSUserRecord)
+
+	// TODO: Create a mock repository to pass the values
+	result := map[string]string{
+		"favorite_no_highlight":      user.Nickname(),
+		"favorite_add_new":           "No value",
+		"friend":                     "No value",
+		"board_sort":                 "No value",
+		"ad_banner":                  "No value",
+		"ad_banner_user_song":        "No value",
+		"dbcs_aware":                 "No value",
+		"dbcs_no_interupting_escape": "No value",
+		"dbcs_drop_repeat":           "No value",
+		"no_modification_mark":       "No value",
+		"colored_modification_mark":  "No value",
+		"default_backup":             "No value",
+		"new_angel_pager":            "No value",
+		"reject_outside_mail":        "No value",
+		"secure_login":               "No value",
+		"foreign":                    "No value",
+		"live_right":                 "No value",
+		"menu_lightbar":              "No value",
+		"cursor_ascii":               "No value",
+		"pager_ui":                   "No value",
+	}
+	return result, nil
+}
+
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {
@@ -70,7 +137,7 @@ func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []int
 		case bbs.FavoriteTypeBoard:
 			dataItems = append(dataItems, map[string]interface{}{
 				"type":     "board",
-				"board_id": item.BoardId(),
+				"board_id": item.BoardID(),
 			})
 
 		case bbs.FavoriteTypeFolder:

@@ -87,15 +87,15 @@ func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID
 	return []bbs.ArticleRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardPostsLimited(ctx context.Context, boardID string) (repository.PostsLimitedBoardRecord, error) {
+func (repo *MockRepository) GetBoardPostsLimit(ctx context.Context, boardID string) (repository.PostsLimitedBoardRecord, error) {
 	return &MockPostsLimitedBoardRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardLoginsLimited(ctx context.Context, boardID string) (repository.LoginsLimitedBoardRecord, error) {
+func (repo *MockRepository) GetBoardLoginsLimit(ctx context.Context, boardID string) (repository.LoginsLimitedBoardRecord, error) {
 	return &MockLoginsLimitedBoardRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardBadPostLimited(ctx context.Context, boardID string) (repository.BadPostLimitedBoardRecord, error) {
+func (repo *MockRepository) GetBoardBadPostLimit(ctx context.Context, boardID string) (repository.BadPostLimitedBoardRecord, error) {
 	return &MockBadPostLimitedBoardRecord{}, nil
 }
 
@@ -128,13 +128,13 @@ type MockPopularArticle struct {
 	boardID        string
 }
 
-func (m MockPopularArticle) Filename() string    { return "" }
-func (m MockPopularArticle) Modified() time.Time { return time.Unix(0, 0) }
-func (m MockPopularArticle) Recommend() int      { return 0 }
-func (m MockPopularArticle) Date() string        { return "" }
+func (m MockPopularArticle) Filename() string    { return m.filename }
+func (m MockPopularArticle) Modified() time.Time { return m.modified }
+func (m MockPopularArticle) Recommend() int      { return m.recommendCount }
+func (m MockPopularArticle) Date() string        { return m.date }
 func (m MockPopularArticle) Title() string       { return m.title }
-func (m MockPopularArticle) Money() int          { return 0 }
-func (m MockPopularArticle) Owner() string       { return "" }
+func (m MockPopularArticle) Money() int          { return m.money }
+func (m MockPopularArticle) Owner() string       { return m.owner }
 func (m MockPopularArticle) BoardID() string     { return m.boardID }
 
 type MockPostsLimitedBoardRecord struct{}
@@ -148,3 +148,31 @@ func (m *MockLoginsLimitedBoardRecord) PostLimitLogins() uint8 { return 0 }
 type MockBadPostLimitedBoardRecord struct{}
 
 func (m *MockBadPostLimitedBoardRecord) PostLimitBadPost() uint8 { return 0 }
+
+func (repo *MockRepository) GetUserArticles(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error) {
+	articleRecords := []MockArticleRecord{
+		{
+			filename:       "",
+			modified:       time.Time{},
+			recommendCount: 10,
+			owner:          "user",
+			date:           "",
+			title:          "[討論] 薪水太少",
+			money:          0,
+		},
+		{
+			filename:       "",
+			modified:       time.Time{},
+			recommendCount: -20,
+			owner:          "9487",
+			date:           "",
+			title:          "[問題] 我不會寫程式",
+			money:          0,
+		},
+	}
+	result := make([]bbs.ArticleRecord, len(articleRecords))
+	for i, v := range articleRecords {
+		result[i] = v
+	}
+	return result, nil
+}
