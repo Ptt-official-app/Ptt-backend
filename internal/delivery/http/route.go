@@ -60,8 +60,10 @@ func (delivery *Delivery) routeClasses(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// routeClasses is the handler for `/v1/users`
 func (delivery *Delivery) routeUsers(w http.ResponseWriter, r *http.Request) {
 	// TODO: Check IP Flowspeed
+	delivery.logger.Debugf("routeUsers: %v", r)
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getUsers(w, r)

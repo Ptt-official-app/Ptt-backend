@@ -5,13 +5,30 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 // TestGetUserInformation is a test function which will test getUserInformation (/v1/users/{{user_id}}/favorites)
 // Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__information
 func TestGetUserInformation(t *testing.T) {
-
 	userID := "id"
+	expectedData := map[string]interface{}{
+		"user_id":              userID,
+		"nickname":             "",
+		"realname":             "",
+		"number_of_login_days": "0",
+		"number_of_posts":      "0",
+		"number_of_badposts":   "0",
+		"money":                "0",
+		"money_description":    "債台高築",
+		"last_login_time":      time.Date(2021, 1, 1, 0, 0, 0, 0, time.UTC).Format(time.RFC3339),
+		"last_login_ipv4":      "127.0.0.1",
+		"last_login_ip":        "127.0.0.1",
+		"last_login_country":   "",
+		"mailbox_description":  "",
+		"chess_status":         map[string]interface{}{},
+		"plan":                 map[string]interface{}{},
+	}
 	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
 	req, err := http.NewRequest("GET", "/v1/users/SYSOP/information", nil)
@@ -41,9 +58,11 @@ func TestGetUserInformation(t *testing.T) {
 
 	t.Logf("got response %v", rr.Body.String())
 	responsedData := responsedMap["data"].(map[string]interface{})
-	if responsedData["user_id"] != userID {
-		t.Errorf("handler returned unexpected body, user_id not match: got %v want userId %v",
-			rr.Body.String(), userID)
+
+	responseB, _ := json.MarshalIndent(responsedData, "", "  ")
+	expectedB, _ := json.MarshalIndent(expectedData, "", "  ")
+	if string(responseB) != string(expectedB) {
+		t.Errorf("response not match: got %v want %v", responseB, expectedB)
 	}
 }
 
