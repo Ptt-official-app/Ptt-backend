@@ -104,6 +104,11 @@ func (usecase *usecase) GetUserPreferences(ctx context.Context, userID string) (
 	return rec, nil
 }
 
+func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]interface{}, error) {
+	// FIXME: empty function need to be implemented
+	return nil, nil
+}
+
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {
