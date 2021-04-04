@@ -217,3 +217,46 @@ func TestGetUserArticles(t *testing.T) {
 			rr.Body.String())
 	}
 }
+
+// TestGetUserComments is a test function which will test getUserComments (/v1/users/{{user_id}}/comments)
+func TestGetUserComments(t *testing.T) {
+	userID := "id"
+	mockUsecase := NewMockUsecase()
+	mockDelivery := NewHTTPDelivery(mockUsecase)
+
+	req, err := http.NewRequest("GET", "/v1/users/user/comments", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := mockUsecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/users/", mockDelivery.routeUsers)
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	responsedMap := map[string]interface{}{}
+	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
+
+	t.Logf("got response %v", rr.Body.String())
+	responsedData := responsedMap["data"].(map[string]interface{})
+	items := responsedData["items"].([]interface{})
+	firstItem := items[0].(map[string]interface{})
+
+	expectedValue := "SYSOP"
+	if firstItem["board_id"].(string) != expectedValue {
+		t.Errorf("handler returned unexpected body, favorite_no_highlight not match: got %v want value %v",
+			firstItem, expectedValue)
+	}
+}
