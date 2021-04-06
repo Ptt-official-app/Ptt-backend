@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+// TestGetUserInformation is a test function which will test getUserInformation (/v1/users/{{user_id}}/favorites)
+// Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__information
 func TestGetUserInformation(t *testing.T) {
 
 	userID := "id"
@@ -45,6 +47,7 @@ func TestGetUserInformation(t *testing.T) {
 	}
 }
 
+// TestParseUserPath is a test function which will test getUsers route mapping
 func TestParseUserPath(t *testing.T) {
 
 	type TestCase struct {
@@ -93,6 +96,8 @@ func TestParseUserPath(t *testing.T) {
 
 }
 
+// TestGetUserInformation is a test function which will test getUserInformation (/v1/users/{{user_id}}/favorites)
+// Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
 func TestGetUserFavorite(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
@@ -134,6 +139,7 @@ func TestGetUserFavorite(t *testing.T) {
 	}
 }
 
+// TestGetUserPreference is a test function which will test getUserPreferences (/v1/users/{{user_id}}/preferences)
 func TestGetUserPreference(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
@@ -174,6 +180,7 @@ func TestGetUserPreference(t *testing.T) {
 
 }
 
+// TestGetUserArticles is a test function which will test getUserArticles (/v1/users/{{user_id}}/articles)
 func TestGetUserArticles(t *testing.T) {
 
 	userID := "id"
@@ -208,5 +215,48 @@ func TestGetUserArticles(t *testing.T) {
 	if responsedMap["data"] == nil {
 		t.Errorf("handler returned unexpected body, got %v want not nil",
 			rr.Body.String())
+	}
+}
+
+// TestGetUserComments is a test function which will test getUserComments (/v1/users/{{user_id}}/comments)
+func TestGetUserComments(t *testing.T) {
+	userID := "id"
+	mockUsecase := NewMockUsecase()
+	mockDelivery := NewHTTPDelivery(mockUsecase)
+
+	req, err := http.NewRequest("GET", "/v1/users/user/comments", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := mockUsecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/users/", mockDelivery.routeUsers)
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	responsedMap := map[string]interface{}{}
+	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
+
+	t.Logf("got response %v", rr.Body.String())
+	responsedData := responsedMap["data"].(map[string]interface{})
+	items := responsedData["items"].([]interface{})
+	firstItem := items[0].(map[string]interface{})
+
+	expectedValue := "SYSOP"
+	if firstItem["board_id"].(string) != expectedValue {
+		t.Errorf("handler returned unexpected body, favorite_no_highlight not match: got %v want value %v",
+			firstItem, expectedValue)
 	}
 }

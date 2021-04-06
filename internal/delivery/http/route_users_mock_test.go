@@ -41,10 +41,20 @@ func (usecase *MockUsecase) GetUserArticles(ctx context.Context, userID string) 
 	return nil, nil
 }
 
+func (usecase *MockUsecase) GetUserComments(ctx context.Context, userID string) ([]interface{}, error) {
+	result := []interface{}{
+		map[string]interface{}{
+			"board_id": "SYSOP",
+		},
+	}
+	return result, nil
+}
+
 type MockUserRecord struct {
 	userID string
 }
 
+// NewMockUserRecord generates fake user record for developing
 func NewMockUserRecord(userID string) *MockUserRecord { return &MockUserRecord{userID: userID} }
 func (u *MockUserRecord) UserID() string              { return u.userID }
 
