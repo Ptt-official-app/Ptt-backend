@@ -87,14 +87,6 @@ func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, 
 	return nil, nil
 }
 
-func (repo *MockRepository) CanUserCommentAtBoard(boardID, userID string) bool {
-	return true
-}
-
-func (repo *MockRepository) CanCommentOnArticle(articleID string) bool {
-	return true
-}
-
 func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {
 	return []bbs.ArticleRecord{}, nil
 }

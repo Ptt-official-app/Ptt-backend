@@ -96,16 +96,12 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 }
 
 func (usecase *usecase) checkAppendCommentPermission(token string, userInfo map[string]string) error {
-	boardID := userInfo["board_id"]
-	userID := userInfo["user_id"]
-	if !usecase.repo.CanUserCommentAtBoard(boardID, userID) {
-		return fmt.Errorf("user %s can not comment at board %s", userID, boardID)
-	}
+	//boardID := userInfo["board_id"]
+	//userID := userInfo["user_id"]
 
-	articleID := userInfo["article_id"]
-	if !usecase.repo.CanCommentOnArticle(articleID) {
-		return fmt.Errorf("can not comment in article: %s", articleID)
-	}
+	// TODO: 判斷在該版是否被水桶
+	// TODO: 判斷該版是否允許推文
+	// TODO: 判斷該文章是否鎖文
 
 	return nil
 }
