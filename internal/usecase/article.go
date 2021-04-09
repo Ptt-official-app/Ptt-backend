@@ -20,3 +20,8 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
 	return map[string]interface{}{}, nil
 }
+
+// ForwardArticle returns forwarding results
+func (usecase *usecase) ForwardArticle(ctx context.Context, userID, boardID, filename, toEmail, toBoard string) (map[string]interface{}, error) {
+	return map[string]interface{}{}, nil
+}

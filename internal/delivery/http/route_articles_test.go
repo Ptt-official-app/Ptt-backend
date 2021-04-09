@@ -13,3 +13,7 @@ func (usecase *MockUsecase) GetPopularArticles(ctx context.Context) ([]repositor
 func (usecase *MockUsecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
 	return map[string]interface{}{}, nil
 }
+
+func (usecase *MockUsecase) ForwardArticle(ctx context.Context, userID, boardID, filename, toEmail, toBoard string) (map[string]interface{}, error) {
+	return map[string]interface{}{}, nil
+}
