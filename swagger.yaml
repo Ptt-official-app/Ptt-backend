@@ -688,7 +688,7 @@ paths:
         - 單篇文章部分
 
     post:
-      summary: '新增評論推文或是噓文'
+      summary: '新增評論推文或是噓文；轉錄文章'
       description: ''
       security:
         - BearerAuth: [ ]
@@ -714,7 +714,7 @@ paths:
               properties:
                 action:
                   type: string
-                  enum: [ 'append_comment' ]
+                  enum: [ 'append_comment', 'forward_article' ]
                 type:
                   type: string
                   enum: [ '推', '噓', '→' ]
@@ -722,10 +722,18 @@ paths:
                 text:
                   type: string
                   description: '內文'
+                email:
+                  type: string
+                  description: '轉錄目標信箱'
+                board:
+                  type: string
+                  description: '轉錄目標看板'
               required:
                 - action
                 - type
                 - text
+                - email
+                - board
       responses:
         '200':
           description: 'ok'
