@@ -66,19 +66,19 @@ func TestParseUserPath(t *testing.T) {
 			expectedItemID: "1",
 		},
 		{
-			input:          "/v1/users/Pichu/information",
-			expectdUserID:  "Pichu",
-			expectdItem:    "information",
+			input:         "/v1/users/Pichu/information",
+			expectdUserID: "Pichu",
+			expectdItem:   "information",
 		},
 		{
-			input:          "/v1/users/Pichu/",
-			expectdUserID:  "Pichu",
-			expectdItem:    "",
+			input:         "/v1/users/Pichu/",
+			expectdUserID: "Pichu",
+			expectdItem:   "",
 		},
 		{
-			input:          "/v1/users/Pichu",
-			expectdUserID:  "Pichu",
-			expectdItem:    "",
+			input:         "/v1/users/Pichu",
+			expectdUserID: "Pichu",
+			expectdItem:   "",
 		},
 	}
 
