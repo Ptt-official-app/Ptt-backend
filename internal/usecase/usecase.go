@@ -23,6 +23,8 @@ type Usecase interface {
 	GetUserPreferences(ctx context.Context, userID string) (map[string]string, error)
 	// GetUserComments returns history comments of a user
 	GetUserComments(ctx context.Context, userID string) ([]interface{}, error)
+	// GetUserDrafts returns user's draft by given draft id
+	GetUserDrafts(ctx context.Context, userID string, draftID string) ([]byte, error)
 
 	// board.go
 	// GetBoardByID returns board record of board id

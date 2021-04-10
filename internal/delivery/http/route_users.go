@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 
@@ -10,7 +11,7 @@ import (
 
 // getUsers is a http handler function which will rewrite to correct route
 func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
-	userID, item, err := parseUserPath(r.URL.Path)
+	userID, item, itemID, err := parseUserPath(r.URL.Path)
 	switch item {
 	case "information":
 		delivery.getUserInformation(w, r, userID)
@@ -22,6 +23,8 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 		delivery.getUserPreferences(w, r, userID)
 	case "comments":
 		delivery.getUserComments(w, r, userID)
+	case "drafts":
+		delivery.getUserDrafts(w, r, userID, itemID)
 	default:
 		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userID, item, err)
 		w.WriteHeader(http.StatusNotFound)
@@ -234,5 +237,40 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	_, err = w.Write(responseByte)
 	if err != nil {
 		delivery.logger.Errorf("getUserFavorites success response err: %w", err)
+	}
+}
+
+func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, userID string, draftID string) {
+	token := delivery.getTokenFromRequest(r)
+
+	err := delivery.usecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionReadUserInformation},
+		map[string]string{
+			"user_id": userID,
+		})
+
+	if err != nil {
+		// TODO: record unauthorized access
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	buf, err := delivery.usecase.GetUserDrafts(context.Background(), userID, draftID)
+	if err != nil {
+		delivery.logger.Errorf("failed to get user drafts: %s", err)
+	}
+
+	bufStr := base64.StdEncoding.EncodeToString(buf)
+
+	responseMap := map[string]interface{}{
+		"data": map[string]interface{}{
+			"raw": bufStr,
+		},
+	}
+
+	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
+	_, err = w.Write(responseByte)
+	if err != nil {
+		delivery.logger.Errorf("getUserDrafts success response err: %w", err)
 	}
 }

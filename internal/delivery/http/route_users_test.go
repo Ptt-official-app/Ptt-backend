@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -51,26 +52,33 @@ func TestGetUserInformation(t *testing.T) {
 func TestParseUserPath(t *testing.T) {
 
 	type TestCase struct {
-		input         string
-		expectdUserID string
-		expectdItem   string
+		input          string
+		expectdUserID  string
+		expectdItem    string
+		expectedItemID string
 	}
 
 	cases := []TestCase{
 		{
-			input:         "/v1/users/Pichu/information",
-			expectdUserID: "Pichu",
-			expectdItem:   "information",
+			input:          "/v1/users/Pichu/drafts/1",
+			expectdUserID:  "Pichu",
+			expectdItem:    "drafts",
+			expectedItemID: "1",
 		},
 		{
-			input:         "/v1/users/Pichu/",
-			expectdUserID: "Pichu",
-			expectdItem:   "",
+			input:          "/v1/users/Pichu/information",
+			expectdUserID:  "Pichu",
+			expectdItem:    "information",
 		},
 		{
-			input:         "/v1/users/Pichu",
-			expectdUserID: "Pichu",
-			expectdItem:   "",
+			input:          "/v1/users/Pichu/",
+			expectdUserID:  "Pichu",
+			expectdItem:    "",
+		},
+		{
+			input:          "/v1/users/Pichu",
+			expectdUserID:  "Pichu",
+			expectdItem:    "",
 		},
 	}
 
@@ -78,7 +86,8 @@ func TestParseUserPath(t *testing.T) {
 		input := c.input
 		expectdUserID := c.expectdUserID
 		expectdItem := c.expectdItem
-		actualUserID, actualItem, err := parseUserPath(input)
+		expectedItemID := c.expectedItemID
+		actualUserID, actualItem, actualItemID, err := parseUserPath(input)
 		if err != nil {
 			t.Errorf("error on index %d, got: %v", index, err)
 
@@ -90,6 +99,10 @@ func TestParseUserPath(t *testing.T) {
 
 		if actualItem != expectdItem {
 			t.Errorf("item not match on index %d, expected: %v, got: %v", index, expectdItem, actualItem)
+		}
+
+		if actualItemID != expectedItemID {
+			t.Errorf("itemID not match on index %d, expected: %v, got: %v", index, expectedItemID, actualItemID)
 		}
 
 	}
@@ -258,5 +271,48 @@ func TestGetUserComments(t *testing.T) {
 	if firstItem["board_id"].(string) != expectedValue {
 		t.Errorf("handler returned unexpected body, favorite_no_highlight not match: got %v want value %v",
 			firstItem, expectedValue)
+	}
+}
+
+// TestGetUserDrafts is a test function which will test getUserDrafts (/v1/users/{{user_id}}/drafts/{{draft_id}})
+func TestGetUserDrafts(t *testing.T) {
+	userID := "id"
+	mockUsecase := NewMockUsecase()
+	mockDelivery := NewHTTPDelivery(mockUsecase)
+
+	req, err := http.NewRequest("GET", "/v1/users/user/drafts/1", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := mockUsecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer "+token)
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/users/", mockDelivery.routeUsers)
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	responsedMap := map[string]interface{}{}
+	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
+
+	t.Logf("got response %v", rr.Body.String())
+	responsedData := responsedMap["data"].(map[string]interface{})
+	raw := responsedData["raw"].(string)
+	actualValue, _ := base64.StdEncoding.DecodeString(raw)
+
+	expectedValue := []byte("this is a draft")
+	if string(actualValue) != string(expectedValue) {
+		t.Errorf("handler returned unexpected body, raw not match: got %v want value %v",
+			actualValue, expectedValue)
 	}
 }
