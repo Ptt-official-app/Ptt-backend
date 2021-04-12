@@ -23,14 +23,21 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 
 	token := delivery.getTokenFromRequest(r)
 
-	// Check permission for forwarding article
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionForwardArticle},
+	// Check permission for whether article is allow forwarding `from` board
+	outErr := delivery.usecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionForwardArticleOut},
 		map[string]string{
 			"board_id":   boardID,
 			"article_id": filename,
 		})
-	if err != nil {
+	// Check permission for whether article is allow forwarding `to` board
+	toErr := delivery.usecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionForwardArticleTo},
+		map[string]string{
+			"board_id":   toBoard,
+			"article_id": filename,
+		})
+	if toErr != nil || outErr != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
 		return
