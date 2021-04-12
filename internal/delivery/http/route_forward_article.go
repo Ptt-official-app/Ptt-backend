@@ -41,19 +41,34 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	_, err = delivery.usecase.ForwardArticle(
-		context.Background(),
-		userID,
-		boardID,
-		filename,
-		toEmail,
-		toBoard,
-	)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
+
+	if toBoard != "" {
+		_, err = delivery.usecase.ForwardArticleToBoard(
+			context.Background(),
+			userID,
+			boardID,
+			filename,
+			toBoard,
+		)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
 	}
 
+	if toEmail != "" {
+		_, err = delivery.usecase.ForwardArticleToEmail(
+			context.Background(),
+			userID,
+			boardID,
+			filename,
+			toEmail,
+		)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+	}
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{},
 	}

@@ -21,7 +21,12 @@ func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, file
 	return map[string]interface{}{}, nil
 }
 
-// ForwardArticle returns forwarding results
-func (usecase *usecase) ForwardArticle(ctx context.Context, userID, boardID, filename, toEmail, toBoard string) (map[string]interface{}, error) {
+// ForwardArticleToBoard returns forwarding to board results
+func (usecase *usecase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, toBoard string) (map[string]interface{}, error) {
+	return map[string]interface{}{}, nil
+}
+
+// ForwardArticleToEmail returns forwarding to email results
+func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, toEmail string) (map[string]interface{}, error) {
 	return map[string]interface{}{}, nil
 }
