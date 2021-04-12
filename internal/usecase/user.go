@@ -105,8 +105,11 @@ func (usecase *usecase) GetUserPreferences(ctx context.Context, userID string) (
 }
 
 func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]interface{}, error) {
-	// FIXME: empty function need to be implemented
-	return nil, nil
+	dataItems, err := usecase.repo.GetUserComments(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	return dataItems, nil
 }
 
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {

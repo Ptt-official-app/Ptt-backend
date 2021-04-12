@@ -22,6 +22,14 @@ func (repo *MockRepository) GetUserPreferences(ctx context.Context, userID strin
 	return map[string]string{"favorite_no_highlight": "true"}, nil
 }
 
+func (repo *MockRepository) GetUserComments(ctx context.Context, userID string) ([]interface{}, error) {
+	return []interface{}{
+		map[string]interface{}{
+			"board_id": "SYSOP",
+		},
+	}, nil
+}
+
 type MockUser struct {
 	userID string
 }
