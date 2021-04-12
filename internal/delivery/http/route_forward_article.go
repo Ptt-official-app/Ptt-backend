@@ -42,13 +42,22 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 		return
 	}
 
-	if toBoard != "" {
-		_, err = delivery.usecase.ForwardArticleToBoard(
+	destinations := []usecase.Forward{
+		&usecase.ForwardToBoard{
+			Board: toBoard,
+		},
+		&usecase.ForwardToEmail{
+			Email: toEmail,
+		},
+	}
+
+	for _, dest := range destinations {
+		_, err = delivery.usecase.ForwardArticle(
 			context.Background(),
 			userID,
 			boardID,
 			filename,
-			toBoard,
+			dest,
 		)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -56,19 +65,6 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 		}
 	}
 
-	if toEmail != "" {
-		_, err = delivery.usecase.ForwardArticleToEmail(
-			context.Background(),
-			userID,
-			boardID,
-			filename,
-			toEmail,
-		)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			return
-		}
-	}
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{},
 	}
