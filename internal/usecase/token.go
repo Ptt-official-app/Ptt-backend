@@ -77,11 +77,31 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 }
 
 func (usecase *usecase) CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error {
+	for _, permission := range permissionID {
+		switch permission {
+		case PermissionAppendComment:
+			if err := usecase.checkAppendCommentPermission(token, userInfo); err != nil {
+				return err
+			}
+		case PermissionReadBoardInformation:
+		case PermissionReadFavorite:
+		case PermissionReadTreasureInformation:
+		case PermissionReadUserInformation:
+		default:
+			return fmt.Errorf("undefined permission id:%s", permission)
+		}
+	}
 
-	// todo: for PermissionAppendComment should check
-	// 1. if board can append comment
-	// 2. if use can response in such board
-	// 3. if article locked
+	return nil
+}
+
+func (usecase *usecase) checkAppendCommentPermission(token string, userInfo map[string]string) error {
+	//boardID := userInfo["board_id"]
+	//userID := userInfo["user_id"]
+
+	// TODO: 判斷在該版是否被水桶
+	// TODO: 判斷該版是否允許推文
+	// TODO: 判斷該文章是否鎖文
 
 	return nil
 }
