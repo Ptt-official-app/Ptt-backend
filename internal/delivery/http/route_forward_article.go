@@ -36,10 +36,14 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 		return
 	}
 
-	destinations := make([]usecase.Forward, 2)
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 
-	// Check permission for whether article is allow forwarding `to` board
 	if toBoard != "" {
+		// Check permission for whether article is allow forwarding `to` board
 		err := delivery.usecase.CheckPermission(token,
 			[]usecase.Permission{usecase.PermissionForwardAddArticle},
 			map[string]string{
@@ -52,38 +56,33 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 			return
 		}
 
-		destinations = append(destinations,
-			&usecase.ForwardToBoard{
-				Board: toBoard,
-			})
-	}
-
-	if toEmail != "" {
-		destinations = append(destinations,
-			&usecase.ForwardToEmail{
-				Email: toEmail,
-			})
-	}
-
-	userID, err := delivery.usecase.GetUserIDFromToken(token)
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	for _, dest := range destinations {
-		_, err = delivery.usecase.ForwardArticle(
+		_, err = delivery.usecase.ForwardArticleToBoard(
 			context.Background(),
 			userID,
 			boardID,
 			filename,
-			dest,
+			toBoard,
 		)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
 	}
+
+	if toEmail != "" {
+		_, err = delivery.usecase.ForwardArticleToEmail(
+			context.Background(),
+			userID,
+			boardID,
+			filename,
+			toEmail,
+		)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+	}
+
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{},
 	}

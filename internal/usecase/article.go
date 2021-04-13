@@ -21,26 +21,12 @@ func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, file
 	return map[string]interface{}{}, nil
 }
 
-type Forward interface {
-	Forward() (map[string]interface{}, error)
-}
-type ForwardToBoard struct {
-	Board string
-}
-
-func (b *ForwardToBoard) Forward() (map[string]interface{}, error) {
+// ForwardArticleToBoard returns forwarding to board results
+func (usecase *usecase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error) {
 	return map[string]interface{}{}, nil
 }
 
-type ForwardToEmail struct {
-	Email string
-}
-
-func (b *ForwardToEmail) Forward() (map[string]interface{}, error) {
+// ForwardArticleToEmail returns forwarding to email results
+func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) (map[string]interface{}, error) {
 	return map[string]interface{}{}, nil
-}
-
-// ForwardArticle returns forwarding to board results
-func (usecase *usecase) ForwardArticle(ctx context.Context, userID, boardID, filename string, to Forward) (map[string]interface{}, error) {
-	return to.Forward()
 }
