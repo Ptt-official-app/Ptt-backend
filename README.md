@@ -138,3 +138,9 @@ ASCII 圖片產圖引擎
   ](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
   `docker-compose up -d`
 
+## 貢獻者相關
+
+如果想要參與開發與維護專案可參考:
+[FOR_DEVELOPERS.md](https://github.com/Ptt-official-app/Ptt-backend/blob/development/FOR_DEVELOPERS.md)
+
+也可直接發 issue 討論相關問題
