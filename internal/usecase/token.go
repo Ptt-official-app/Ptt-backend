@@ -15,8 +15,8 @@ const (
 	PermissionReadTreasureInformation Permission = "READ_TREASURE_INFORMATION"
 	PermissionReadFavorite            Permission = "READ_FAVORITE"
 	PermissionAppendComment           Permission = "APPEND_COMMENT"
-	PermissionForwardArticleOut       Permission = "FORWARD_ARTICLE"
-	PermissionForwardArticleTo        Permission = "FORWARD_ARTICLE"
+	PermissionForwardArticle          Permission = "FORWARD_ARTICLE"
+	PermissionForwardAddArticle       Permission = "ADD_ARTICLE"
 )
 
 func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {

@@ -24,38 +24,51 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 	token := delivery.getTokenFromRequest(r)
 
 	// Check permission for whether article is allow forwarding `from` board
-	outErr := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionForwardArticleOut},
+	err := delivery.usecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionForwardArticle},
 		map[string]string{
 			"board_id":   boardID,
 			"article_id": filename,
 		})
-	// Check permission for whether article is allow forwarding `to` board
-	toErr := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionForwardArticleTo},
-		map[string]string{
-			"board_id":   toBoard,
-			"article_id": filename,
-		})
-	if toErr != nil || outErr != nil {
+	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
 		return
+	}
+
+	destinations := make([]usecase.Forward, 2)
+
+	// Check permission for whether article is allow forwarding `to` board
+	if toBoard != "" {
+		err := delivery.usecase.CheckPermission(token,
+			[]usecase.Permission{usecase.PermissionForwardAddArticle},
+			map[string]string{
+				"board_id":   toBoard,
+				"article_id": filename,
+			})
+		if err != nil {
+			// TODO: record unauthorized access
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		destinations = append(destinations,
+			&usecase.ForwardToBoard{
+				Board: toBoard,
+			})
+	}
+
+	if toEmail != "" {
+		destinations = append(destinations,
+			&usecase.ForwardToEmail{
+				Email: toEmail,
+			})
 	}
 
 	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
-	}
-
-	destinations := []usecase.Forward{
-		&usecase.ForwardToBoard{
-			Board: toBoard,
-		},
-		&usecase.ForwardToEmail{
-			Email: toEmail,
-		},
 	}
 
 	for _, dest := range destinations {
@@ -71,7 +84,6 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 			return
 		}
 	}
-
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{},
 	}
