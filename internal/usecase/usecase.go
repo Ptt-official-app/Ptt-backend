@@ -54,6 +54,10 @@ type Usecase interface {
 	// GetPopularArticles returns all popular articles
 	GetPopularArticles(ctx context.Context) ([]repository.PopularArticleRecord, error)
 	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error)
+	// ForwardArticleToBoard returns forwarding to board results
+	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error)
+	// ForwardArticleToEmail returns forwarding to email results
+	ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) (map[string]interface{}, error)
 }
 
 type usecase struct {
