@@ -6,3 +6,5 @@ PTT APP 後端 貢獻者名單
 | 名稱(網路名稱) | GitHub                                        | 社交帳號                                         | 貢獻內容 |
 | -------------- | --------------------------------------------- | ------------------------------------------------ | -------- |
 | 陳昱廷         | [y2468101216](https://github.com/y2468101216) | [facebook](https://www.facebook.com/y2468101216) | coding   |
+| PichuChen      |                                               |                                                  | coding   |
+| SivWatt、涼涼  | [SivWatt](https://github.com/SivWatt)         |                                                  | coding   |
