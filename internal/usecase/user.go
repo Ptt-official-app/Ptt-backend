@@ -112,6 +112,11 @@ func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]i
 	return dataItems, nil
 }
 
+func (usecase *usecase) GetUserDrafts(ctx context.Context, userID, draftID string) ([]byte, error) {
+	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
+	return []byte{}, nil
+}
+
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {

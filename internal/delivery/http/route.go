@@ -205,14 +205,19 @@ func (delivery *Delivery) parseClassPath(path string) (classID string, item stri
 	return "", "", nil
 }
 
-func parseUserPath(path string) (userID string, item string, err error) {
+func parseUserPath(path string) (userID string, item string, itemID string, err error) {
 	pathSegment := strings.Split(path, "/")
-	// /{{version}}/users/{{user_id}}/{{item}}
-	if len(pathSegment) == 4 {
+	if len(pathSegment) == 6 {
+		// /{{version}}/users/{{user_id}}/{{item}}/{{itemID}}
+		return pathSegment[3], pathSegment[4], pathSegment[5], nil
+	} else if len(pathSegment) == 5 {
+		// /{{version}}/users/{{user_id}}/{{item}}
+		return pathSegment[3], pathSegment[4], "", nil
+	} else if len(pathSegment) == 4 {
 		// /{{version}}/users/{{user_id}}
-		return pathSegment[3], "", nil
+		return pathSegment[3], "", "", nil
 	}
-	return pathSegment[3], pathSegment[4], nil
+	return "", "", "", nil
 }
 
 // return a boolean value to indicate support guest account

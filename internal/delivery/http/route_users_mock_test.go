@@ -50,6 +50,10 @@ func (usecase *MockUsecase) GetUserComments(ctx context.Context, userID string) 
 	return result, nil
 }
 
+func (usecase *MockUsecase) GetUserDrafts(ctx context.Context, userID string, draftID string) ([]byte, error) {
+	return []byte("this is a draft"), nil
+}
+
 type MockUserRecord struct {
 	userID string
 }
