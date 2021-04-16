@@ -22,7 +22,7 @@ type Usecase interface {
 	GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) // FIXME: use concrete type rather than []interface{}
 	GetUserPreferences(ctx context.Context, userID string) (map[string]string, error)
 	// GetUserComments returns history comments of a user
-	GetUserComments(ctx context.Context, userID string) ([]interface{}, error)
+	GetUserComments(ctx context.Context, userID string) ([]interface{}, error) // FIXME: use concrete type from go-bbs instead of []interface{}
 	// GetUserDrafts returns user's draft by given draft id
 	GetUserDrafts(ctx context.Context, userID string, draftID string) ([]byte, error)
 
@@ -56,6 +56,10 @@ type Usecase interface {
 	// GetPopularArticles returns all popular articles
 	GetPopularArticles(ctx context.Context) ([]repository.PopularArticleRecord, error)
 	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error)
+	// ForwardArticleToBoard returns forwarding to board results
+	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error)
+	// ForwardArticleToEmail returns forwarding to email results
+	ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) (map[string]interface{}, error)
 }
 
 type usecase struct {

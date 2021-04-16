@@ -44,10 +44,15 @@ type Repository interface {
 	// GetUserPreferences returns user's preferences
 	// TODO: replace UserPreferencesRecord with real bbs record
 	GetUserPreferences(ctx context.Context, userID string) (map[string]string, error)
+	// GetUserComments return user's history comments
+	// TODO: return a slice of concrete type not interface
+	GetUserComments(ctx context.Context, userID string) ([]interface{}, error)
 
 	// article.go
 	// GetPopularArticles returns all popular articles
 	GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error)
+	// AppendComment returns comment details
+	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error)
 }
 
 type repository struct {

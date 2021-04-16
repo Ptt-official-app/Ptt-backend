@@ -22,21 +22,22 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 
 	token := delivery.getTokenFromRequest(r)
 
-	// Check permission for append comment
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionAppendComment},
-		map[string]string{
-			"board_id":   boardID,
-			"article_id": filename,
-		})
+	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
-		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	userID, err := delivery.usecase.GetUserIDFromToken(token)
+	// Check permission for append comment
+	err = delivery.usecase.CheckPermission(token,
+		[]usecase.Permission{usecase.PermissionAppendComment},
+		map[string]string{
+			"board_id":   boardID,
+			"article_id": filename,
+			"user_id":    userID,
+		})
 	if err != nil {
+		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
