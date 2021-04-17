@@ -17,6 +17,8 @@ const (
 	PermissionAppendComment           Permission = "APPEND_COMMENT"
 	PermissionForwardArticle          Permission = "FORWARD_ARTICLE"
 	PermissionForwardAddArticle       Permission = "ADD_ARTICLE"
+	PermissionUpdateDraft             Permission = "UPDATE_DRAFT"
+	PermissionDeleteDraft             Permission = "DELETE_DRAFT"
 )
 
 func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {
@@ -89,6 +91,8 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 		case PermissionReadFavorite:
 		case PermissionReadTreasureInformation:
 		case PermissionReadUserInformation:
+		case PermissionUpdateDraft:
+		case PermissionDeleteDraft:
 		default:
 			return fmt.Errorf("undefined permission id:%s", permission)
 		}
