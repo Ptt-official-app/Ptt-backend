@@ -65,6 +65,8 @@ func (delivery *Delivery) routeUsers(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getUsers(w, r)
+	case http.MethodPost:
+		delivery.postUsers(w, r)
 	}
 }
 
