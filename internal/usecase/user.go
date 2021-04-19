@@ -117,6 +117,16 @@ func (usecase *usecase) GetUserDrafts(ctx context.Context, userID, draftID strin
 	return []byte{}, nil
 }
 
+func (usecase *usecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
+	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
+	return text, nil
+}
+
+func (usecase *usecase) DeleteUserDraft(ctx context.Context, userID, draftID string) error {
+	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
+	return nil
+}
+
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
 	dataItems := []interface{}{}
 	for _, item := range recs {

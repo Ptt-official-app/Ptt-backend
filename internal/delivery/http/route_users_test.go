@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 )
 
@@ -314,5 +316,81 @@ func TestGetUserDrafts(t *testing.T) {
 	if string(actualValue) != string(expectedValue) {
 		t.Errorf("handler returned unexpected body, raw not match: got %v want value %v",
 			actualValue, expectedValue)
+	}
+}
+
+func TestUpdateUserDraft(t *testing.T) {
+	userID := "id"
+	mockUsecase := NewMockUsecase()
+	mockDelivery := NewHTTPDelivery(mockUsecase)
+
+	v := url.Values{}
+	v.Set("action", "update_draft")
+	v.Set("raw", "dGhpcyBpcyBhIGRyYWZ0") // "this is a draft" in base64
+	t.Logf("testing body: %v", v)
+	req, err := http.NewRequest("POST", "/v1/users/user/drafts/1", strings.NewReader(v.Encode()))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := mockUsecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer "+token)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/users/", mockDelivery.routeUsers)
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	responsedMap := map[string]interface{}{}
+	err = json.Unmarshal(rr.Body.Bytes(), &responsedMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
+
+	t.Logf("got response %v", rr.Body.String())
+	responsedData := responsedMap["data"].(map[string]interface{})
+	raw := responsedData["raw"].(string)
+	actualValue, _ := base64.StdEncoding.DecodeString(raw)
+
+	expectedValue := []byte("this is a draft")
+	if string(actualValue) != string(expectedValue) {
+		t.Errorf("handler returned unexpected body, raw not match: got %v want value %v",
+			actualValue, expectedValue)
+	}
+}
+
+func TestDeleteUserDraft(t *testing.T) {
+	userID := "id"
+	mockUsecase := NewMockUsecase()
+	mockDelivery := NewHTTPDelivery(mockUsecase)
+
+	v := url.Values{}
+	v.Set("action", "delete_draft")
+	t.Logf("testing body: %v", v)
+	req, err := http.NewRequest("POST", "/v1/users/user/drafts/1", strings.NewReader(v.Encode()))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	token := mockUsecase.CreateAccessTokenWithUsername(userID)
+	t.Logf("testing token: %v", token)
+	req.Header.Add("Authorization", "bearer "+token)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+
+	rr := httptest.NewRecorder()
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/users/", mockDelivery.routeUsers)
+	r.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
 	}
 }
