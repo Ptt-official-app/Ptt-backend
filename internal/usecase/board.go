@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -57,7 +58,7 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 	// TODO:GetBoards need add return error
 	allBoards := usecase.repo.GetBoards(ctx)
 	if len(allBoards) == 0 {
-		usecase.logger.Warningf("GetBoards Error")
+		return allBoards, errors.New("GetBoards error : No data")
 	}
 
 	filtedBoards := shouldBeDisplayOnPouplarList(&allBoards)
