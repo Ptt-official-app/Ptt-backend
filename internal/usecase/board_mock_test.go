@@ -181,26 +181,26 @@ func (repo *MockRepository) GetUserArticles(ctx context.Context, boardID string)
 	return result, nil
 }
 
-type mockBoardRecord struct {
+type MockBoardRecord struct {
 	boardID string
-	titld   string
+	title   string
 	isClass string
 	classID string
 	bM      string
 }
 
-func (repo *MockRepository) GetPopularBoards(ctx context.Context) ([]mockBoardRecord, error) {
-	boardRecords := []mockBoardRecord{
+func (repo *MockRepository) GetPopularBoards(ctx context.Context) ([]MockBoardRecord, error) {
+	boardRecords := []MockBoardRecord{
 		{
 			boardID: "TestBoardID",
-			titld:   "TestID",
+			title:   "TestID",
 			isClass: "NewClass",
 			classID: "TestClass",
 			bM:      "TestBM",
 		},
 	}
 
-	result := make([]mockBoardRecord, len(boardRecords))
+	result := make([]MockBoardRecord, len(boardRecords))
 	for i, v := range boardRecords {
 		result[i] = v
 	}
