@@ -55,14 +55,14 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 		})
 
 	if err != nil {
-		// TODO: record unauthorized access
+		delivery.logger.Warningf("unauthorized get user information for %s: %v", userID, err)
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
 	dataMap, err := delivery.usecase.GetUserInformation(context.Background(), userID)
 	if err != nil {
-		// TODO: record error
+		delivery.logger.Warningf("get user information for %s failed: %v", userID, err)
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
 			"error":             "find_userrec_error",
