@@ -53,18 +53,37 @@ func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.Boar
 }
 
 func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error) {
-	// TODO: Change to popular GetBoards or get popular board there
-	// Please see: https://github.com/Ptt-official-app/Ptt-backend/issues/51#issuecomment-783895477
-	boards := usecase.repo.GetBoards(ctx)
-	// TODO: Sort boards in descending order by number_of_user
-
-	// sort.Slice(boards, func(i, j int) bool {
-	// 	return boards[i].UserNum > boards[j].UserNum
-	// })
-	if len(boards) < 100 {
-		return boards, nil
+	// Use GetBoards to obtain data and use conditions to filter
+	// TODO:GetBoards need add return error
+	allBoards := usecase.repo.GetBoards(ctx)
+	if len(allBoards) == 0 {
+		usecase.logger.Warningf("GetBoards Error")
 	}
-	return boards[:100], nil
+
+	filtedBoards := shouldBeDisplayOnPouplarList(&allBoards)
+
+	// TODO:Add condition to sort
+	// sort.Slice(filtedBoards, func(i, j int) bool {
+	// 	return (*filtedBoards)[i].UserEntered > (*filtedBoards)[j].UserEntered
+	// })
+
+	if len(*filtedBoards) < 100 {
+		return *filtedBoards, nil
+	}
+
+	return (*filtedBoards)[:100], nil
+}
+
+func shouldBeDisplayOnPouplarList(allBoards *[]bbs.BoardRecord) (filtedBoards *[]bbs.BoardRecord) {
+	for index := range *allBoards {
+		// Initially filter boards by board status or other values
+		// TODO:Need to add filter conditions,here is an example
+		if (*allBoards)[index].ClassID() != "" {
+			*filtedBoards = append(*filtedBoards, (*allBoards)[index])
+		}
+		// TODO:Add other conditions
+	}
+	return
 }
 
 func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error) {
