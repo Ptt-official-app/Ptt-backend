@@ -111,8 +111,8 @@ func TestGetPopularBoards(t *testing.T) {
 	usecase := NewUsecase(&config.Config{}, resp)
 
 	filtedBoards, err := usecase.GetPopularBoards(context.TODO())
-	if err == nil {
-		t.Errorf("GetPopularBoards should have error")
+	if err != nil {
+		t.Errorf("GetPopularBoards error : %v", err)
 	}
 
 	// TODO:The test here must be changed after the implementation is completed
