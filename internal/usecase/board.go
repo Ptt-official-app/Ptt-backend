@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -58,33 +57,35 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 	// TODO:GetBoards need add return error
 	allBoards := usecase.repo.GetBoards(ctx)
 	if len(allBoards) == 0 {
-		return allBoards, errors.New("GetBoards error : No data")
+		usecase.logger.Warningf("GetPopularBoards : GetBoards did not obtain data")
 	}
 
-	filtedBoards := shouldBeDisplayOnPouplarList(&allBoards)
+	filtedBoards := []bbs.BoardRecord{}
+	for index := range allBoards {
+		if shouldBeDisplayOnPouplarList(&allBoards[index]) {
+			filtedBoards = append(filtedBoards, allBoards[index])
+		}
+	}
 
 	// TODO:Add condition to sort
 	// sort.Slice(filtedBoards, func(i, j int) bool {
-	// 	return (*filtedBoards)[i].UserEntered > (*filtedBoards)[j].UserEntered
+	// 	return (filtedBoards)[i].UserEntered > (filtedBoards)[j].UserEntered
 	// })
 
-	if len(*filtedBoards) < 100 {
-		return *filtedBoards, nil
+	if len(filtedBoards) < 100 {
+		return filtedBoards, nil
 	}
 
-	return (*filtedBoards)[:100], nil
+	return (filtedBoards)[:100], nil
 }
 
-func shouldBeDisplayOnPouplarList(allBoards *[]bbs.BoardRecord) (filtedBoards *[]bbs.BoardRecord) {
-	for index := range *allBoards {
-		// Initially filter boards by board status or other values
-		// TODO:Need to add filter conditions,here is an example
-		if (*allBoards)[index].ClassID() != "" {
-			*filtedBoards = append(*filtedBoards, (*allBoards)[index])
-		}
-		// TODO:Add other conditions
+func shouldBeDisplayOnPouplarList(board *bbs.BoardRecord) bool {
+	// Initially filter boards by board status or other values
+	// TODO:Need to add filter conditions,here is an example
+	if (*board).ClassID() != "" {
+		return true
 	}
-	return
+	return false
 }
 
 func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error) {
