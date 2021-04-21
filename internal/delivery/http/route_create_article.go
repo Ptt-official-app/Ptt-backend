@@ -3,8 +3,9 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	"net/http"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, boardID string) {

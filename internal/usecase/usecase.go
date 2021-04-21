@@ -48,7 +48,7 @@ type Usecase interface {
 	// GetBoardTreasures returns treasures of a board
 	GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} // FIXME: use concrete type rather than []interface{}
 	// CreatePost create a new post
-	CreateArticle(ctx context.Context,userID, boardID, title, article string) (bbs.ArticleRecord, error)
+	CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error)
 
 	// token.go
 	// CreateAccessTokenWithUsername creates access token for a user
