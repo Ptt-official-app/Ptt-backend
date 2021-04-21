@@ -14,6 +14,7 @@ const (
 	PermissionReadBoardInformation    Permission = "READ_BOARD_INFORMATION"
 	PermissionReadTreasureInformation Permission = "READ_TREASURE_INFORMATION"
 	PermissionReadFavorite            Permission = "READ_FAVORITE"
+	PermissionCreateArticle           Permission = "PUBLISH_POSTS"
 	PermissionAppendComment           Permission = "APPEND_COMMENT"
 	PermissionForwardArticle          Permission = "FORWARD_ARTICLE"
 	PermissionForwardAddArticle       Permission = "ADD_ARTICLE"
@@ -93,7 +94,15 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 		case PermissionReadUserInformation:
 		case PermissionUpdateDraft:
 		case PermissionDeleteDraft:
+<<<<<<< HEAD
 		case PermissionForwardArticle:
+=======
+		case PermissionCreateArticle:
+			// TODO:
+			// get board data and check whether board allow create articles
+			// get board ban list and check whether user on the list
+			// get global ban list and check whether user on the list
+>>>>>>> 新增發文 http
 		default:
 			return fmt.Errorf("undefined permission id:%s", permission)
 		}
