@@ -54,6 +54,6 @@ func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, board
 }
 
 // CreateArticle create a new article on a board
-func (usecase *usecase) CreateArticle(ctx context.Context,userID, boardID, title, article string) (bbs.ArticleRecord, error) {
+func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
 	return nil, nil
 }
