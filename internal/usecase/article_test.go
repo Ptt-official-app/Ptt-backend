@@ -27,3 +27,47 @@ func TestGetPopularArticles(t *testing.T) {
 	}
 
 }
+
+func TestForwardArticleToEmail(t *testing.T) {
+	repo := &MockRepository{}
+
+	userID := "mockUserID"
+	boardID := "board1"
+	filename := "filename1"
+	email := "test@gmail.com"
+	mail := &MockMail{}
+
+	usecase := NewUsecase(&config.Config{}, repo)
+	usecase.UpdateMail(mail)
+	err := usecase.ForwardArticleToEmail(context.TODO(), userID, boardID, filename, email)
+
+	if err != nil {
+		t.Errorf("ForwardArticleToEmail failed %v", err)
+	}
+
+	if mail.data["email"] != email {
+		t.Errorf("Send Email with incorrect email, want %s, get %s\n", email, mail.data["email"])
+	}
+
+	if mail.data["title"] != "[討論] 偶爾要發個廢文" {
+		t.Errorf("Send Email with incorrect title, want %s, get %s\n", "[討論] 偶爾要發個廢文", mail.data["title"])
+	}
+
+	if mail.data["userID"] != userID {
+		t.Errorf("Send Email with incorrect userID, want %s, get %s\n", userID, mail.data["userID"])
+	}
+}
+
+type MockMail struct {
+	data map[string]interface{}
+}
+
+func (mail *MockMail) Send(email, title, userID string, body []byte) error {
+	mail.data = map[string]interface{}{
+		"email":  email,
+		"title":  title,
+		"userID": userID,
+		"body":   body,
+	}
+	return nil
+}

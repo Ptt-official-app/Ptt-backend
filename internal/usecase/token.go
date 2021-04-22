@@ -93,6 +93,7 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 		case PermissionReadUserInformation:
 		case PermissionUpdateDraft:
 		case PermissionDeleteDraft:
+		case PermissionForwardArticle:
 		default:
 			return fmt.Errorf("undefined permission id:%s", permission)
 		}

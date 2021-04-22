@@ -14,6 +14,7 @@ type Config struct {
 	AccessTokenPrivateKey string
 	AccessTokenPublicKey  string
 	AccessTokenExpiresAt  time.Duration
+	MailDriver            string
 }
 
 var (
@@ -83,5 +84,11 @@ func applyConfig(config *Config, rawConfig *toml.Tree) {
 		if err != nil {
 			logger.Warningf("parse duration failed: %v", err)
 		}
+	}
+
+	s, ok = rawConfig.Get("mail.driver").(string)
+	if ok {
+		logger.Debugf("read rawConfig mail.driver: %s", s)
+		config.MailDriver = s
 	}
 }
