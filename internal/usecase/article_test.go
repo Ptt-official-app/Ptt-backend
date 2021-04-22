@@ -38,7 +38,7 @@ func TestForwardArticleToEmail(t *testing.T) {
 	mail := &MockMail{}
 
 	usecase := NewUsecase(&config.Config{}, repo)
-	usecase.UpdateMail(mail)
+	_ = usecase.UpdateMail(mail)
 	err := usecase.ForwardArticleToEmail(context.TODO(), userID, boardID, filename, email)
 
 	if err != nil {
