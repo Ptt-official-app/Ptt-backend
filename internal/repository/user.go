@@ -110,6 +110,11 @@ func (repo *repository) GetUserDrafts(_ context.Context, userID, draftID string)
 	return []byte{}, nil
 }
 
+func (repo *repository) UpdateUserDraft(_ context.Context, userID, draftID string, text []byte) ([]byte, error) {
+	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
+	return text, nil
+}
+
 func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {
 	userRecords, err := db.ReadUserRecords()
 	if err != nil {

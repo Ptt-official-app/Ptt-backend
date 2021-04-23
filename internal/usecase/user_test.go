@@ -96,3 +96,17 @@ func TestGetUserDrafts(t *testing.T) {
 		t.Error("returned unexpected error")
 	}
 }
+
+func TestUpdateUserDrafts(t *testing.T) {
+	userID := "user"
+	mockRepository := &MockRepository{}
+	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
+
+	actualValue, _ := mockUsecase.UpdateUserDraft(context.TODO(), userID, "0", []byte("this is a draft"))
+	expectedValue := "this is a draft"
+
+	if expectedValue != string(actualValue) {
+		t.Errorf("returned unexpected value: got %v want value %v",
+			actualValue, expectedValue)
+	}
+}

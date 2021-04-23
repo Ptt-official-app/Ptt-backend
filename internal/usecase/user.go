@@ -121,8 +121,10 @@ func (usecase *usecase) GetUserDrafts(ctx context.Context, userID, draftID strin
 }
 
 func (usecase *usecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
-	return text, nil
+	if !isValidDraftID([]byte(draftID)) {
+		return []byte{}, errors.New(fmt.Sprintf("invalid draft ID: %s", draftID))
+	}
+	return usecase.repo.UpdateUserDraft(ctx, userID, draftID, text)
 }
 
 func (usecase *usecase) DeleteUserDraft(ctx context.Context, userID, draftID string) error {
