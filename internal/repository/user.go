@@ -105,6 +105,11 @@ func (repo *repository) GetUserComments(_ context.Context, userID string) ([]int
 	return result, nil
 }
 
+func (repo *repository) GetUserDrafts(_ context.Context, userID, draftID string) ([]byte, error) {
+	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
+	return []byte{}, nil
+}
+
 func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {
 	userRecords, err := db.ReadUserRecords()
 	if err != nil {

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -113,8 +114,10 @@ func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]i
 }
 
 func (usecase *usecase) GetUserDrafts(ctx context.Context, userID, draftID string) ([]byte, error) {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
-	return []byte{}, nil
+	if !isValidDraftID([]byte(draftID)) {
+		return []byte{}, errors.New(fmt.Sprintf("invalid draft ID: %s", draftID))
+	}
+	return usecase.repo.GetUserDrafts(ctx, userID, draftID)
 }
 
 func (usecase *usecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
@@ -155,6 +158,13 @@ func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []int
 		}
 	}
 	return dataItems
+}
+
+func isValidDraftID(draftID []byte) bool {
+	if len(draftID) == 1 {
+		return draftID[0] >= '0' && draftID[0] <= '9'
+	}
+	return false
 }
 
 func getMoneyDiscription(money int) string {

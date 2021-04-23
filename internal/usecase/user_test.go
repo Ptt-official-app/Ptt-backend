@@ -76,3 +76,23 @@ func TestGetUserComments(t *testing.T) {
 		t.Errorf(`item["board_id"] expect %s, got %s`, expectBoardID, item["board_id"])
 	}
 }
+
+func TestGetUserDrafts(t *testing.T) {
+	userID := "user"
+	mockRepository := &MockRepository{}
+	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
+
+	// case 1: valid draftID
+	actualValue, _ := mockUsecase.GetUserDrafts(context.TODO(), userID, "0")
+	expectedValue := "this is a draft"
+	if expectedValue != string(actualValue) {
+		t.Errorf("returned unexpected value: got %v want value %v",
+			actualValue, expectedValue)
+	}
+
+	// case 2: invalid draftID
+	_, err := mockUsecase.GetUserDrafts(context.TODO(), userID, "10")
+	if err == nil {
+		t.Error("returned unexpected error")
+	}
+}
