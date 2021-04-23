@@ -38,6 +38,10 @@ func (repo *MockRepository) UpdateUserDraft(ctx context.Context, userID, draftID
 	return text, nil
 }
 
+func (repo *MockRepository) DeleteUserDraft(ctx context.Context, userID, draftID string) error {
+	return nil
+}
+
 type MockUser struct {
 	userID string
 }

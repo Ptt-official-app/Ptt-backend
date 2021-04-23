@@ -115,6 +115,11 @@ func (repo *repository) UpdateUserDraft(_ context.Context, userID, draftID strin
 	return text, nil
 }
 
+func (repo *repository) DeleteUserDraft(_ context.Context, userID, draftID string) error {
+	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
+	return nil
+}
+
 func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {
 	userRecords, err := db.ReadUserRecords()
 	if err != nil {
