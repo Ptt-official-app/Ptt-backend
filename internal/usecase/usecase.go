@@ -5,6 +5,7 @@ import (
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
+	"github.com/Ptt-official-app/Ptt-backend/internal/mail"
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/Ptt-official-app/go-bbs"
 )
@@ -62,13 +63,17 @@ type Usecase interface {
 	// ForwardArticleToBoard returns forwarding to board results
 	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error)
 	// ForwardArticleToEmail returns forwarding to email results
-	ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) (map[string]interface{}, error)
+	ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error
+
+	// mail.go
+	UpdateMail(mail mail.Mail) error
 }
 
 type usecase struct {
 	logger       logging.Logger
 	globalConfig *config.Config
 	repo         repository.Repository
+	mail         mail.Mail
 }
 
 func NewUsecase(globalConfig *config.Config, repo repository.Repository) Usecase {
@@ -76,5 +81,6 @@ func NewUsecase(globalConfig *config.Config, repo repository.Repository) Usecase
 		logger:       logging.NewLogger(),
 		globalConfig: globalConfig,
 		repo:         repo,
+		mail:         mail.NewMail(globalConfig.MailDriver),
 	}
 }

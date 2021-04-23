@@ -18,7 +18,7 @@ func (repo *MockRepository) GetBoardArticle(ctx context.Context, boardID, filena
 func (repo *MockRepository) GetBoardArticleRecords(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error) {
 	articleRecords := []MockArticleRecord{
 		{
-			filename:       "",
+			filename:       "filename1",
 			modified:       time.Time{},
 			recommendCount: 10,
 			owner:          "SYSOP",
@@ -27,7 +27,7 @@ func (repo *MockRepository) GetBoardArticleRecords(ctx context.Context, boardID 
 			money:          0,
 		},
 		{
-			filename:       "",
+			filename:       "filename2",
 			modified:       time.Time{},
 			recommendCount: -20,
 			owner:          "XDXD",

@@ -39,3 +39,7 @@ Ojl6/rZ4xKcHM/NLpUJP3wDpeFQfMaMiAKQHoGs6rk5z1l/tUUVjJWrw0A==
 # 預設 Access Token 多久過期
 # 格式請見 https://golang.org/pkg/time/#ParseDuration
 access_token_expires_at= "24h"
+
+[mail]
+# 預設的發信服務
+driver= "smtp"

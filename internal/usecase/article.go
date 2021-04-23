@@ -30,6 +30,24 @@ func (usecase *usecase) ForwardArticleToBoard(ctx context.Context, userID, board
 }
 
 // ForwardArticleToEmail returns forwarding to email results
-func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) (map[string]interface{}, error) {
-	return map[string]interface{}{}, nil
+func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error {
+	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
+	if err != nil {
+		return fmt.Errorf("GetBoardArticleRecords error: %w", err)
+	}
+	var title string
+	for _, article := range articleRecords {
+		if article.Filename() == filename {
+			title = article.Title()
+			break
+		}
+	}
+	if title == "" {
+		return fmt.Errorf("cannot find article %s", filename)
+	}
+	buffer, err := usecase.repo.GetBoardArticle(ctx, boardID, filename)
+	if err != nil {
+		return fmt.Errorf("GetBoardArticle error: %w", err)
+	}
+	return usecase.mail.Send(email, title, userID, buffer)
 }

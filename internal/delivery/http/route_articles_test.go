@@ -18,6 +18,6 @@ func (usecase *MockUsecase) ForwardArticleToBoard(ctx context.Context, userID, b
 	return map[string]interface{}{}, nil
 }
 
-func (usecase *MockUsecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) (map[string]interface{}, error) {
-	return map[string]interface{}{}, nil
+func (usecase *MockUsecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error {
+	return nil
 }

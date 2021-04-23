@@ -70,7 +70,7 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 	}
 
 	if toEmail != "" {
-		_, err = delivery.usecase.ForwardArticleToEmail(
+		err = delivery.usecase.ForwardArticleToEmail(
 			context.Background(),
 			userID,
 			boardID,
