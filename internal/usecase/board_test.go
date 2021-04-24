@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -82,7 +83,7 @@ func TestSearchArticles(t *testing.T) {
 func TestGetBoardPostsLimitation(t *testing.T) {
 	resp := &MockRepository{}
 
-	usecase := NewUsecase(&config.Config{}, resp)
+	usecase := NewUsecase(&config.Config{}, resp, &logging.DummyLogger{})
 
 	limitation, err := usecase.GetBoardPostsLimitation(context.TODO(), "board-id")
 	if err != nil {

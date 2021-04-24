@@ -5,11 +5,13 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 func TestGetPopularArticles(t *testing.T) {
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
 	req, err := http.NewRequest("GET", "/v1/popular-articles", nil)
 	if err != nil {
 		t.Fatal(err)

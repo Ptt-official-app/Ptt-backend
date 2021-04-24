@@ -9,6 +9,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 // TestGetUserInformation is a test function which will test getUserInformation (/v1/users/{{user_id}}/favorites)
@@ -33,7 +35,7 @@ func TestGetUserInformation(t *testing.T) {
 		"plan":                 map[string]interface{}{},
 	}
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
 	req, err := http.NewRequest("GET", "/v1/users/SYSOP/information", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -135,7 +137,7 @@ func TestParseUserPath(t *testing.T) {
 func TestGetUserFavorite(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
 	req, err := http.NewRequest("GET", "/v1/users/SYSOP/favorites", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -177,7 +179,7 @@ func TestGetUserFavorite(t *testing.T) {
 func TestGetUserPreference(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
 	req, err := http.NewRequest("GET", "/v1/users/SYSOP/preferences", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -219,7 +221,7 @@ func TestGetUserArticles(t *testing.T) {
 
 	userID := "id"
 	mockUsecase := NewMockUsecase()
-	mockDelivery := NewHTTPDelivery(mockUsecase)
+	mockDelivery := NewHTTPDelivery(mockUsecase, &logging.DummyLogger{})
 
 	req, err := http.NewRequest("GET", "/v1/users/user/articles", nil)
 	if err != nil {
@@ -256,7 +258,7 @@ func TestGetUserArticles(t *testing.T) {
 func TestGetUserComments(t *testing.T) {
 	userID := "id"
 	mockUsecase := NewMockUsecase()
-	mockDelivery := NewHTTPDelivery(mockUsecase)
+	mockDelivery := NewHTTPDelivery(mockUsecase, &logging.DummyLogger{})
 
 	req, err := http.NewRequest("GET", "/v1/users/user/comments", nil)
 	if err != nil {
@@ -299,7 +301,7 @@ func TestGetUserComments(t *testing.T) {
 func TestGetUserDrafts(t *testing.T) {
 	userID := "id"
 	mockUsecase := NewMockUsecase()
-	mockDelivery := NewHTTPDelivery(mockUsecase)
+	mockDelivery := NewHTTPDelivery(mockUsecase, &logging.DummyLogger{})
 
 	req, err := http.NewRequest("GET", "/v1/users/user/drafts/1", nil)
 	if err != nil {
@@ -341,7 +343,7 @@ func TestGetUserDrafts(t *testing.T) {
 func TestUpdateUserDraft(t *testing.T) {
 	userID := "id"
 	mockUsecase := NewMockUsecase()
-	mockDelivery := NewHTTPDelivery(mockUsecase)
+	mockDelivery := NewHTTPDelivery(mockUsecase, &logging.DummyLogger{})
 
 	v := url.Values{}
 	v.Set("action", "update_draft")
@@ -388,7 +390,7 @@ func TestUpdateUserDraft(t *testing.T) {
 func TestDeleteUserDraft(t *testing.T) {
 	userID := "id"
 	mockUsecase := NewMockUsecase()
-	mockDelivery := NewHTTPDelivery(mockUsecase)
+	mockDelivery := NewHTTPDelivery(mockUsecase, &logging.DummyLogger{})
 
 	v := url.Values{}
 	v.Set("action", "delete_draft")

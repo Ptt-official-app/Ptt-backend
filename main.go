@@ -28,13 +28,13 @@ func main() {
 		return
 	}
 
-	repo, err := repository.NewRepository(db)
+	repo, err := repository.NewRepository(db, logger)
 	if err != nil {
 		logger.Errorf("failed to create user repository: %s\n", err)
 		return
 	}
-	usecase := usecase.NewUsecase(globalConfig, repo)
-	httpDelivery := http.NewHTTPDelivery(usecase)
+	usecase := usecase.NewUsecase(globalConfig, repo, logger)
+	httpDelivery := http.NewHTTPDelivery(usecase, logger)
 	if err := httpDelivery.Run(globalConfig.ListenPort); err != nil {
 		logger.Errorf("run http delivery error: %s\n", err)
 	}

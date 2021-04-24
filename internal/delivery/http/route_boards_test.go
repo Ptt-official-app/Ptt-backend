@@ -7,12 +7,14 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 func TestGetPopularBoardList(t *testing.T) {
 
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
 	req, err := http.NewRequest("GET", "/v1/popular-boards", nil)
 	if err != nil {
 		t.Fatal(err)
@@ -57,7 +59,7 @@ func TestGetPopularBoardList(t *testing.T) {
 func TestGetBoardList(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
 
 	req, err := http.NewRequest("GET", "/v1/boards/", nil)
 	if err != nil {
@@ -108,7 +110,7 @@ func TestGetBoardList(t *testing.T) {
 func TestGetBoardInformation(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
 
 	req, err := http.NewRequest("GET", "/v1/boards/SYSOP/information", nil)
 	if err != nil {
@@ -158,7 +160,7 @@ func TestGetBoardInformation(t *testing.T) {
 func TestGetBoardSettings(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
 
 	req, err := http.NewRequest("GET", "/v1/boards/SYSOP/settings", nil)
 	if err != nil {
