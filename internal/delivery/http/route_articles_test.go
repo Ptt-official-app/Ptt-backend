@@ -3,6 +3,8 @@ package http
 import (
 	"context"
 
+	"github.com/Ptt-official-app/go-bbs"
+
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 )
 
@@ -20,4 +22,8 @@ func (usecase *MockUsecase) ForwardArticleToBoard(ctx context.Context, userID, b
 
 func (usecase *MockUsecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error {
 	return nil
+}
+
+func (usecase *MockUsecase) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
+	return nil, nil
 }

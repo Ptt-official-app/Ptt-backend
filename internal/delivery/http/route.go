@@ -116,12 +116,14 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if item == "articles" && boardID != "" && filename != "" {
-		if action == "append_comment" {
+	if item == "articles" && boardID != "" {
+		if action == "append_comment" && filename != "" {
 			delivery.appendComment(w, r, boardID, filename)
 			return
-		} else if action == "forward_article" {
+		} else if action == "forward_article" && filename != "" {
 			delivery.forwardArticle(w, r, boardID, filename)
+		} else if action == "add_article" {
+			delivery.publishPost(w, r, boardID)
 			return
 		}
 	}
