@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
@@ -35,6 +36,42 @@ func TestGetUserByID(t *testing.T) {
 		return
 	}
 
+}
+
+func TestGetUserInformation_InputNotExistUser_ReturnError(t *testing.T) {
+	userID := "not-exist-user-id"
+	errMsg := fmt.Sprintf("get userrec for %s failed", userID)
+	repo := &MockRepository{}
+	usecase := NewUsecase(&config.Config{}, repo)
+
+	data, err := usecase.GetUserInformation(context.TODO(), userID)
+	// TODO: check return error message with error object
+	if err.Error() != errMsg {
+		t.Errorf("GetUserInformation with %s expected error, got %v", userID, err)
+	}
+
+	if data != nil {
+		t.Errorf("GetUserInformation with %s expect nil data, got %v", userID, data)
+	}
+}
+
+func TestGetUserInformation_InputPichu_ReturnData(t *testing.T) {
+	userID := "pichu"
+	repo := &MockRepository{}
+	usecase := NewUsecase(&config.Config{}, repo)
+
+	data, err := usecase.GetUserInformation(context.TODO(), userID)
+	if err != nil {
+		t.Errorf("GetUserInformation with %s expected nil, got %v", userID, err)
+	}
+
+	if data == nil {
+		t.Errorf("GetUserInformation with %s expected data, got nil", userID)
+	}
+
+	if data["user_id"] != userID {
+		t.Errorf("GetUserInformation with %s expect %s, got %s", userID, userID, data["user_id"])
+	}
 }
 
 func TestGetUserArticles(t *testing.T) {
