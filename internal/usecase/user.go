@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
@@ -45,10 +46,10 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 		"user_id":              user.UserID(),
 		"nickname":             user.Nickname(),
 		"realname":             user.RealName(),
-		"number_of_login_days": fmt.Sprintf("%d", user.NumLoginDays()),
-		"number_of_posts":      fmt.Sprintf("%d", user.NumPosts()),
-		"number_of_badposts":   fmt.Sprintf("%d", user.NumBadPosts()),
-		"money":                fmt.Sprintf("%d", user.Money()),
+		"number_of_login_days": strconv.FormatInt(int64(user.NumLoginDays()), 10),
+		"number_of_posts":      strconv.FormatInt(int64(user.NumPosts()), 10),
+		"number_of_badposts":   strconv.FormatInt(int64(user.NumBadPosts()), 10),
+		"money":                strconv.FormatInt(int64(user.Money()), 10),
 		"money_description":    getMoneyDiscription(user.Money()),
 		"last_login_time":      user.LastLogin().Format(time.RFC3339),
 		"last_login_ipv4":      user.LastHost(),
