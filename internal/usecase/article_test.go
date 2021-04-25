@@ -28,6 +28,22 @@ func TestGetPopularArticles(t *testing.T) {
 
 }
 
+func TestForwardArticleToBoard(t *testing.T) {
+	repo := &MockRepository{}
+
+	userID := "mockUserID"
+	boardID := "board1"
+	filename := "filename1"
+	boardName := "destinationBoard"
+
+	usecase := NewUsecase(&config.Config{}, repo)
+	_, err := usecase.ForwardArticleToBoard(context.TODO(), userID, boardID, filename, boardName)
+
+	if err != nil {
+		t.Errorf("ForwardArticleToBoard failed %v", err)
+	}
+}
+
 func TestForwardArticleToEmail(t *testing.T) {
 	repo := &MockRepository{}
 

@@ -59,6 +59,10 @@ type Repository interface {
 	GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error)
 	// AppendComment returns comment details
 	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error)
+	// ForwardArticleToBoard returns forwarding to board results
+	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error)
+	// ForwardArticleToEmail returns forwarding to email results
+	ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error
 }
 
 type repository struct {

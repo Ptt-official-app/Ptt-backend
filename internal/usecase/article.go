@@ -27,7 +27,8 @@ func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, file
 
 // ForwardArticleToBoard returns forwarding to board results
 func (usecase *usecase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error) {
-	return map[string]interface{}{}, nil
+	result, err := usecase.repo.ForwardArticleToBoard(ctx, userID, boardID, filename, boardName)
+	return result, err
 }
 
 // ForwardArticleToEmail returns forwarding to email results

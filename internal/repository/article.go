@@ -37,3 +37,18 @@ func (repo *repository) AppendComment(ctx context.Context, userID, boardID, file
 func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, title, content string) (bbs.ArticleRecord, error) {
 	return nil, nil
 }
+
+func (repo *repository) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error) {
+	result := map[string]interface{}{
+		"user_id":      "No value",
+		"article_id":   "No value",
+		"forward_time": "No value",
+		"title":        "No value",
+		"board_id":     "No value",
+	}
+	return result, nil
+}
+
+func (repo *repository) ForwardArticleToEmail(ctx context.Context, userID string, boardID string, filename string, email string) error {
+	return nil
+}
