@@ -53,6 +53,8 @@ type Repository interface {
 	GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error)
 	// AppendComment returns comment details
 	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error)
+	// CreateArticle
+	CreateArticle(ctx context.Context, userID, boardID, title, article string) error
 }
 
 type repository struct {

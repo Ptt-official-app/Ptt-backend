@@ -83,6 +83,10 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 	return result, nil
 }
 
+func (repo *MockRepository) CreateArticle(ctx context.Context, userID, boardID, title, article string) error {
+	return nil
+}
+
 func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
 	return nil, nil
 }
