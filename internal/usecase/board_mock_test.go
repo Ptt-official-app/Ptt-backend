@@ -145,6 +145,8 @@ type MockPostsLimitedBoardRecord struct{}
 
 func (m *MockPostsLimitedBoardRecord) PostLimitPosts() uint8 { return 0 }
 
+func (m *MockPostsLimitedBoardRecord) EnableNewPost() bool { return false}
+
 type MockLoginsLimitedBoardRecord struct{}
 
 func (m *MockLoginsLimitedBoardRecord) PostLimitLogins() uint8 { return 0 }

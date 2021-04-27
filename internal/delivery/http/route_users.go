@@ -48,11 +48,9 @@ func (delivery *Delivery) postUsers(w http.ResponseWriter, r *http.Request) {
 func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadUserInformation},
-		map[string]string{
-			"user_id": userID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+		"user_id": userID,
+	})
 
 	if err != nil {
 		delivery.logger.Warningf("unauthorized get user information for %s: %v", userID, err)
@@ -92,11 +90,9 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 // Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
 func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadUserInformation},
-		map[string]string{
-			"user_id": userID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+		"user_id": userID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -129,11 +125,9 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 // to w. request path should be /v1/users/{{user_id}}/articles
 func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadUserInformation},
-		map[string]string{
-			"user_id": userID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+		"user_id": userID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -166,11 +160,9 @@ func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request
 func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadUserInformation},
-		map[string]string{
-			"user_id": userID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+		"user_id": userID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -210,11 +202,9 @@ func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Requ
 func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadUserInformation},
-		map[string]string{
-			"user_id": userID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+		"user_id": userID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -254,11 +244,9 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, userID string, draftID string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadUserInformation},
-		map[string]string{
-			"user_id": userID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+		"user_id": userID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -313,11 +301,9 @@ func (delivery *Delivery) postUserDrafts(w http.ResponseWriter, r *http.Request,
 func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request, userID string, draftID string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionUpdateDraft},
-		map[string]string{
-			"user_id": userID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionUpdateDraft}, map[string]string{
+		"user_id": userID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -371,11 +357,9 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 func (delivery *Delivery) deleteUserDraft(w http.ResponseWriter, r *http.Request, userID string, draftID string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionDeleteDraft},
-		map[string]string{
-			"user_id": userID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionDeleteDraft}, map[string]string{
+		"user_id": userID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access

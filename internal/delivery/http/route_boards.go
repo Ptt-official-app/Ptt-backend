@@ -88,11 +88,9 @@ func (delivery *Delivery) getPopularBoardList(w http.ResponseWriter, r *http.Req
 func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadBoardInformation},
-		map[string]string{
-			"board_id": boardID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+		"board_id": boardID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -147,11 +145,9 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardSettings: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadBoardInformation},
-		map[string]string{
-			"board_id": boardID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+		"board_id": boardID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access

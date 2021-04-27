@@ -1,6 +1,8 @@
 package usecase
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -81,7 +83,7 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 	return "", fmt.Errorf("token not valid")
 }
 
-func (usecase *usecase) CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error {
+func (usecase *usecase) CheckPermission(ctx context.Context, token string, permissionID []Permission, userInfo map[string]string) error {
 	for _, permission := range permissionID {
 		switch permission {
 		case PermissionAppendComment:
@@ -96,10 +98,9 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 		case PermissionDeleteDraft:
 		case PermissionForwardArticle:
 		case PermissionCreateArticle:
-			// TODO:
-			// get board data and check whether board allow create articles
-			// get board ban list and check whether user on the list
-			// get global ban list and check whether user on the list
+			if err := usecase.checkCreateArticlePermission(ctx, token, userInfo); err != nil {
+				return err
+			}
 		default:
 			return fmt.Errorf("undefined permission id:%s", permission)
 		}
@@ -115,6 +116,29 @@ func (usecase *usecase) checkAppendCommentPermission(token string, userInfo map[
 	// TODO: 判斷在該版是否被水桶
 	// TODO: 判斷該版是否允許推文
 	// TODO: 判斷該文章是否鎖文
+
+	return nil
+}
+
+func (usecase *usecase) checkCreateArticlePermission(ctx context.Context, token string, userInfo map[string]string) error {
+	// TODO:
+	// get board data and check whether board allow create articles
+	boardID, ok := userInfo["boardID"]
+	if !ok {
+		return errors.New("no board_id key") // todo: define error
+	}
+	boardLimit, err := usecase.repo.GetBoardPostsLimit(ctx, boardID)
+	if err != nil {
+		return fmt.Errorf("create article permission failed: %w", err)
+	}
+	if !boardLimit.EnableNewPost() {
+		return errors.New("this board not allow create new article")
+	}
+
+	// get board ban list and check whether user on the list
+	// TODO: repo 新增各板水桶名單
+	// get global ban list and check whether user on the list
+	// TODO: repo 新增全站水桶名單
 
 	return nil
 }

@@ -25,12 +25,10 @@ func (delivery *Delivery) getBoardTreasures(w http.ResponseWriter, r *http.Reque
 	}
 
 	// Check permission for board
-	err = delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadTreasureInformation},
-		map[string]string{
-			"board_id":    boardID,
-			"treasure_id": strings.Join(treasuresID, ","),
-		})
+	err = delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadTreasureInformation}, map[string]string{
+		"board_id":    boardID,
+		"treasure_id": strings.Join(treasuresID, ","),
+	})
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)

@@ -24,12 +24,10 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 	token := delivery.getTokenFromRequest(r)
 
 	// Check permission for whether article is allow forwarding `from` board
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionForwardArticle},
-		map[string]string{
-			"board_id":   boardID,
-			"article_id": filename,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionForwardArticle}, map[string]string{
+		"board_id":   boardID,
+		"article_id": filename,
+	})
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
@@ -44,12 +42,10 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 
 	if toBoard != "" {
 		// Check permission for whether article is allow forwarding `to` board
-		err := delivery.usecase.CheckPermission(token,
-			[]usecase.Permission{usecase.PermissionForwardAddArticle},
-			map[string]string{
-				"board_id":   toBoard,
-				"article_id": filename,
-			})
+		err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionForwardAddArticle}, map[string]string{
+			"board_id":   toBoard,
+			"article_id": filename,
+		})
 		if err != nil {
 			// TODO: record unauthorized access
 			w.WriteHeader(http.StatusUnauthorized)

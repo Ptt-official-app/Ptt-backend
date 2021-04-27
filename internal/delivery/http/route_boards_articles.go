@@ -16,11 +16,9 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 	delivery.logger.Debugf("getBoardArticles: %v", r)
 	token := delivery.getTokenFromRequest(r)
 	// Check permission for board
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadBoardInformation},
-		map[string]string{
-			"board_id": boardID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+		"board_id": boardID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -76,11 +74,9 @@ func (delivery *Delivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Re
 	delivery.logger.Debugf("getBoardArticlesFile: %v", r)
 
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadBoardInformation},
-		map[string]string{
-			"board_id": boardID,
-		})
+	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+		"board_id": boardID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
