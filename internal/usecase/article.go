@@ -62,7 +62,7 @@ func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, titl
 	}
 
 	articles, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
-	if err != nil  {
+	if err != nil {
 		return nil, fmt.Errorf("get article records failed: %w", err)
 	}
 

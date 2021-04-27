@@ -27,9 +27,10 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
+	ctx := context.Background()
 
 	// Check permission for append comment
-	err = delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionAppendComment}, map[string]string{
+	err = delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionAppendComment}, map[string]string{
 		"board_id":   boardID,
 		"article_id": filename,
 		"user_id":    userID,
@@ -41,7 +42,7 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 	}
 
 	res, err := delivery.usecase.AppendComment(
-		context.Background(),
+		ctx,
 		userID,
 		boardID,
 		filename,
