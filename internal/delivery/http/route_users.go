@@ -92,7 +92,8 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 // Please see: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/get_v1_users__user_id__favorites
 func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	ctx := context.Background()
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -102,7 +103,7 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	dataItems, err := delivery.usecase.GetUserFavorites(context.Background(), userID)
+	dataItems, err := delivery.usecase.GetUserFavorites(ctx, userID)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -127,7 +128,8 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 // to w. request path should be /v1/users/{{user_id}}/articles
 func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	ctx := context.Background()
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -138,7 +140,7 @@ func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request
 	}
 
 	// return need fix
-	dataItems, err := delivery.usecase.GetUserArticles(context.Background(), userID)
+	dataItems, err := delivery.usecase.GetUserArticles(ctx, userID)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user's articles: %s\n", err)
 	}
@@ -161,8 +163,9 @@ func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request
 // to w. request path should be /v1/users/{{user_id}}/preferences
 func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
+	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -172,7 +175,7 @@ func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	dataMap, err := delivery.usecase.GetUserPreferences(context.Background(), userID)
+	dataMap, err := delivery.usecase.GetUserPreferences(ctx, userID)
 	if err != nil {
 		// TODO: record error
 		w.WriteHeader(http.StatusInternalServerError)
