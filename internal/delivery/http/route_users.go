@@ -206,8 +206,9 @@ func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Requ
 // to w. request path should be /v1/users/{{user_id}}/comments
 func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
+	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -217,7 +218,7 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	dataItems, err := delivery.usecase.GetUserComments(context.Background(), userID)
+	dataItems, err := delivery.usecase.GetUserComments(ctx, userID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
@@ -248,8 +249,9 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 
 func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, userID string, draftID string) {
 	token := delivery.getTokenFromRequest(r)
+	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -259,7 +261,7 @@ func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	buf, err := delivery.usecase.GetUserDrafts(context.Background(), userID, draftID)
+	buf, err := delivery.usecase.GetUserDrafts(ctx, userID, draftID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
@@ -306,7 +308,8 @@ func (delivery *Delivery) postUserDrafts(w http.ResponseWriter, r *http.Request,
 func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request, userID string, draftID string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionUpdateDraft}, map[string]string{
+	ctx := context.Background()
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionUpdateDraft}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -329,7 +332,7 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	buf, err := delivery.usecase.UpdateUserDraft(context.Background(), userID, draftID, text)
+	buf, err := delivery.usecase.UpdateUserDraft(ctx, userID, draftID, text)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
@@ -361,8 +364,9 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 
 func (delivery *Delivery) deleteUserDraft(w http.ResponseWriter, r *http.Request, userID string, draftID string) {
 	token := delivery.getTokenFromRequest(r)
+	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionDeleteDraft}, map[string]string{
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionDeleteDraft}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -372,7 +376,7 @@ func (delivery *Delivery) deleteUserDraft(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	err = delivery.usecase.DeleteUserDraft(context.Background(), userID, draftID)
+	err = delivery.usecase.DeleteUserDraft(ctx, userID, draftID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
