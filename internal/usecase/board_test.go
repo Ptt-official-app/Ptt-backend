@@ -105,3 +105,18 @@ func TestGetBoardPostsLimitation(t *testing.T) {
 		return
 	}
 }
+
+func TestGetPopularBoards(t *testing.T) {
+	resp := &MockRepository{}
+	usecase := NewUsecase(&config.Config{}, resp)
+
+	filtedBoards, err := usecase.GetPopularBoards(context.TODO())
+	if err != nil {
+		t.Errorf("GetPopularBoards error : %v", err)
+	}
+
+	// TODO:The test here must be changed after the implementation is completed
+	if len(filtedBoards) != 0 {
+		t.Errorf("GetPopularBoards shoule have no data")
+	}
+}
