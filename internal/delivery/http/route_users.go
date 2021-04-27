@@ -48,7 +48,9 @@ func (delivery *Delivery) postUsers(w http.ResponseWriter, r *http.Request) {
 func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	ctx := context.Background()
+
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -58,7 +60,7 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	dataMap, err := delivery.usecase.GetUserInformation(context.Background(), userID)
+	dataMap, err := delivery.usecase.GetUserInformation(ctx, userID)
 	if err != nil {
 		delivery.logger.Warningf("get user information for %s failed: %v", userID, err)
 		w.WriteHeader(http.StatusInternalServerError)
