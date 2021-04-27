@@ -15,8 +15,9 @@ import (
 func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardArticles: %v", r)
 	token := delivery.getTokenFromRequest(r)
+	ctx := context.Background()
 	// Check permission for board
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
 
@@ -72,9 +73,10 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 
 func (delivery *Delivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Request, boardID string, filename string) {
 	delivery.logger.Debugf("getBoardArticlesFile: %v", r)
+	ctx := context.Background()
 
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
 
@@ -84,7 +86,7 @@ func (delivery *Delivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	buf, err := delivery.usecase.GetBoardArticle(context.Background(), boardID, filename)
+	buf, err := delivery.usecase.GetBoardArticle(ctx, boardID, filename)
 	if err != nil {
 		delivery.logger.Errorf("failed to get board article: %s", err)
 	}

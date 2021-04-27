@@ -23,9 +23,10 @@ func (delivery *Delivery) getBoardTreasures(w http.ResponseWriter, r *http.Reque
 		delivery.getBoardTreasuresFile(w, r, boardID, treasuresID, filename)
 		return
 	}
+	ctx := context.Background()
 
 	// Check permission for board
-	err = delivery.usecase.CheckPermission(nil, token, []usecase.Permission{usecase.PermissionReadTreasureInformation}, map[string]string{
+	err = delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadTreasureInformation}, map[string]string{
 		"board_id":    boardID,
 		"treasure_id": strings.Join(treasuresID, ","),
 	})
@@ -35,7 +36,7 @@ func (delivery *Delivery) getBoardTreasures(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	treasures := delivery.usecase.GetBoardTreasures(context.Background(), boardID, treasuresID)
+	treasures := delivery.usecase.GetBoardTreasures(ctx, boardID, treasuresID)
 	delivery.logger.Debugf("fh: %v", treasures)
 
 	responseMap := map[string]interface{}{
