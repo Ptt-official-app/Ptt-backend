@@ -7,17 +7,20 @@ import (
 	"github.com/Ptt-official-app/go-bbs"
 )
 
+// GetBoardByID returns the mock board record corresponding to boardID
 func (usecase *MockUsecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	boardRecord := NewMockBoardRecord("SYSOP", boardID, "嘰哩 ◎站長好!", false)
 	return boardRecord, nil
 }
 
+// GetBoards returns the mock board records available for specific users identified by userID
 func (usecase *MockUsecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecord {
 	result := make([]bbs.BoardRecord, 0)
 	result = append(result, NewMockBoardRecord("junk", "TEST", "發電 ◎雜七雜八的垃圾", false))
 	return result
 }
 
+// GetPopularBoards returns the mock popular boards
 func (usecase *MockUsecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error) {
 	result := make([]bbs.BoardRecord, 0)
 	result = append(result, NewMockBoardRecord("SYSOP", "", "嘰哩 ◎站長好!", true))
@@ -25,6 +28,7 @@ func (usecase *MockUsecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRe
 	return result, nil
 }
 
+// GetBoardArticles returns the mock board articles.
 func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []interface{} {
 	return []interface{}{
 		map[string]interface{}{
@@ -40,10 +44,12 @@ func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string
 	}
 }
 
+// TODO: Implement GetBoardArticle
 func (usecase *MockUsecase) GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error) {
 	panic("Not implemented")
 }
 
+// GetBoardTreasures returns mock treasures for specific board identified by boardID and treasuresID
 func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} {
 	return []interface{}{
 		map[string]interface{}{
@@ -56,6 +62,7 @@ func (usecase *MockUsecase) GetBoardTreasures(ctx context.Context, boardID strin
 	}
 }
 
+// GetBoardPostsLimitation returns mock board post limitation with posts limit, logins limit, and bad post limit are all equal to 0
 func (usecase *MockUsecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*usecase.BoardPostLimitation, error) {
 	return NewMockBoardPostLimitation(0, 0, 0), nil
 }
