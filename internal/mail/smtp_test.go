@@ -24,7 +24,7 @@ func TestSmtpMail(t *testing.T) {
 
 	err = provider.Send("test@example.com", "test", "test", msg)
 
-	if err != nil {
-		t.Errorf("send fail : " + err.Error())
+	if err == nil {
+		t.Errorf("send must fail")
 	}
 }
