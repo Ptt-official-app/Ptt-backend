@@ -10,6 +10,11 @@ import (
 	"github.com/Ptt-official-app/go-bbs"
 )
 
+// postToken
+// this function will check username and verify password.
+// It will generate the token return to client if it’s valid.
+// Request URL: /v1/token
+// API Doc: https://pttapp.cc/swagger/#/%E4%BD%BF%E7%94%A8%E8%80%85%E9%83%A8%E5%88%86/post_v1_token
 func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 
 	err := r.ParseForm()
