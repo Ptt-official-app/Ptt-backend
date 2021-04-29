@@ -27,9 +27,9 @@ func createSMTP(url *url.URL) (*smtpProvider, error) {
 	return &smtpProvider{plainAuth: auth, smtpURL: url}, nil
 }
 
-func (s *smtpProvider) Send(email, title, userID string, body []byte) error {
-	to := []string{email}
-	err := smtp.SendMail(s.smtpURL.Host, s.plainAuth, userID+"@ptt-backend.com", to, body)
+func (s *smtpProvider) Send(from, to, title string, body []byte) error {
+	toArr := []string{to}
+	err := smtp.SendMail(s.smtpURL.Host, s.plainAuth, from, toArr, body)
 
 	if err != nil {
 		return err

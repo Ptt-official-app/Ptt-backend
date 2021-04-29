@@ -6,7 +6,7 @@ import (
 )
 
 //stmp example - smtp://username:password@mail.smtp.com:25
-func NewMail(mailDriver string) (Mail, error) {
+func NewMailProvider(mailDriver string) (Mail, error) {
 	urlStruct, err := url.Parse(mailDriver)
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ type Mail interface {
 	Send(email, title, userID string, body []byte) error
 }
 
-func (mail *mail) Send(email, title, userID string, body []byte) error {
-	fmt.Printf("call mail send with: %s, %s, %s, %v", email, title, userID, body)
+func (mail *mail) Send(from, to, title string, body []byte) error {
+	fmt.Printf("call mail send with: %s, %s, %v", from, title, body)
 	return nil
 }
