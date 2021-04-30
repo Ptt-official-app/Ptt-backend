@@ -120,3 +120,28 @@ func TestGetPopularBoards(t *testing.T) {
 		t.Errorf("GetPopularBoards shoule have no data")
 	}
 }
+
+func TestAppendComment(t *testing.T) {
+	resp := &MockRepository{}
+	usecase := NewUsecase(&config.Config{}, resp)
+
+	userID := "sysop"
+	text := "頭香"
+	appendType := "推"
+	boardID := "board1"
+	fileName := "filename1"
+
+	pushRecord, err := usecase.AppendComment(context.TODO(), userID, boardID, fileName, appendType, text)
+	if err != nil {
+		t.Errorf("GetPopularBoards error : %v", err)
+	}
+	if pushRecord.ID() != userID {
+		t.Errorf("ID not match, expected: %v, got: %v", userID, pushRecord.ID())
+	}
+	if pushRecord.Text() != text {
+		t.Errorf("Text not match, expected: %v, got: %v", text, pushRecord.Text())
+	}
+	if pushRecord.Type() != appendType {
+		t.Errorf("Type not match, expected: %v, got: %v", appendType, pushRecord.Type())
+	}
+}

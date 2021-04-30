@@ -84,7 +84,13 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 }
 
 func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {
-	return nil, nil
+	return MockPushRecord{
+		appendType: appendType,
+		userID:     userID,
+		text:       text,
+		time:       time.Time{},
+		ipAddr:     "127.0.0.1",
+	}, nil
 }
 
 func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {
@@ -180,3 +186,17 @@ func (repo *MockRepository) GetUserArticles(ctx context.Context, boardID string)
 	}
 	return result, nil
 }
+
+type MockPushRecord struct {
+	appendType string
+	userID     string
+	ipAddr     string
+	text       string
+	time       time.Time
+}
+
+func (m MockPushRecord) Type() string    { return m.appendType }
+func (m MockPushRecord) ID() string      { return m.userID }
+func (m MockPushRecord) IPAddr() string  { return m.ipAddr }
+func (m MockPushRecord) Text() string    { return m.text }
+func (m MockPushRecord) Time() time.Time { return m.time }
