@@ -83,7 +83,7 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 	return result, nil
 }
 
-func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
+func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {
 	return nil, nil
 }
 

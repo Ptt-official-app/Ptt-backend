@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/Ptt-official-app/go-bbs"
 )
@@ -14,13 +15,22 @@ type PopularArticleRecord interface {
 	BoardID() string
 }
 
+type PushRecord interface {
+	// TODO: use bbs.PushRecord instead
+	Type() string
+	ID() string
+	IPAddr() string
+	Text() string
+	Time() time.Time
+}
+
 func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error) {
 	// Note: go-bbs has not implemented this yet
 	// TODO: delegate to repo.db when it is ready
 	return []PopularArticleRecord{}, nil
 }
 
-func (repo *repository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
+func (repo *repository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error) {
 	return nil, nil
 }
 
