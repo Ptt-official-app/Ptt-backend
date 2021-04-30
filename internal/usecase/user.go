@@ -114,14 +114,14 @@ func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]i
 
 func (usecase *usecase) GetUserDrafts(ctx context.Context, userID, draftID string) ([]byte, error) {
 	if !isValidDraftID([]byte(draftID)) {
-		return []byte{}, fmt.Errorf("invalid draft ID: %s", draftID)
+		return nil, fmt.Errorf("invalid draft ID: %s", draftID)
 	}
 	return usecase.repo.GetUserDrafts(ctx, userID, draftID)
 }
 
 func (usecase *usecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
 	if !isValidDraftID([]byte(draftID)) {
-		return []byte{}, fmt.Errorf("invalid draft ID: %s", draftID)
+		return nil, fmt.Errorf("invalid draft ID: %s", draftID)
 	}
 	return usecase.repo.UpdateUserDraft(ctx, userID, draftID, text)
 }

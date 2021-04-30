@@ -97,7 +97,7 @@ func TestGetUserDrafts(t *testing.T) {
 	}
 }
 
-func TestUpdateUserDrafts(t *testing.T) {
+func TestUpdateUserDraft(t *testing.T) {
 	userID := "user"
 	mockRepository := &MockRepository{}
 	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
@@ -108,5 +108,23 @@ func TestUpdateUserDrafts(t *testing.T) {
 	if expectedValue != string(actualValue) {
 		t.Errorf("returned unexpected value: got %v want value %v",
 			actualValue, expectedValue)
+	}
+}
+
+func TestDeleteUserDraft(t *testing.T) {
+	userID := "user"
+	mockRepository := &MockRepository{}
+	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
+
+	// case 1: valid draftID
+	err := mockUsecase.DeleteUserDraft(context.TODO(), userID, "0")
+	if err != nil {
+		t.Error("returned unexpected error")
+	}
+
+	// case 2: invalid draftID
+	err = mockUsecase.DeleteUserDraft(context.TODO(), userID, "10")
+	if err == nil {
+		t.Error("returned unexpected error")
 	}
 }
