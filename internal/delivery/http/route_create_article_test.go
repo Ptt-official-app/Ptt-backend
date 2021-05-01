@@ -6,12 +6,14 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 func TestCreateArticleResponse(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	v := url.Values{}
 	v.Set("action", "add_article")

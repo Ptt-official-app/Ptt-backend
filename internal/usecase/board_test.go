@@ -109,7 +109,7 @@ func TestGetBoardPostsLimitation(t *testing.T) {
 
 func TestGetPopularBoards(t *testing.T) {
 	resp := &MockRepository{}
-	usecase := NewUsecase(&config.Config{}, resp)
+	usecase := NewUsecase(&config.Config{}, resp, logging.DefaultDummyLogger)
 
 	filtedBoards, err := usecase.GetPopularBoards(context.TODO())
 	if err != nil {

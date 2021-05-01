@@ -43,7 +43,7 @@ func TestGetUserInformation_InputNotExistUser_ReturnError(t *testing.T) {
 	userID := "not-exist-user-id"
 	errMsg := fmt.Sprintf("get userrec for %s failed", userID)
 	repo := &MockRepository{}
-	usecase := NewUsecase(&config.Config{}, repo)
+	usecase := NewUsecase(&config.Config{}, repo, logging.DefaultDummyLogger)
 
 	data, err := usecase.GetUserInformation(context.TODO(), userID)
 	// TODO: check return error message with error object
@@ -59,7 +59,7 @@ func TestGetUserInformation_InputNotExistUser_ReturnError(t *testing.T) {
 func TestGetUserInformation_InputPichu_ReturnData(t *testing.T) {
 	userID := "pichu"
 	repo := &MockRepository{}
-	usecase := NewUsecase(&config.Config{}, repo)
+	usecase := NewUsecase(&config.Config{}, repo, logging.DefaultDummyLogger)
 
 	data, err := usecase.GetUserInformation(context.TODO(), userID)
 	if err != nil {
