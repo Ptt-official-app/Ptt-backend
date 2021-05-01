@@ -12,7 +12,7 @@ import (
 
 // getBoardList get the board list for user with userID
 // Request URL: /v1/boards
-// API Doc: https://pttapp.cc/swagger/#/%E7%9C%8B%E6%9D%BF%E9%83%A8%E5%88%86/get_v1_boards
+// Please see: https://pttapp.cc/swagger/#/%E7%9C%8B%E6%9D%BF%E9%83%A8%E5%88%86/get_v1_boards
 func (delivery *Delivery) getBoardList(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getBoardList: %v", r)
 
@@ -52,7 +52,7 @@ func (delivery *Delivery) getBoardList(w http.ResponseWriter, r *http.Request) {
 
 // getPopularBoardList gets the popular list.
 // Request URL: /v1/popular-boards
-// TODO: Add API Doc link.
+// TODO: Add Please see link.
 func (delivery *Delivery) getPopularBoardList(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getPopularBoardList: %v", r)
 
@@ -93,7 +93,7 @@ func (delivery *Delivery) getPopularBoardList(w http.ResponseWriter, r *http.Req
 
 // getBoardInformation gets the information for board with boardID
 // Request URL: /v1/boards/{board_id}/information
-// API Doc: https://pttapp.cc/swagger/#/%E7%9C%8B%E6%9D%BF%E9%83%A8%E5%88%86/get_v1_boards__board_id__information
+// Please see: https://pttapp.cc/swagger/#/%E7%9C%8B%E6%9D%BF%E9%83%A8%E5%88%86/get_v1_boards__board_id__information
 func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
@@ -155,7 +155,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 
 // getBoardSettings gets the settings for board with boardID.
 // Request URL: /v1/boards/{{board_id}}/settings
-// TODO: Add API Doc link.
+// TODO: Add Please see link.
 func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardSettings: %v", r)
 	token := delivery.getTokenFromRequest(r)
