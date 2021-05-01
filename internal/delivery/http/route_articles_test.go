@@ -12,8 +12,8 @@ func (usecase *MockUsecase) GetPopularArticles(ctx context.Context) ([]repositor
 	return []repository.PopularArticleRecord{}, nil
 }
 
-func (usecase *MockUsecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
-	return map[string]interface{}{}, nil
+func (usecase *MockUsecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {
+	return nil, nil
 }
 
 func (usecase *MockUsecase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error) {

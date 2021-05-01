@@ -61,7 +61,7 @@ type Usecase interface {
 	// article.go
 	// GetPopularArticles returns all popular articles
 	GetPopularArticles(ctx context.Context) ([]repository.PopularArticleRecord, error)
-	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error)
+	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error)
 	// ForwardArticleToBoard returns forwarding to board results
 	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error)
 	// ForwardArticleToEmail returns forwarding to email results
