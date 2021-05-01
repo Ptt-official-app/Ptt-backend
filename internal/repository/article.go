@@ -23,3 +23,7 @@ func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticl
 func (repo *repository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
 	return nil, nil
 }
+
+func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, title, content string) (bbs.ArticleRecord, error) {
+	return nil, nil
+}

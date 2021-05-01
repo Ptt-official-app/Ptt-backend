@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Ptt-official-app/go-bbs"
+
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 )
 
@@ -50,4 +52,9 @@ func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, board
 		return fmt.Errorf("GetBoardArticle error: %w", err)
 	}
 	return usecase.mail.Send(email, title, userID, buffer)
+}
+
+// CreateArticle create a new article on a board
+func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
+	return nil, nil
 }
