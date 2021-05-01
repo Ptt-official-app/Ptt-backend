@@ -1,6 +1,6 @@
 package logging
 
-var _ Logger = &DummyLogger{}
+var DefaultDummyLogger Logger = &DummyLogger{}
 
 // Dummy logger methods do nothing, and is used for testing
 type DummyLogger struct{}

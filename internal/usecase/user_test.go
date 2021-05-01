@@ -12,7 +12,7 @@ func TestGetUserByID(t *testing.T) {
 
 	resp := &MockRepository{}
 
-	usecase := NewUsecase(&config.Config{}, resp, &logging.DummyLogger{})
+	usecase := NewUsecase(&config.Config{}, resp, logging.DefaultDummyLogger)
 
 	rec, err := usecase.GetUserByID(context.TODO(), "not-exist-user-id")
 	if err == nil {
@@ -42,7 +42,7 @@ func TestGetUserArticles(t *testing.T) {
 
 	userID := "user"
 	mockRepository := &MockRepository{}
-	mockUsecase := NewUsecase(&config.Config{}, mockRepository, &logging.DummyLogger{})
+	mockUsecase := NewUsecase(&config.Config{}, mockRepository, logging.DefaultDummyLogger)
 
 	dataItems, err := mockUsecase.GetUserArticles(context.TODO(), userID)
 
@@ -62,7 +62,7 @@ func TestGetUserComments(t *testing.T) {
 	userID := "user"
 	expectBoardID := "SYSOP"
 	mockRepository := &MockRepository{}
-	mockUsecase := NewUsecase(&config.Config{}, mockRepository, &logging.DummyLogger{})
+	mockUsecase := NewUsecase(&config.Config{}, mockRepository, logging.DefaultDummyLogger)
 
 	dataItems, err := mockUsecase.GetUserComments(context.TODO(), userID)
 

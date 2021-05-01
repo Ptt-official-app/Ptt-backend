@@ -11,7 +11,7 @@ import (
 
 func TestGetPopularArticles(t *testing.T) {
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 	req, err := http.NewRequest("GET", "/v1/popular-articles", nil)
 	if err != nil {
 		t.Fatal(err)

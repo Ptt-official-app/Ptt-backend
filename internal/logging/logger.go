@@ -4,6 +4,8 @@ import (
 	"log"
 )
 
+var DefaultLogger Logger = NewLogger()
+
 // Logger is the interface that wraps the basic Logging methods.
 //
 // Logger follows the Syslog Message Severities in RFC5424.

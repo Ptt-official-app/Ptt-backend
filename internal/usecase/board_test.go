@@ -83,7 +83,7 @@ func TestSearchArticles(t *testing.T) {
 func TestGetBoardPostsLimitation(t *testing.T) {
 	resp := &MockRepository{}
 
-	usecase := NewUsecase(&config.Config{}, resp, &logging.DummyLogger{})
+	usecase := NewUsecase(&config.Config{}, resp, logging.DefaultDummyLogger)
 
 	limitation, err := usecase.GetBoardPostsLimitation(context.TODO(), "board-id")
 	if err != nil {

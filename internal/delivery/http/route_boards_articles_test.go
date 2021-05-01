@@ -14,7 +14,7 @@ import (
 func TestGetBoardArticlesBadRequest(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	title := ""
 	author := ""
@@ -47,7 +47,7 @@ func TestGetBoardArticlesBadRequest(t *testing.T) {
 func TestGetBoardArticlesResponse(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase, &logging.DummyLogger{})
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	titleContain := "test_posts"
 	author := "test01"
