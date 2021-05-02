@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
@@ -56,8 +57,22 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"raw":    r.PostForm.Encode(),
-			"parsed": res,
+			"raw": r.PostForm.Encode(),
+			"parsed": map[string]interface{}{
+				"is_header_modied": false,
+				"author_id":        nil,
+				"author_name":      nil,
+				"title":            nil,
+				"post_time":        nil,
+				"board_name":       "", // todo: go-bbs articles 需實作新介面取得資訊
+				"text": map[string]string{
+					"text": "", // todo: // todo: go-bbs articles 需實作新介面取得資訊
+				},
+				"signature":    map[string]string{},
+				"sender_info":  map[string]string{}, // todo: go-bbs articles 需實作新介面取得資訊(user info)
+				"edit_records": map[string]string{},
+				"push_records": []repository.PushRecord{res}, // TODO: support bbs.PushRecord instead
+			},
 		},
 	}
 

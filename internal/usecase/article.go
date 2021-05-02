@@ -19,11 +19,10 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 }
 
 // AppendComment append comment to specific article
-func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (map[string]interface{}, error) {
-	//result, err := usecase.repo.AppendComment(ctx, userID, boardID, filename, appendType, text)
+func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {
+	result, err := usecase.repo.AppendComment(ctx, userID, boardID, filename, appendType, text)
 
-	//return result, err
-	return nil, nil
+	return result, err
 }
 
 // ForwardArticleToBoard returns forwarding to board results
