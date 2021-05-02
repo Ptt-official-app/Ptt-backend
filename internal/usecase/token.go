@@ -98,9 +98,9 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 		case PermissionDeleteDraft:
 		case PermissionForwardArticle:
 		case PermissionCreateArticle:
-			//if err := usecase.checkCreateArticlePermission(ctx, token, userInfo); err != nil {
-			//	return err
-			//}
+			if err := usecase.checkCreateArticlePermission(context.Background(), token, userInfo); err != nil {
+				return err
+			}
 		default:
 			return fmt.Errorf("undefined permission id:%s", permission)
 		}
