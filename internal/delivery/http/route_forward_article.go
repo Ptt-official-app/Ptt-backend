@@ -26,7 +26,7 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 	ctx := context.Background()
 
 	// Check permission for whether article is allow forwarding `from` board
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionForwardArticle}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionForwardArticle}, map[string]string{
 		"board_id":   boardID,
 		"article_id": filename,
 	})
@@ -44,7 +44,7 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 
 	if toBoard != "" {
 		// Check permission for whether article is allow forwarding `to` board
-		err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionForwardAddArticle}, map[string]string{
+		err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionForwardAddArticle}, map[string]string{
 			"board_id":   toBoard,
 			"article_id": filename,
 		})

@@ -90,7 +90,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 	token := delivery.getTokenFromRequest(r)
 	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
 
@@ -149,7 +149,7 @@ func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Reques
 	token := delivery.getTokenFromRequest(r)
 	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
 

@@ -27,7 +27,7 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 
 	ctx := context.Background()
 
-	err = delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionCreateArticle}, map[string]string{
+	err = delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionCreateArticle}, map[string]string{
 		"board_id": boardID,
 		"user_id":  userID,
 	})

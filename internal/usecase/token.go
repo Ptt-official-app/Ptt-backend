@@ -83,7 +83,7 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 	return "", fmt.Errorf("token not valid")
 }
 
-func (usecase *usecase) CheckPermission(ctx context.Context, token string, permissionID []Permission, userInfo map[string]string) error {
+func (usecase *usecase) CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error {
 	for _, permission := range permissionID {
 		switch permission {
 		case PermissionAppendComment:
@@ -98,9 +98,9 @@ func (usecase *usecase) CheckPermission(ctx context.Context, token string, permi
 		case PermissionDeleteDraft:
 		case PermissionForwardArticle:
 		case PermissionCreateArticle:
-			if err := usecase.checkCreateArticlePermission(ctx, token, userInfo); err != nil {
-				return err
-			}
+			//if err := usecase.checkCreateArticlePermission(ctx, token, userInfo); err != nil {
+			//	return err
+			//}
 		default:
 			return fmt.Errorf("undefined permission id:%s", permission)
 		}

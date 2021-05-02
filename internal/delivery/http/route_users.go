@@ -50,7 +50,7 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 
 	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -93,7 +93,7 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	ctx := context.Background()
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -129,7 +129,7 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request, userID string) {
 	token := delivery.getTokenFromRequest(r)
 	ctx := context.Background()
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -165,7 +165,7 @@ func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Requ
 	token := delivery.getTokenFromRequest(r)
 	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -208,7 +208,7 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	token := delivery.getTokenFromRequest(r)
 	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -251,7 +251,7 @@ func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, 
 	token := delivery.getTokenFromRequest(r)
 	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -309,7 +309,7 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 	token := delivery.getTokenFromRequest(r)
 
 	ctx := context.Background()
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionUpdateDraft}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionUpdateDraft}, map[string]string{
 		"user_id": userID,
 	})
 
@@ -366,7 +366,7 @@ func (delivery *Delivery) deleteUserDraft(w http.ResponseWriter, r *http.Request
 	token := delivery.getTokenFromRequest(r)
 	ctx := context.Background()
 
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionDeleteDraft}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionDeleteDraft}, map[string]string{
 		"user_id": userID,
 	})
 

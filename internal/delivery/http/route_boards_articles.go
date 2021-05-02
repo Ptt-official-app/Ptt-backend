@@ -15,9 +15,8 @@ import (
 func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardArticles: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	ctx := context.Background()
 	// Check permission for board
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
 
@@ -76,7 +75,7 @@ func (delivery *Delivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Re
 	ctx := context.Background()
 
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(ctx, token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
 
