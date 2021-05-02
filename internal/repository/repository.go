@@ -54,6 +54,7 @@ type Repository interface {
 	// AppendComment returns comment details
 	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error)
 	// CreateArticle
+	// TODO: return result from bbs response
 	CreateArticle(ctx context.Context, userID, boardID, title, article string) error
 }
 
