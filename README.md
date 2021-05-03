@@ -2,7 +2,7 @@
 
 ## 這專案是做什麼的,跟什麼有關係
         
-Ptt-backend 是做 BBS (Bulletin Board System)的開源專案
+Ptt-backend 是做 BBS (Bulletin Board System) 的開源專案
 但 BBS 有很多種, Ptt 只是 BBS 的其中一種
 go-bbs 是與 Ptt-backend 有關的專案,解析儲存的檔案提供給 Ptt-backend 使用
 

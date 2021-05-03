@@ -4,7 +4,7 @@
 
 這個專案主要的開發語言是 Golang 以及中文。
 
-原有的 [PTT 程式碼](https://github.com/ptt/pttbbs)是透過C語言進行開發的，
+原有的 [PTT 程式碼](https://github.com/ptt/pttbbs) 是透過C語言進行開發的，
 然而 C 語言開發的程式碼雖然效能高，但是可維護性稍低，以致於後續接手維護不易。
 
 另外原有 C 程式碼編譯結果仰賴平台例如 LP32, LP32, ILP64, LLP64 等狀態，導致原有主機
@@ -28,24 +28,24 @@
 ## 整體架構部分
 
 目前整體而言會以 HTTP 的 [RESTful API](https://zh.wikipedia.org/wiki/%E8%A1%A8%E7%8E%B0%E5%B1%82%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2) 作為對外設計的介面，未來也許會支援相容 VT100
-（也就是傳統可以用 PCMAN 登入的 BBS 介面）的SSH連線方式。
+（也就是傳統可以用 PCMAN 登入的 BBS 介面） 的SSH連線方式。
 
 使用 [RESTful API](https://zh.wikipedia.org/wiki/%E8%A1%A8%E7%8E%B0%E5%B1%82%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2) 
 的主因在於便於其他開發者進行開發，HTTP 有許多現成的客戶端以及測試工具，在各種語言以及平台中皆有範例程式碼以及函式庫可以呼叫。
-另外HTTPS也經過了數年來在資訊安全上的驗證，同時我們可以透過 HTTP 既有的快取機制設計來進一步節省維運伺服器所需要的流量。
+另外 HTTPS 也經過了數年來在資訊安全上的驗證，同時我們可以透過 HTTP 既有的快取機制設計來進一步節省維運伺服器所需要的流量。
 
 這個專案採用 Golang 原生的 HTTP 解譯器不另外使用其他框架 (framework) 以降低未來框架修改時的維護成本。
 
 在呼叫流程中如下列所示： （需要補圖）
 
 ```
-====外面（公有 IP 或是受防火牆保護的網段）=====
+==== 外面 （公有 IP 或是受防火牆保護的網段） =====
 
 針對 IP 判斷流量以及流速決定是否發回 429 Too Many Request
 
 檢查傳入的 Access Token 是否合法
 
-解開傳入的 Access Token, 取出使用者必要資訊（例如User ID, User Level）
+解開傳入的 Access Token, 取出使用者必要資訊（例如 User ID, User Level）
 
 透過使用者必要資訊以及 etag 和 if-not-modified 資訊來決定是否送回 304 Not Modified
 
@@ -268,12 +268,17 @@ slack 找 陳昱廷
 
 * 第一次上手搞不懂要怎麼寫
 
-Ptt-backend的 部分通常是實作 delivery/usecase/repository/ 以及這三個的 test
+Ptt-backend的 部分通常是實作 delivery/usecase/repository/ 
+- internal/repository/
+- internal/usecase/
+- internal/delivery/
+
+以及這三個 layer 的測試。
 如果 go-bbs 還沒實作可以先做 mock 假資料
 
 * 我會寫程式,但是 query 找不到
 
-        可以問一下,檔案儲存的方式有些不同,自己要找可能要找很久
+        可以問一下，檔案儲存的方式有些不同,自己要找可能要找很久
 
 * 開發到一半發現有地方還沒實作怎麼辦
 
