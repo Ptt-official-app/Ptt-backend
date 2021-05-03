@@ -14,7 +14,7 @@ func NewMailProvider(mailDriver string) (Mail, error) {
 
 	switch urlStruct.Scheme {
 	case "smtp":
-		provider, err := createSMTP(urlStruct)
+		provider, err := newSMTPProvider(urlStruct)
 
 		if err != nil {
 			return nil, err
