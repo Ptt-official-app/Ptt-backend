@@ -69,7 +69,7 @@
 
 檢查傳入的 Access Token 是否合法
 
-解開傳入的 Access Token, 取出使用者必要資訊（例如User ID, User Level）
+解開傳入的 Access Token, 取出使用者必要資訊（例如 User ID, User Level）
 
 訂閱指定的 Go Channel
 
@@ -268,7 +268,7 @@ slack 找 陳昱廷
 
 * 第一次上手搞不懂要怎麼寫
 
-Ptt-backend的 部分通常是實作 delivery/usecase/repository/ 
+Ptt-backend 的部分通常是實作 delivery/usecase/repository/ 
 - internal/repository/
 - internal/usecase/
 - internal/delivery/
@@ -276,9 +276,9 @@ Ptt-backend的 部分通常是實作 delivery/usecase/repository/
 以及這三個 layer 的測試。
 如果 go-bbs 還沒實作可以先做 mock 假資料
 
-* 我會寫程式,但是 query 找不到
+* 我會寫程式，但是 query 找不到
 
-        可以問一下，檔案儲存的方式有些不同,自己要找可能要找很久
+        可以問一下，檔案儲存的方式有些不同，自己要找可能要找很久
 
 * 開發到一半發現有地方還沒實作怎麼辦
 
