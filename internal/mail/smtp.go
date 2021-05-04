@@ -3,7 +3,6 @@ package mail
 import (
 	"net/smtp"
 	"net/url"
-	"strings"
 )
 
 type smtpProvider struct {
@@ -16,8 +15,8 @@ func newSMTPProvider(url *url.URL) (*smtpProvider, error) {
 	username := url.User.Username()
 	password, _ := url.User.Password()
 
-	hostSlice := strings.Split(url.Host, ":")
-	auth := smtp.PlainAuth("", username, password, hostSlice[0])
+	hostName := url.Hostname()
+	auth := smtp.PlainAuth("", username, password, hostName)
 
 	return &smtpProvider{plainAuth: auth, url: url}, nil
 }
