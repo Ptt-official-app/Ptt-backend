@@ -9,8 +9,10 @@ import (
 	"testing"
 )
 
+// TestGetPopularBoardList is the test function which will test getPopularBoardList
+// Request URL: /v1/popular-boards
+// TODO: Add Please see link.
 func TestGetPopularBoardList(t *testing.T) {
-
 	usecase := NewMockUsecase()
 	delivery := NewHTTPDelivery(usecase)
 	req, err := http.NewRequest("GET", "/v1/popular-boards", nil)
@@ -54,6 +56,9 @@ func TestGetPopularBoardList(t *testing.T) {
 	}
 }
 
+// TestGetBoardList is the test function which will test getBoardList
+// Request URL: /v1/boards
+// Please see: https://pttapp.cc/swagger/#/%E7%9C%8B%E6%9D%BF%E9%83%A8%E5%88%86/get_v1_boards
 func TestGetBoardList(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
@@ -105,6 +110,9 @@ func TestGetBoardList(t *testing.T) {
 	}
 }
 
+// TestGetBoardInformation is the test function which will test getBoardInformation
+// Request URL: /v1/boards/{board_id}/information
+// Please see: https://pttapp.cc/swagger/#/%E7%9C%8B%E6%9D%BF%E9%83%A8%E5%88%86/get_v1_boards__board_id__information
 func TestGetBoardInformation(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
@@ -155,6 +163,9 @@ func TestGetBoardInformation(t *testing.T) {
 	}
 }
 
+// TestGetBoardSettings is the test function which will test  getBoardSettings
+// Request URL: /v1/boards/{{board_id}}/settings
+// TODO: Add Please see link.
 func TestGetBoardSettings(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
