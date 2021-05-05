@@ -30,6 +30,18 @@ func (repo *MockRepository) GetUserComments(ctx context.Context, userID string) 
 	}, nil
 }
 
+func (repo *MockRepository) GetUserDrafts(ctx context.Context, userID, draftID string) ([]byte, error) {
+	return []byte("this is a draft"), nil
+}
+
+func (repo *MockRepository) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
+	return text, nil
+}
+
+func (repo *MockRepository) DeleteUserDraft(ctx context.Context, userID, draftID string) error {
+	return nil
+}
+
 type MockUser struct {
 	userID string
 }

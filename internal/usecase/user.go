@@ -114,18 +114,24 @@ func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]i
 }
 
 func (usecase *usecase) GetUserDrafts(ctx context.Context, userID, draftID string) ([]byte, error) {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
-	return []byte{}, nil
+	if !isValidDraftID([]byte(draftID)) {
+		return nil, fmt.Errorf("invalid draft ID: %s", draftID)
+	}
+	return usecase.repo.GetUserDrafts(ctx, userID, draftID)
 }
 
 func (usecase *usecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
-	return text, nil
+	if !isValidDraftID([]byte(draftID)) {
+		return nil, fmt.Errorf("invalid draft ID: %s", draftID)
+	}
+	return usecase.repo.UpdateUserDraft(ctx, userID, draftID, text)
 }
 
 func (usecase *usecase) DeleteUserDraft(ctx context.Context, userID, draftID string) error {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
-	return nil
+	if !isValidDraftID([]byte(draftID)) {
+		return fmt.Errorf("invalid draft ID: %s", draftID)
+	}
+	return usecase.repo.DeleteUserDraft(ctx, userID, draftID)
 }
 
 func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []interface{} {
@@ -156,6 +162,13 @@ func (usecase *usecase) parseFavoriteFolderItem(recs []bbs.FavoriteRecord) []int
 		}
 	}
 	return dataItems
+}
+
+func isValidDraftID(draftID []byte) bool {
+	if len(draftID) == 1 {
+		return draftID[0] >= '0' && draftID[0] <= '9'
+	}
+	return false
 }
 
 func getMoneyDiscription(money int) string {
