@@ -78,9 +78,9 @@ type usecase struct {
 	mail         mail.Mail
 }
 
-func NewUsecase(globalConfig *config.Config, repo repository.Repository) Usecase {
+func NewUsecase(globalConfig *config.Config, repo repository.Repository, logger logging.Logger) Usecase {
 	return &usecase{
-		logger:       logging.NewLogger(),
+		logger:       logger,
 		globalConfig: globalConfig,
 		repo:         repo,
 		mail:         mail.NewMail(globalConfig.MailDriver),

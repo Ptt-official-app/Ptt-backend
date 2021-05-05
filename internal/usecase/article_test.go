@@ -5,12 +5,13 @@ import (
 	"testing"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 func TestGetPopularArticles(t *testing.T) {
 	repo := &MockRepository{}
 
-	usecase := NewUsecase(&config.Config{}, repo)
+	usecase := NewUsecase(&config.Config{}, repo, logging.DefaultDummyLogger)
 	articles, err := usecase.GetPopularArticles(context.TODO())
 
 	if err != nil {
@@ -37,7 +38,7 @@ func TestForwardArticleToEmail(t *testing.T) {
 	email := "test@gmail.com"
 	mail := &MockMail{}
 
-	usecase := NewUsecase(&config.Config{}, repo)
+	usecase := NewUsecase(&config.Config{}, repo, logging.DefaultDummyLogger)
 	_ = usecase.UpdateMail(mail)
 	err := usecase.ForwardArticleToEmail(context.TODO(), userID, boardID, filename, email)
 

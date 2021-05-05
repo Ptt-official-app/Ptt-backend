@@ -5,11 +5,13 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 func TestFetchBoardTreasures(t *testing.T) {
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 	req, err := http.NewRequest(http.MethodGet, "/v1/boards/1/treasures", nil)
 	if err != nil {
 		t.Fatal(err)

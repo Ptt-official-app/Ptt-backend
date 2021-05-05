@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 // TestAppendCommentBadRequest test request post `/v1/boards/{}/articles/{}` post
@@ -13,7 +15,7 @@ import (
 func TestAppendCommentBadRequest(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	req, err := http.NewRequest("POST", "/v1/boards/test/articles/test", nil)
 	if err != nil {
@@ -38,7 +40,7 @@ func TestAppendCommentBadRequest(t *testing.T) {
 func TestAppendCommentResponse(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	v := url.Values{}
 	v.Set("action", "append_comment")

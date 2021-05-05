@@ -15,9 +15,9 @@ type Delivery struct {
 }
 
 // TODO: explain what this method to
-func NewHTTPDelivery(usecase usecase.Usecase) *Delivery {
+func NewHTTPDelivery(usecase usecase.Usecase, logger logging.Logger) *Delivery {
 	delivery := &Delivery{
-		logger:  logging.NewLogger(),
+		logger:  logger,
 		usecase: usecase,
 	}
 	return delivery

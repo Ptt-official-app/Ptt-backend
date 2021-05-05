@@ -7,12 +7,14 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 func TestGetBoardArticlesBadRequest(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	title := ""
 	author := ""
@@ -45,7 +47,7 @@ func TestGetBoardArticlesBadRequest(t *testing.T) {
 func TestGetBoardArticlesResponse(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	titleContain := "test_posts"
 	author := "test01"

@@ -6,6 +6,8 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 // TestForwardArticleBadRequest test request post `/v1/boards/{}/articles/{}` post
@@ -13,7 +15,7 @@ import (
 func TestForwardArticleBadRequest(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	req, err := http.NewRequest("POST", "/v1/boards/test/articles/test", nil)
 	if err != nil {
@@ -40,7 +42,7 @@ func TestForwardArticleBadRequest(t *testing.T) {
 func TestForwardArticleInternalServerError(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	v := url.Values{}
 	v.Set("action", "forward_article")
@@ -71,7 +73,7 @@ func TestForwardArticleInternalServerError(t *testing.T) {
 func TestForwardArticleResponse(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 
 	v := url.Values{}
 	v.Set("action", "forward_article")

@@ -6,13 +6,14 @@ import (
 	"testing"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 func TestGetUserByID(t *testing.T) {
 
 	resp := &MockRepository{}
 
-	usecase := NewUsecase(&config.Config{}, resp)
+	usecase := NewUsecase(&config.Config{}, resp, logging.DefaultDummyLogger)
 
 	rec, err := usecase.GetUserByID(context.TODO(), "not-exist-user-id")
 	if err == nil {
@@ -42,7 +43,7 @@ func TestGetUserInformation_InputNotExistUser_ReturnError(t *testing.T) {
 	userID := "not-exist-user-id"
 	errMsg := fmt.Sprintf("get userrec for %s failed", userID)
 	repo := &MockRepository{}
-	usecase := NewUsecase(&config.Config{}, repo)
+	usecase := NewUsecase(&config.Config{}, repo, logging.DefaultDummyLogger)
 
 	data, err := usecase.GetUserInformation(context.TODO(), userID)
 	// TODO: check return error message with error object
@@ -58,7 +59,7 @@ func TestGetUserInformation_InputNotExistUser_ReturnError(t *testing.T) {
 func TestGetUserInformation_InputPichu_ReturnData(t *testing.T) {
 	userID := "pichu"
 	repo := &MockRepository{}
-	usecase := NewUsecase(&config.Config{}, repo)
+	usecase := NewUsecase(&config.Config{}, repo, logging.DefaultDummyLogger)
 
 	data, err := usecase.GetUserInformation(context.TODO(), userID)
 	if err != nil {
@@ -78,7 +79,7 @@ func TestGetUserArticles(t *testing.T) {
 
 	userID := "user"
 	mockRepository := &MockRepository{}
-	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
+	mockUsecase := NewUsecase(&config.Config{}, mockRepository, logging.DefaultDummyLogger)
 
 	dataItems, err := mockUsecase.GetUserArticles(context.TODO(), userID)
 
@@ -98,7 +99,7 @@ func TestGetUserComments(t *testing.T) {
 	userID := "user"
 	expectBoardID := "SYSOP"
 	mockRepository := &MockRepository{}
-	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
+	mockUsecase := NewUsecase(&config.Config{}, mockRepository, logging.DefaultDummyLogger)
 
 	dataItems, err := mockUsecase.GetUserComments(context.TODO(), userID)
 

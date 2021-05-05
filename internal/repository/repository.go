@@ -65,9 +65,10 @@ type repository struct {
 	db           *bbs.DB
 	userRecords  []bbs.UserRecord
 	boardRecords []bbs.BoardRecord
+	logger       logging.Logger
 }
 
-func NewRepository(db *bbs.DB) (Repository, error) {
+func NewRepository(db *bbs.DB, logger logging.Logger) (Repository, error) {
 	userRecords, err := loadUserRecords(db)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load user records: %w", err)
@@ -82,5 +83,6 @@ func NewRepository(db *bbs.DB) (Repository, error) {
 		db:           db,
 		boardRecords: boardRecords,
 		userRecords:  userRecords,
+		logger:       logger,
 	}, nil
 }

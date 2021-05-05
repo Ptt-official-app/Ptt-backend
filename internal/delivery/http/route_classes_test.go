@@ -6,12 +6,14 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 )
 
 func TestGetClassesList(t *testing.T) {
 	userID := "id"
 	usecase := NewMockUsecase()
-	delivery := NewHTTPDelivery(usecase)
+	delivery := NewHTTPDelivery(usecase, logging.DefaultDummyLogger)
 	req, err := http.NewRequest("GET", "/v1/classes/1", nil)
 	if err != nil {
 		t.Fatal(err)
