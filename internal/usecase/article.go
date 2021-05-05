@@ -54,7 +54,6 @@ func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, board
 }
 
 // CreateArticle create a new article on a board
-// TODO: return result from bbs response
 func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
 	err := usecase.repo.CreateArticle(ctx, userID, boardID, title, article)
 	if err != nil {
