@@ -97,6 +97,22 @@ func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, 
 	}, nil
 }
 
+func (repo *MockRepository) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (repository.ForwardArticleToBoardRecord, error) {
+	return MockForwardArticleToBoardRecord{
+		filename:       "",
+		modified:       time.Time{},
+		recommendCount: 10,
+		owner:          "rico",
+		date:           "",
+		title:          "[閒聊] 可不可以當 couch potato",
+		money:          0,
+		destBoardID:    "Soft_Job",
+		ipAddr:         "1.1.1.1",
+		forwardTime:    time.Time{},
+		forwardTitle:   "轉 [閒聊] 可不可以當 couch potato",
+	}, nil
+}
+
 func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {
 	return []bbs.ArticleRecord{}, nil
 }
@@ -206,3 +222,29 @@ func (m MockPushRecord) ID() string      { return m.userID }
 func (m MockPushRecord) IPAddr() string  { return m.ipAddr }
 func (m MockPushRecord) Text() string    { return m.text }
 func (m MockPushRecord) Time() time.Time { return m.time }
+
+type MockForwardArticleToBoardRecord struct {
+	filename       string
+	modified       time.Time
+	recommendCount int
+	owner          string
+	date           string
+	title          string
+	money          int
+	destBoardID    string
+	ipAddr         string
+	forwardTime    time.Time
+	forwardTitle   string
+}
+
+func (m MockForwardArticleToBoardRecord) Filename() string       { return m.filename }
+func (m MockForwardArticleToBoardRecord) Modified() time.Time    { return m.modified }
+func (m MockForwardArticleToBoardRecord) Recommend() int         { return m.recommendCount }
+func (m MockForwardArticleToBoardRecord) Date() string           { return m.date }
+func (m MockForwardArticleToBoardRecord) Title() string          { return m.title }
+func (m MockForwardArticleToBoardRecord) Money() int             { return m.money }
+func (m MockForwardArticleToBoardRecord) Owner() string          { return m.owner }
+func (m MockForwardArticleToBoardRecord) DestBoardID() string    { return m.destBoardID }
+func (m MockForwardArticleToBoardRecord) IPAddr() string         { return m.ipAddr }
+func (m MockForwardArticleToBoardRecord) ForwardTime() time.Time { return m.forwardTime }
+func (m MockForwardArticleToBoardRecord) ForwardTitle() string   { return m.forwardTitle }

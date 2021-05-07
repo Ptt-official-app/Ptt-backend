@@ -97,6 +97,9 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 		case PermissionUpdateDraft:
 		case PermissionDeleteDraft:
 		case PermissionForwardArticle:
+			if err := usecase.checkForwardArticlePermission(token, userInfo); err != nil {
+				return err
+			}
 		case PermissionCreateArticle:
 			if err := usecase.checkCreateArticlePermission(context.Background(), token, userInfo); err != nil {
 				return err
@@ -139,6 +142,22 @@ func (usecase *usecase) checkCreateArticlePermission(ctx context.Context, token 
 	// TODO: repo 新增各板水桶名單
 	// get global ban list and check whether user on the list
 	// TODO: repo 新增全站水桶名單
+
+	return nil
+}
+
+func (usecase *usecase) checkForwardArticlePermission(token string, userInfo map[string]string) error {
+	//boardID := userInfo["board_id"]
+	//userID := userInfo["user_id"]
+
+	// TODO: 判斷是否有轉錄的權限
+	// TODO: 判斷在該版是否允許發文
+	// TODO: 判斷轉錄的版是否允許發文
+	// TODO: 判斷在該版是否被水桶
+	// TODO: 判斷轉錄的次數上限
+	// TODO: 判斷轉錄的版跟現在的版是不同的
+	// TODO: 判斷冷卻時間
+	// TODO: 判斷 CAPTCHA 驗證是否通過
 
 	return nil
 }

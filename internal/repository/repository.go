@@ -35,7 +35,7 @@ type Repository interface {
 	GetBoardBadPostLimit(ctx context.Context, boardID string) (BadPostLimitedBoardRecord, error)
 
 	// user.go
-	// GetUsers returns all user reords
+	// GetUsers returns all user records
 	GetUsers(ctx context.Context) ([]bbs.UserRecord, error)
 	// GetUserFavoriteRecords returns favorite records of a user
 	GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error)
@@ -62,6 +62,8 @@ type Repository interface {
 	// CreateArticle
 	// TODO: return result from bbs response
 	CreateArticle(ctx context.Context, userID, boardID, title, article string) error
+	// ForwardArticleToBoard returns forwarding to board results
+	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (ForwardArticleToBoardRecord, error)
 }
 
 type repository struct {
