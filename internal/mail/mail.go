@@ -5,7 +5,7 @@ import (
 	"net/url"
 )
 
-//stmp example - smtp://username:password@mail.smtp.com:25
+// NewMailProvider returns a SMTP mail provider with connection string. Eg, smtp://username:password@example.com:25
 func NewMailProvider(mailDriver string) (Mail, error) {
 	urlStruct, err := url.Parse(mailDriver)
 	if err != nil {
@@ -14,12 +14,7 @@ func NewMailProvider(mailDriver string) (Mail, error) {
 
 	switch urlStruct.Scheme {
 	case "smtp":
-		provider, err := newSMTPProvider(urlStruct)
-
-		if err != nil {
-			return nil, err
-		}
-
+		provider := newSMTPProvider(urlStruct)
 		return provider, nil
 	}
 
