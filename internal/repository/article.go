@@ -38,7 +38,7 @@ func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, titl
 	return nil, nil
 }
 
-// CreateArticle 
+// CreateArticle
 // TODO: return result from bbs response
 func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) error {
 	return nil
