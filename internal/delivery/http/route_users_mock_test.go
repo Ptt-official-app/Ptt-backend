@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -66,17 +67,15 @@ func (usecase *MockUsecase) GetUserComments(ctx context.Context, userID string) 
 	return result, nil
 }
 
-func (usecase *MockUsecase) GetUserDrafts(ctx context.Context, userID string, draftID string) ([]byte, error) {
-	return []byte("this is a draft"), nil
+func (usecase *MockUsecase) GetUserDrafts(ctx context.Context, userID string, draftID string) (repository.UserDraft, error) {
+	return nil, nil
 }
 
-func (usecase *MockUsecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
-	return text, nil
+func (usecase *MockUsecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (repository.UserDraft, error) {
+	return nil, nil
 }
 
 func (usecase *MockUsecase) DeleteUserDraft(ctx context.Context, userID, draftID string) error {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/168
 	return nil
 }
 

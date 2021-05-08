@@ -105,18 +105,20 @@ func (repo *repository) GetUserComments(_ context.Context, userID string) ([]int
 	return result, nil
 }
 
-func (repo *repository) GetUserDrafts(_ context.Context, userID, draftID string) ([]byte, error) {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
-	return []byte{}, nil
+// TODO: use bbs.UserDraft instead
+type UserDraft interface {
+	Raw() []byte
 }
 
-func (repo *repository) UpdateUserDraft(_ context.Context, userID, draftID string, text []byte) ([]byte, error) {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
-	return text, nil
+func (repo *repository) GetUserDrafts(_ context.Context, userID, draftID string) (UserDraft, error) {
+	return nil, nil
+}
+
+func (repo *repository) UpdateUserDraft(_ context.Context, userID, draftID string, text []byte) (UserDraft, error) {
+	return nil, nil
 }
 
 func (repo *repository) DeleteUserDraft(_ context.Context, userID, draftID string) error {
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
 	return nil
 }
 
