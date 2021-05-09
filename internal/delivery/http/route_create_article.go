@@ -25,19 +25,19 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 		return
 	}
 
-	err = delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionCreateArticle},
-		map[string]string{
-			"board_id": boardID,
-			"user_id":  userID,
-		})
+	ctx := context.Background()
+
+	err = delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionCreateArticle}, map[string]string{
+		"board_id": boardID,
+		"user_id":  userID,
+	})
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
-	_, err = delivery.usecase.CreateArticle(context.Background(), userID, boardID, title, article)
+	_, err = delivery.usecase.CreateArticle(ctx, userID, boardID, title, article)
 	// 改成 _ 避免 declared but not used
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

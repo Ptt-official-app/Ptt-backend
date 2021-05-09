@@ -10,6 +10,7 @@ import (
 // TODO: go-bbs lacks following interfaces, remove when go-bbs will have implemented functions
 type PostsLimitedBoardRecord interface {
 	PostLimitPosts() uint8
+	EnableNewPost() bool
 }
 
 type LoginsLimitedBoardRecord interface {
@@ -27,6 +28,10 @@ type badPostLimitedBoardRecord struct{}
 func (r *postsLimitedBoardRecord) PostLimitPosts() uint8 {
 	// TODO: connect go-bbs
 	return 0
+}
+
+func (r *postsLimitedBoardRecord) EnableNewPost() bool {
+	return false
 }
 
 func (r *loginsLimitedBoardRecord) PostLimitLogins() uint8 {

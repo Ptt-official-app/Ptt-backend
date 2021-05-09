@@ -97,11 +97,11 @@ func (delivery *Delivery) getPopularBoardList(w http.ResponseWriter, r *http.Req
 func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardInformation: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadBoardInformation},
-		map[string]string{
-			"board_id": boardID,
-		})
+	ctx := context.Background()
+
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+		"board_id": boardID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -109,7 +109,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardID)
+	brd, err := delivery.usecase.GetBoardByID(ctx, boardID)
 	if err != nil {
 		// TODO: record error
 		delivery.logger.Warningf("find board %s failed: %v", boardID, err)
@@ -126,7 +126,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	limitation, err := delivery.usecase.GetBoardPostsLimitation(context.Background(), boardID)
+	limitation, err := delivery.usecase.GetBoardPostsLimitation(ctx, boardID)
 	if err != nil {
 		delivery.logger.Warningf("get board %s post_limitation failed: %v", boardID, err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -159,11 +159,11 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Request, boardID string) {
 	delivery.logger.Debugf("getBoardSettings: %v", r)
 	token := delivery.getTokenFromRequest(r)
-	err := delivery.usecase.CheckPermission(token,
-		[]usecase.Permission{usecase.PermissionReadBoardInformation},
-		map[string]string{
-			"board_id": boardID,
-		})
+	ctx := context.Background()
+
+	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
+		"board_id": boardID,
+	})
 
 	if err != nil {
 		// TODO: record unauthorized access
@@ -171,7 +171,7 @@ func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	brd, err := delivery.usecase.GetBoardByID(context.Background(), boardID)
+	brd, err := delivery.usecase.GetBoardByID(ctx, boardID)
 	if err != nil {
 		// TODO: record error
 		delivery.logger.Warningf("find board %s failed: %v", boardID, err)

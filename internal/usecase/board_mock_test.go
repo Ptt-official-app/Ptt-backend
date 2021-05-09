@@ -83,6 +83,10 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 	return result, nil
 }
 
+func (repo *MockRepository) CreateArticle(ctx context.Context, userID, boardID, title, article string) error {
+	return nil
+}
+
 func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {
 	return MockPushRecord{
 		appendType: appendType,
@@ -150,6 +154,8 @@ func (m MockPopularArticle) BoardID() string     { return m.boardID }
 type MockPostsLimitedBoardRecord struct{}
 
 func (m *MockPostsLimitedBoardRecord) PostLimitPosts() uint8 { return 0 }
+
+func (m *MockPostsLimitedBoardRecord) EnableNewPost() bool { return false }
 
 type MockLoginsLimitedBoardRecord struct{}
 
