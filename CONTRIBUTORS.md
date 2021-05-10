@@ -9,4 +9,5 @@ PTT APP 後端 貢獻者名單
 | PichuChen      |                                               |                                                    | coding             |
 | SivWatt、涼涼  | [SivWatt](https://github.com/SivWatt)         |                                                    | coding             |
 | whitefloor     | [whitefloor](https://github.com/whitefloor)   |                                                    | coding/code review |
-| nickyanggg     | [whitefloor](https://github.com/nickyanggg)   | [facebook](https://www.facebook.com/yang.z.lin.90) | coding             |
+| nickyanggg     | [nickyanggg](https://github.com/nickyanggg)   | [facebook](https://www.facebook.com/yang.z.lin.90) | coding             |
+| gogog22510     | [gogog22510](https://github.com/gogog22510)   |                                                    | coding             |
