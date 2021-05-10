@@ -1,6 +1,8 @@
 package router_benchmark
 
 import (
+	"github.com/gorilla/mux"
+	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -9,16 +11,31 @@ import (
 
 func BenchmarkServeMux(b *testing.B) {
 	rr := httptest.NewRecorder()
-	mux := http.NewServeMux()
-	mux.HandleFunc("/v1/boards/", getBoards)
+	r := http.NewServeMux()
+	r.HandleFunc("/v1/boards/", getBoards)
+	runTest(b, r, rr)
+}
+func BenchmarkGorillaMux(b *testing.B) {
+	rr := httptest.NewRecorder()
+	r := mux.NewRouter().StrictSlash(true)
+	r.HandleFunc("/v1/boards/{boardID}/articles", getBoardArticles_gorillamux)
+	runTest(b, r, rr)
+}
+func BenchmarkHttpRouter(b *testing.B) {
+	rr := httptest.NewRecorder()
+	r := httprouter.New()
+	r.HandlerFunc(http.MethodGet, "/v1/boards/:boardID/articles", getBoardArticles_httprouter)
+	runTest(b, r, rr)
+}
 
+func runTest(b *testing.B, r http.Handler, rr *httptest.ResponseRecorder) {
 	req, err := http.NewRequest("GET", "/v1/boards/SYSOP/articles", nil)
 	if err != nil {
 		b.Fatal(err)
 	}
 
 	for i := 0; i < b.N; i++ {
-		mux.ServeHTTP(rr, req)
+		r.ServeHTTP(rr, req)
 		if rr.Code != http.StatusOK {
 			b.Errorf("handler returned wrong status code: got %v want %v",
 				rr.Code, http.StatusOK)
@@ -93,11 +110,18 @@ func getBoardArticles(w http.ResponseWriter, r *http.Request, boardID string) {
 	w.WriteHeader(200)
 }
 
-//
-//// getBoards is the handler for `/v1/boards` with GET method
-//func getBoardArticles_Router(w http.ResponseWriter, r *http.Request) {
-//	params := httprouter.ParamsFromContext(r.Context())
-//	boardID := params["boardID"]
-//	_ = boardID
-//	w.WriteHeader(200)
-//}
+// getBoards is the handler for `/v1/boards` with GET method
+func getBoardArticles_httprouter(w http.ResponseWriter, r *http.Request) {
+	params := httprouter.ParamsFromContext(r.Context())
+	boardID := params.ByName("boardID")
+	_ = boardID
+	w.WriteHeader(200)
+}
+
+// getBoards is the handler for `/v1/boards` with GET method
+func getBoardArticles_gorillamux(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	boardID := params["boardID"]
+	_ = boardID
+	w.WriteHeader(200)
+}
