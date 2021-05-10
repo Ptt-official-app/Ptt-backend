@@ -9,19 +9,19 @@ import (
 	"testing"
 )
 
-func BenchmarkServeMux(b *testing.B) {
+func Benchmark_ServeMux(b *testing.B) {
 	rr := httptest.NewRecorder()
 	r := http.NewServeMux()
 	r.HandleFunc("/v1/boards/", getBoards)
 	runTest(b, r, rr)
 }
-func BenchmarkGorillaMux(b *testing.B) {
+func Benchmark_gorillamux(b *testing.B) {
 	rr := httptest.NewRecorder()
 	r := mux.NewRouter().StrictSlash(true)
 	r.HandleFunc("/v1/boards/{boardID}/articles", getBoardArticles_gorillamux)
 	runTest(b, r, rr)
 }
-func BenchmarkHttpRouter(b *testing.B) {
+func Benchmark_httprouter(b *testing.B) {
 	rr := httptest.NewRecorder()
 	r := httprouter.New()
 	r.HandlerFunc(http.MethodGet, "/v1/boards/:boardID/articles", getBoardArticles_httprouter)
@@ -81,23 +81,18 @@ func parseBoardPath(path string) (boardID string, item string, filename string, 
 	pathSegment := strings.Split(path, "/")
 
 	if len(pathSegment) >= 6 {
-		// /{{version}}/boards/{{class_id}}/{{item}}/{{filename}}
 		boardID = pathSegment[3]
 		item = pathSegment[4]
 		filename = pathSegment[5]
 		return
 	} else if len(pathSegment) == 5 {
-		// /{{version}}/boards/{{class_id}}/{{item}}
 		boardID = pathSegment[3]
 		item = pathSegment[4]
 		return
 	} else if len(pathSegment) == 4 {
-		// /{{version}}/boards/{{class_id}}
 		boardID = pathSegment[3]
 		return
 	} else if len(pathSegment) == 3 {
-		// /{{version}}/boards
-		// Should not be reach...
 		return
 	}
 	return
@@ -105,7 +100,7 @@ func parseBoardPath(path string) (boardID string, item string, filename string, 
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
 // article list to client
-func getBoardArticles(w http.ResponseWriter, r *http.Request, boardID string) {
+func getBoardArticles(w http.ResponseWriter, _ *http.Request, boardID string) {
 	_ = boardID
 	w.WriteHeader(200)
 }
