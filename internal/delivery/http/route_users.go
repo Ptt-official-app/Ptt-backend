@@ -276,7 +276,7 @@ func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	bufStr := base64.StdEncoding.EncodeToString(buf)
+	bufStr := base64.StdEncoding.EncodeToString(buf.Raw())
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
@@ -347,7 +347,7 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	bufStr := base64.StdEncoding.EncodeToString(buf)
+	bufStr := base64.StdEncoding.EncodeToString(buf.Raw())
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{

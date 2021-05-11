@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -30,12 +31,22 @@ func (repo *MockRepository) GetUserComments(ctx context.Context, userID string) 
 	}, nil
 }
 
-func (repo *MockRepository) GetUserDrafts(ctx context.Context, userID, draftID string) ([]byte, error) {
-	return []byte("this is a draft"), nil
+type MockUserDraft struct {
+	raw []byte
 }
 
-func (repo *MockRepository) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
-	return text, nil
+func (m MockUserDraft) Raw() []byte { return m.raw }
+
+func (repo *MockRepository) GetUserDrafts(ctx context.Context, userID, draftID string) (repository.UserDraft, error) {
+	return MockUserDraft{
+		raw: []byte("this is a draft"),
+	}, nil
+}
+
+func (repo *MockRepository) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (repository.UserDraft, error) {
+	return MockUserDraft{
+		raw: text,
+	}, nil
 }
 
 func (repo *MockRepository) DeleteUserDraft(ctx context.Context, userID, draftID string) error {

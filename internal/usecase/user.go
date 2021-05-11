@@ -113,14 +113,14 @@ func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]i
 	return dataItems, nil
 }
 
-func (usecase *usecase) GetUserDrafts(ctx context.Context, userID, draftID string) ([]byte, error) {
+func (usecase *usecase) GetUserDrafts(ctx context.Context, userID, draftID string) (repository.UserDraft, error) {
 	if !isValidDraftID([]byte(draftID)) {
 		return nil, fmt.Errorf("invalid draft ID: %s", draftID)
 	}
 	return usecase.repo.GetUserDrafts(ctx, userID, draftID)
 }
 
-func (usecase *usecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error) {
+func (usecase *usecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (repository.UserDraft, error) {
 	if !isValidDraftID([]byte(draftID)) {
 		return nil, fmt.Errorf("invalid draft ID: %s", draftID)
 	}

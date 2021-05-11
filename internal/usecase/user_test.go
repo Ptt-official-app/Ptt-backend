@@ -122,7 +122,7 @@ func TestGetUserDrafts(t *testing.T) {
 	// case 1: valid draftID
 	actualValue, _ := mockUsecase.GetUserDrafts(context.TODO(), userID, "0")
 	expectedValue := "this is a draft"
-	if expectedValue != string(actualValue) {
+	if expectedValue != string(actualValue.Raw()) {
 		t.Errorf("returned unexpected value: got %v want value %v",
 			actualValue, expectedValue)
 	}
@@ -142,7 +142,7 @@ func TestUpdateUserDraft(t *testing.T) {
 	actualValue, _ := mockUsecase.UpdateUserDraft(context.TODO(), userID, "0", []byte("this is a draft"))
 	expectedValue := "this is a draft"
 
-	if expectedValue != string(actualValue) {
+	if expectedValue != string(actualValue.Raw()) {
 		t.Errorf("returned unexpected value: got %v want value %v",
 			actualValue, expectedValue)
 	}

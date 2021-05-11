@@ -47,11 +47,11 @@ type Repository interface {
 	// GetUserComments return user's history comments
 	// TODO: return a slice of concrete type not interface
 	GetUserComments(ctx context.Context, userID string) ([]interface{}, error)
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
-	GetUserDrafts(ctx context.Context, userID, draftID string) ([]byte, error)
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
-	UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) ([]byte, error)
-	// TODO: https://github.com/Ptt-official-app/Ptt-backend/issues/167
+	// GetUserDrafts returns user's draft according to draftID
+	GetUserDrafts(ctx context.Context, userID, draftID string) (UserDraft, error)
+	// UpdateUserDraft updates user's draft according to draftID
+	UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (UserDraft, error)
+	// DeleteUserDraft deletes user's draft according to draftID
 	DeleteUserDraft(ctx context.Context, userID, draftID string) error
 
 	// article.go
