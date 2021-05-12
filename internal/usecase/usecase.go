@@ -75,14 +75,15 @@ type usecase struct {
 	logger       logging.Logger
 	globalConfig *config.Config
 	repo         repository.Repository
-	mail         mail.Mail
+	mailProvider mail.Mail
 }
 
 func NewUsecase(globalConfig *config.Config, repo repository.Repository) Usecase {
+	mailProvider, _ := mail.NewMailProvider(globalConfig.MailDriver)
 	return &usecase{
 		logger:       logging.NewLogger(),
 		globalConfig: globalConfig,
 		repo:         repo,
-		mail:         mail.NewMail(globalConfig.MailDriver),
+		mailProvider: mailProvider,
 	}
 }

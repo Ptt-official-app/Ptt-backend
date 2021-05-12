@@ -50,7 +50,7 @@ func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, board
 	if err != nil {
 		return fmt.Errorf("GetBoardArticle error: %w", err)
 	}
-	return usecase.mail.Send(email, title, userID, buffer)
+	return usecase.mailProvider.Send(email, title, userID, buffer)
 }
 
 // CreateArticle create a new article on a board
