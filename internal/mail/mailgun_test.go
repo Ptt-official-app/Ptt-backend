@@ -10,12 +10,12 @@ import (
 )
 
 const (
-	testApiKey = "key"
+	testAPIKey = "key"
 	testDomain = "pttapp.cc"
 )
 
 var (
-	testQuery = url.Values{"api_key": {testApiKey}, "domain": {testDomain}}
+	testQuery = url.Values{"api_key": {testAPIKey}, "domain": {testDomain}}
 )
 
 func TestMailgunSend_ReturnNoError(t *testing.T) {
@@ -78,7 +78,6 @@ func TestMailgunSend_ReturnNoError(t *testing.T) {
 func TestMailgunSend_ReturnError(t *testing.T) {
 	testServer := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, http.StatusText(http.StatusBadGateway), http.StatusBadGateway)
-		return
 	}))
 	defer testServer.Close()
 
