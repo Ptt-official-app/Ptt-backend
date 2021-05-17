@@ -16,8 +16,7 @@ const (
 )
 
 var (
-	_         Mail = &mailgunProvider{}
-	goodCodes      = []int{http.StatusOK, http.StatusAccepted, http.StatusNoContent}
+	_ Mail = &mailgunProvider{}
 )
 
 type mailgunProvider struct {
@@ -66,7 +65,7 @@ func (m *mailgunProvider) Send(from, to, title string, body []byte) error {
 		return err
 	}
 
-	if notGood(resp.StatusCode) {
+	if resp.StatusCode != http.StatusOK {
 		bodyData, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			return err
@@ -75,13 +74,4 @@ func (m *mailgunProvider) Send(from, to, title string, body []byte) error {
 	}
 
 	return nil
-}
-
-func notGood(statusCode int) bool {
-	for _, i := range goodCodes {
-		if statusCode == i {
-			return false
-		}
-	}
-	return true
 }
