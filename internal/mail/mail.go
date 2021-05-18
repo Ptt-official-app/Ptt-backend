@@ -16,6 +16,9 @@ func NewMailProvider(mailDriver string) (Mail, error) {
 	case "smtp":
 		provider := newSMTPProvider(urlStruct)
 		return provider, nil
+
+	case "mailgun":
+		return newMailgunProvider(urlStruct), nil
 	}
 
 	return &mail{}, nil
