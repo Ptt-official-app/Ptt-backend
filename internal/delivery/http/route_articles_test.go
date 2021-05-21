@@ -16,8 +16,8 @@ func (usecase *MockUsecase) AppendComment(ctx context.Context, userID, boardID, 
 	return nil, nil
 }
 
-func (usecase *MockUsecase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (map[string]interface{}, error) {
-	return map[string]interface{}{}, nil
+func (usecase *MockUsecase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (repository.ForwardArticleToBoardRecord, error) {
+	return nil, nil
 }
 
 func (usecase *MockUsecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error {

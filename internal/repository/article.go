@@ -43,3 +43,19 @@ func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, titl
 func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) error {
 	return nil
 }
+
+type ForwardArticleToBoardRecord interface {
+	// Note: go-bbs has not implemented this yet
+	// TODO: use bbs.ForwardArticleToBoardRecord or something when it is ready
+	bbs.ArticleRecord
+	DestBoardID() string
+	IPAddr() string
+	ForwardTime() time.Time
+	ForwardTitle() string
+}
+
+func (repo *repository) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (ForwardArticleToBoardRecord, error) {
+	// Note: go-bbs has not implemented this yet
+	// TODO: delegate to repo.db when it is ready
+	return nil, nil
+}
