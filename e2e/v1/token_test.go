@@ -27,7 +27,7 @@ func TestPostToken(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	defer resp.Body.Close()  
+	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -39,7 +39,7 @@ func TestPostToken(t *testing.T) {
 	if err != nil {
 		t.Errorf("get unexpect json: %w", err)
 	}
-	
+
 	t.Logf("got response %v", body)
 
 	if _, ok := responsedMap["error"]; !ok {
