@@ -35,7 +35,11 @@ func TestPostToken(t *testing.T) {
 	}
 
 	responsedMap := map[string]interface{}{}
-	json.Unmarshal(body, &responsedMap)
+	err = json.Unmarshal(body, &responsedMap)
+	if err != nil {
+		t.Errorf("get unexpect json: %w", err)
+	}
+	
 	t.Logf("got response %v", body)
 
 	if _, ok := responsedMap["error"]; !ok {
