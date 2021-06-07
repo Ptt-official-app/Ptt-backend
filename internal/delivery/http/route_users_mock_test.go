@@ -104,6 +104,7 @@ type MockUserRecord struct {
 	plan               map[string]interface{}
 	realname           string
 	money              int
+	userFlag           uint32
 }
 
 // NewMockUserRecord generates fake user record for developing
@@ -123,6 +124,7 @@ func NewMockUserRecord(userID string) *MockUserRecord {
 		plan:               map[string]interface{}{},
 		realname:           "",
 		money:              0,
+		userFlag:           0x02000A60,
 	}
 }
 func (u *MockUserRecord) UserID() string { return u.userID }
@@ -169,3 +171,5 @@ func (u *MockUserRecord) MailboxDescription() string { return u.mailboxDescripti
 func (u *MockUserRecord) ChessStatus() map[string]interface{} { return u.chessStatus }
 
 func (u *MockUserRecord) Plan() map[string]interface{} { return u.plan }
+
+func (u *MockUserRecord) UserFlag() uint32 { return u.userFlag }
