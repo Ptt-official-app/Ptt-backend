@@ -22,7 +22,33 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 	}
 
 	username := r.FormValue("username")
+	if len(username) == 0 {
+		m := map[string]string{
+			"error":             "grant_error",
+			"error_description": "empty username",
+		}
+
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("postToken write get username error response err: %w", err)
+		}
+		return
+	}
 	password := r.FormValue("password")
+	if len(password) == 0 {
+		m := map[string]string{
+			"error":             "grant_error",
+			"error_description": "empty password",
+		}
+
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("postToken write get password error response err: %w", err)
+		}
+		return
+	}
 
 	userec, err := delivery.usecase.GetUserByID(context.Background(), username)
 	if err != nil {
