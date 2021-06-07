@@ -72,3 +72,4 @@ func (u *MockUser) LastCountry() string                  { return "" }
 func (u *MockUser) MailboxDescription() string           { return "" }
 func (u *MockUser) ChessStatus() map[string]interface{}  { return map[string]interface{}{} }
 func (u *MockUser) Plan() map[string]interface{}         { return map[string]interface{}{} }
+func (u *MockUser) UserFlag() uint32                     { return 0x02000A60 }
