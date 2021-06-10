@@ -94,6 +94,9 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 		case PermissionReadFavorite:
 		case PermissionReadTreasureInformation:
 		case PermissionReadUserInformation:
+			if err := usecase.checkPermissionReadUserInformation(token, userInfo); err != nil {
+				return err
+			}
 		case PermissionUpdateDraft:
 		case PermissionDeleteDraft:
 		case PermissionForwardArticle:
@@ -158,6 +161,21 @@ func (usecase *usecase) checkForwardArticlePermission(token string, userInfo map
 	// TODO: 判斷轉錄的版跟現在的版是不同的
 	// TODO: 判斷冷卻時間
 	// TODO: 判斷 CAPTCHA 驗證是否通過
+
+	return nil
+}
+
+func (usecase *usecase) checkPermissionReadUserInformation(token string, userInfo map[string]string) error {
+	// TODO: 判斷管理群的權限
+	tokenUserID, err := usecase.GetUserIDFromToken(token)
+
+	if err != nil {
+		return fmt.Errorf("get user id from token failed: %w", err)
+	}
+
+	if tokenUserID != userInfo["user_id"] {
+		return fmt.Errorf("token user id is not the same userInfo user id")
+	}
 
 	return nil
 }
