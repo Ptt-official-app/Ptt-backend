@@ -84,24 +84,24 @@ func TestGetBoardPostsLimitation(t *testing.T) {
 
 	usecase := NewUsecase(&config.Config{}, resp)
 
-	limitation, err := usecase.GetBoardPostsLimitation(context.TODO(), "board-id")
+	limitation, err := usecase.GetBoardPostsLimitation(context.TODO(), "SYSOP")
 	if err != nil {
-		t.Errorf("getBoardPostsLimitation with board-id excepted not nil error, got nil")
+		t.Errorf("getBoardPostsLimitation with SYSOP expected not nil error, got nil")
 		return
 	}
 
 	if limitation.PostsLimit != 0 {
-		t.Errorf("limitation.PostsLimit is excepted 0, got %d", limitation.PostsLimit)
+		t.Errorf("limitation.PostsLimit is expected 0, got %d", limitation.PostsLimit)
 		return
 	}
 
 	if limitation.LoginsLimit != 0 {
-		t.Errorf("limitation.LoginsLimit is excepted 0, got %d", limitation.LoginsLimit)
+		t.Errorf("limitation.LoginsLimit is expected 0, got %d", limitation.LoginsLimit)
 		return
 	}
 
 	if limitation.BadPostLimit != 0 {
-		t.Errorf("limitation.BadPostLimit is excepted 0, got %d", limitation.BadPostLimit)
+		t.Errorf("limitation.BadPostLimit is expected 0, got %d", limitation.BadPostLimit)
 		return
 	}
 }
@@ -116,8 +116,8 @@ func TestGetPopularBoards(t *testing.T) {
 	}
 
 	// TODO:The test here must be changed after the implementation is completed
-	if len(filtedBoards) != 0 {
-		t.Errorf("GetPopularBoards shoule have no data")
+	if len(filtedBoards) != 1 {
+		t.Errorf("GetPopularBoards should have 1 data")
 	}
 }
 

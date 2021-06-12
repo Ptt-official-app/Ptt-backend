@@ -89,26 +89,16 @@ func shouldBeDisplayOnPouplarList(board *bbs.BoardRecord) bool {
 }
 
 func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error) {
-	postLimit, err := usecase.repo.GetBoardPostsLimit(ctx, boardID)
-	if err != nil {
-		return nil, fmt.Errorf("get board %s posts limit error: %w", boardID, err)
+	for _, it := range usecase.repo.GetBoards(ctx) {
+		if boardID == it.BoardID() {
+			return &BoardPostLimitation{
+				PostsLimit:   it.(bbs.BoardRecordInfo).GetPostLimitPosts(),
+				LoginsLimit:  it.(bbs.BoardRecordInfo).GetPostLimitLogins(),
+				BadPostLimit: it.(bbs.BoardRecordInfo).GetPostLimitBadPost(),
+			}, nil
+		}
 	}
-
-	loginsLimit, err := usecase.repo.GetBoardLoginsLimit(ctx, boardID)
-	if err != nil {
-		return nil, fmt.Errorf("get board %s logins limit error: %w", boardID, err)
-	}
-
-	badPostLimit, err := usecase.repo.GetBoardBadPostLimit(ctx, boardID)
-	if err != nil {
-		return nil, fmt.Errorf("get board %s bad posts limit error: %w", boardID, err)
-	}
-
-	return &BoardPostLimitation{
-		PostsLimit:   postLimit.PostLimitPosts(),
-		LoginsLimit:  loginsLimit.PostLimitLogins(),
-		BadPostLimit: badPostLimit.PostLimitBadPost(),
-	}, nil
+	return nil, fmt.Errorf("board record not found")
 }
 
 func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {

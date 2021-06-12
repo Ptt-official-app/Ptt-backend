@@ -9,7 +9,9 @@ import (
 )
 
 func (repo *MockRepository) GetBoards(ctx context.Context) []bbs.BoardRecord {
-	return []bbs.BoardRecord{}
+	return []bbs.BoardRecord{
+		NewMockBoardRecord("SYSOP", "SYSOP", "嘰哩 ◎站長好!", false),
+	}
 }
 
 func (repo *MockRepository) GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error) {
@@ -121,13 +123,28 @@ func (repo *MockRepository) GetBoardPostsLimit(ctx context.Context, boardID stri
 	return &MockPostsLimitedBoardRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardLoginsLimit(ctx context.Context, boardID string) (repository.LoginsLimitedBoardRecord, error) {
-	return &MockLoginsLimitedBoardRecord{}, nil
+type MockBoardRecord struct {
+	boardID          string
+	title            string
+	isClass          bool
+	classID          string
+	postLimitPosts   uint8
+	postLimitLogins  uint8
+	postLimitBadPost uint8
 }
 
-func (repo *MockRepository) GetBoardBadPostLimit(ctx context.Context, boardID string) (repository.BadPostLimitedBoardRecord, error) {
-	return &MockBadPostLimitedBoardRecord{}, nil
+func NewMockBoardRecord(classID, boardID, title string, isClass bool) *MockBoardRecord {
+	return &MockBoardRecord{boardID: boardID, title: title, isClass: isClass, classID: classID}
 }
+
+func (b *MockBoardRecord) BoardID() string            { return b.boardID }
+func (b *MockBoardRecord) Title() string              { return b.title }
+func (b *MockBoardRecord) IsClass() bool              { return b.isClass }
+func (b *MockBoardRecord) ClassID() string            { return b.classID }
+func (b *MockBoardRecord) BM() []string               { return make([]string, 0) }
+func (b *MockBoardRecord) GetPostLimitPosts() uint8   { return b.postLimitPosts }
+func (b *MockBoardRecord) GetPostLimitLogins() uint8  { return b.postLimitLogins }
+func (b *MockBoardRecord) GetPostLimitBadPost() uint8 { return b.postLimitBadPost }
 
 type MockArticleRecord struct {
 	filename       string
@@ -172,14 +189,6 @@ type MockPostsLimitedBoardRecord struct{}
 func (m *MockPostsLimitedBoardRecord) PostLimitPosts() uint8 { return 0 }
 
 func (m *MockPostsLimitedBoardRecord) EnableNewPost() bool { return false }
-
-type MockLoginsLimitedBoardRecord struct{}
-
-func (m *MockLoginsLimitedBoardRecord) PostLimitLogins() uint8 { return 0 }
-
-type MockBadPostLimitedBoardRecord struct{}
-
-func (m *MockBadPostLimitedBoardRecord) PostLimitBadPost() uint8 { return 0 }
 
 func (repo *MockRepository) GetUserArticles(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error) {
 	articleRecords := []MockArticleRecord{
