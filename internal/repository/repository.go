@@ -27,12 +27,6 @@ type Repository interface {
 	// GetBoardPostsLimit returns posts limited record of a board
 	// TODO: replace PostsLimitedBoardRecord with real bbs record
 	GetBoardPostsLimit(ctx context.Context, boardID string) (PostsLimitedBoardRecord, error)
-	// GetBoardLoginsLimit returns logins limited record of a board
-	// TODO: replace LoginsLimitedBoardRecord with real bbs record
-	GetBoardLoginsLimit(ctx context.Context, boardID string) (LoginsLimitedBoardRecord, error)
-	// GetBoardBadPostLimit returns bad posts limited record of a board
-	// TODO: replace BadPostLimitedBoardRecord with real bbs record
-	GetBoardBadPostLimit(ctx context.Context, boardID string) (BadPostLimitedBoardRecord, error)
 
 	// user.go
 	// GetUsers returns all user records

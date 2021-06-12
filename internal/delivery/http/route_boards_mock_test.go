@@ -86,8 +86,34 @@ func NewMockBoardRecord(classID, boardID, title string, isClass bool) *MockBoard
 	return &MockBoardRecord{boardID: boardID, title: title, isClass: isClass, classID: classID}
 }
 
-func (b *MockBoardRecord) BoardID() string { return b.boardID }
-func (b *MockBoardRecord) Title() string   { return b.title }
-func (b *MockBoardRecord) IsClass() bool   { return b.isClass }
-func (b *MockBoardRecord) ClassID() string { return b.classID }
-func (b *MockBoardRecord) BM() []string    { return make([]string, 0) }
+func (b *MockBoardRecord) BoardID() string          { return b.boardID }
+func (b *MockBoardRecord) Title() string            { return b.title }
+func (b *MockBoardRecord) IsClass() bool            { return b.isClass }
+func (b *MockBoardRecord) ClassID() string          { return b.classID }
+func (b *MockBoardRecord) BM() []string             { return make([]string, 0) }
+func (b *MockBoardRecord) IsNoCount() bool          { return false }
+func (b *MockBoardRecord) IsGroupBoard() bool       { return false }
+func (b *MockBoardRecord) IsHide() bool             { return false }
+func (b *MockBoardRecord) IsPostMask() bool         { return false }
+func (b *MockBoardRecord) IsAnonymous() bool        { return false }
+func (b *MockBoardRecord) IsDefaultAnonymous() bool { return false }
+func (b *MockBoardRecord) IsNoCredit() bool         { return false }
+func (b *MockBoardRecord) IsVoteBoard() bool        { return false }
+func (b *MockBoardRecord) IsWarnEL() bool           { return false }
+func (b *MockBoardRecord) IsTop() bool              { return false }
+func (b *MockBoardRecord) IsNoRecommend() bool      { return false }
+func (b *MockBoardRecord) IsAngelAnonymous() bool   { return false }
+func (b *MockBoardRecord) IsBMCount() bool          { return false }
+func (b *MockBoardRecord) IsIsSymbolic() bool       { return false }
+func (b *MockBoardRecord) IsNoBoo() bool            { return false }
+func (b *MockBoardRecord) IsRestrictedPost() bool   { return false }
+func (b *MockBoardRecord) IsGuestPost() bool        { return false }
+func (b *MockBoardRecord) IsCooldown() bool         { return false }
+func (b *MockBoardRecord) IsCPLog() bool            { return false }
+func (b *MockBoardRecord) IsNoFastRecommend() bool  { return false }
+func (b *MockBoardRecord) IsIPLogRecommend() bool   { return false }
+func (b *MockBoardRecord) IsOver18() bool           { return false }
+func (b *MockBoardRecord) IsNoReply() bool          { return false }
+func (b *MockBoardRecord) IsAlignedComment() bool   { return false }
+func (b *MockBoardRecord) IsNoSelfDeletePost() bool { return false }
+func (b *MockBoardRecord) IsBMMaskContent() bool    { return false }
