@@ -57,6 +57,15 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		delivery.logger.Warningf("unauthorized get user information for %s: %v", userID, err)
 		w.WriteHeader(http.StatusUnauthorized)
+		m := map[string]string{
+			"error":             "permission_error",
+			"error_description": "no permission",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getUserInformation error response err: %w", err)
+		}
 		return
 	}
 
