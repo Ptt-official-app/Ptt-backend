@@ -98,7 +98,16 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 	})
 
 	if err != nil {
-		// TODO: record unauthorized access
+		m := map[string]string{
+			"error":             "permission_error",
+			"error_description": "no permission",
+		}
+
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getUserFavorites error response err: %w", err)
+		}
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -134,7 +143,16 @@ func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request
 	})
 
 	if err != nil {
-		// TODO: record unauthorized access
+		m := map[string]string{
+			"error":             "permission_error",
+			"error_description": "no permission",
+		}
+
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getUserArticles error response err: %w", err)
+		}
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -170,7 +188,16 @@ func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Requ
 	})
 
 	if err != nil {
-		// TODO: record unauthorized access
+		m := map[string]string{
+			"error":             "permission_error",
+			"error_description": "no permission",
+		}
+
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getUserPreferences error response err: %w", err)
+		}
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
@@ -213,7 +240,16 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	})
 
 	if err != nil {
-		// TODO: record unauthorized access
+		m := map[string]string{
+			"error":             "permission_error",
+			"error_description": "no permission",
+		}
+
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getUserComments error response err: %w", err)
+		}
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}

@@ -87,20 +87,10 @@ func (repo *repository) GetUserPreferences(_ context.Context, userID string) (ma
 }
 
 // TODO: no required method in go-bbs and we use a mock, replace it when available
-func (repo *repository) GetUserComments(_ context.Context, userID string) ([]interface{}, error) {
-	result := []interface{}{
-		map[string]interface{}{
-			"board_id":        "No value",
-			"filename":        "No value",
-			"modified_time":   "No value",
-			"recommend_count": "No value",
-			"comment_count":   "No value",
-			"post_data":       "No value",
-			"title":           "No value",
-			"url":             "No value",
-			"comment_order":   "No value",
-			"comment_time":    "No value",
-		},
+func (repo *repository) GetUserComments(_ context.Context, userID string) ([]bbs.UserCommentRecord, error) {
+	result, err := repo.db.GetUserCommentRecordFile(userID)
+	if err != nil {
+		return nil, err
 	}
 	return result, nil
 }

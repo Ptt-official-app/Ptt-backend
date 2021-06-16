@@ -105,7 +105,7 @@ func (usecase *usecase) GetUserPreferences(ctx context.Context, userID string) (
 	return rec, nil
 }
 
-func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]interface{}, error) {
+func (usecase *usecase) GetUserComments(ctx context.Context, userID string) ([]bbs.UserCommentRecord, error) {
 	dataItems, err := usecase.repo.GetUserComments(ctx, userID)
 	if err != nil {
 		return nil, err
