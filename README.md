@@ -21,6 +21,15 @@ go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-b
   ](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
   `docker-compose up -d`
 
+## 軟體測試測試表
+
+測試表目前以 Google Sheet 寫成，這份測試表適合讓對於不熟悉程式語言的開發者了解目前各項功能的狀態。
+
+測試表： [連結](https://docs.google.com/spreadsheets/d/1uo4AJuSi5xTXEht2o2EHogLivCJlJqlLaeqoj1RceDY/edit?usp=sharing)
+
+歷次測試結果：
+* [2021060401](https://docs.google.com/spreadsheets/d/1dyfmWZJaTiDrSMIFZ6ynmfeTWU3h45ScW1eyKFJU494/edit?usp=sharing)
+
 ## 貢獻者相關
 
 如果想要參與開發與維護專案可參考:
