@@ -156,14 +156,14 @@ type MockArticleRecord struct {
 	money          int
 }
 
-func (m MockArticleRecord) Filename() string    { return m.filename }
-func (m MockArticleRecord) Modified() time.Time { return m.modified }
-func (m MockArticleRecord) SetModified(newValue time.Time) {m.modified = newValue}
-func (m MockArticleRecord) Recommend() int      { return m.recommendCount }
-func (m MockArticleRecord) Owner() string       { return m.owner }
-func (m MockArticleRecord) Date() string        { return m.date }
-func (m MockArticleRecord) Title() string       { return m.title }
-func (m MockArticleRecord) Money() int          { return m.money }
+func (m MockArticleRecord) Filename() string               { return m.filename }
+func (m MockArticleRecord) Modified() time.Time            { return m.modified }
+func (m MockArticleRecord) SetModified(newValue time.Time) { m.modified = newValue }
+func (m MockArticleRecord) Recommend() int                 { return m.recommendCount }
+func (m MockArticleRecord) Owner() string                  { return m.owner }
+func (m MockArticleRecord) Date() string                   { return m.date }
+func (m MockArticleRecord) Title() string                  { return m.title }
+func (m MockArticleRecord) Money() int                     { return m.money }
 
 type MockPopularArticle struct {
 	filename       string
@@ -176,15 +176,15 @@ type MockPopularArticle struct {
 	boardID        string
 }
 
-func (m MockPopularArticle) Filename() string    { return m.filename }
-func (m MockPopularArticle) Modified() time.Time { return m.modified }
-func (m MockPopularArticle) SetModified(newValue time.Time) {m.modified = newValue}
-func (m MockPopularArticle) Recommend() int      { return m.recommendCount }
-func (m MockPopularArticle) Date() string        { return m.date }
-func (m MockPopularArticle) Title() string       { return m.title }
-func (m MockPopularArticle) Money() int          { return m.money }
-func (m MockPopularArticle) Owner() string       { return m.owner }
-func (m MockPopularArticle) BoardID() string     { return m.boardID }
+func (m MockPopularArticle) Filename() string               { return m.filename }
+func (m MockPopularArticle) Modified() time.Time            { return m.modified }
+func (m MockPopularArticle) SetModified(newValue time.Time) { m.modified = newValue }
+func (m MockPopularArticle) Recommend() int                 { return m.recommendCount }
+func (m MockPopularArticle) Date() string                   { return m.date }
+func (m MockPopularArticle) Title() string                  { return m.title }
+func (m MockPopularArticle) Money() int                     { return m.money }
+func (m MockPopularArticle) Owner() string                  { return m.owner }
+func (m MockPopularArticle) BoardID() string                { return m.boardID }
 
 type MockPostsLimitedBoardRecord struct{}
 
@@ -248,15 +248,15 @@ type MockForwardArticleToBoardRecord struct {
 	forwardTitle   string
 }
 
-func (m MockForwardArticleToBoardRecord) Filename() string       { return m.filename }
-func (m MockForwardArticleToBoardRecord) Modified() time.Time    { return m.modified }
-func (m MockForwardArticleToBoardRecord) SetModified(newValue time.Time) {m.modified = newValue}
-func (m MockForwardArticleToBoardRecord) Recommend() int         { return m.recommendCount }
-func (m MockForwardArticleToBoardRecord) Date() string           { return m.date }
-func (m MockForwardArticleToBoardRecord) Title() string          { return m.title }
-func (m MockForwardArticleToBoardRecord) Money() int             { return m.money }
-func (m MockForwardArticleToBoardRecord) Owner() string          { return m.owner }
-func (m MockForwardArticleToBoardRecord) DestBoardID() string    { return m.destBoardID }
-func (m MockForwardArticleToBoardRecord) IPAddr() string         { return m.ipAddr }
-func (m MockForwardArticleToBoardRecord) ForwardTime() time.Time { return m.forwardTime }
-func (m MockForwardArticleToBoardRecord) ForwardTitle() string   { return m.forwardTitle }
+func (m MockForwardArticleToBoardRecord) Filename() string               { return m.filename }
+func (m MockForwardArticleToBoardRecord) Modified() time.Time            { return m.modified }
+func (m MockForwardArticleToBoardRecord) SetModified(newValue time.Time) { m.modified = newValue }
+func (m MockForwardArticleToBoardRecord) Recommend() int                 { return m.recommendCount }
+func (m MockForwardArticleToBoardRecord) Date() string                   { return m.date }
+func (m MockForwardArticleToBoardRecord) Title() string                  { return m.title }
+func (m MockForwardArticleToBoardRecord) Money() int                     { return m.money }
+func (m MockForwardArticleToBoardRecord) Owner() string                  { return m.owner }
+func (m MockForwardArticleToBoardRecord) DestBoardID() string            { return m.destBoardID }
+func (m MockForwardArticleToBoardRecord) IPAddr() string                 { return m.ipAddr }
+func (m MockForwardArticleToBoardRecord) ForwardTime() time.Time         { return m.forwardTime }
+func (m MockForwardArticleToBoardRecord) ForwardTitle() string           { return m.forwardTitle }
