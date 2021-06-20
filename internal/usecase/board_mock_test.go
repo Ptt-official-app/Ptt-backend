@@ -158,6 +158,7 @@ type MockArticleRecord struct {
 
 func (m MockArticleRecord) Filename() string    { return m.filename }
 func (m MockArticleRecord) Modified() time.Time { return m.modified }
+func (m MockArticleRecord) SetModified(newValue time.Time) {m.modified = newValue}
 func (m MockArticleRecord) Recommend() int      { return m.recommendCount }
 func (m MockArticleRecord) Owner() string       { return m.owner }
 func (m MockArticleRecord) Date() string        { return m.date }
@@ -177,6 +178,7 @@ type MockPopularArticle struct {
 
 func (m MockPopularArticle) Filename() string    { return m.filename }
 func (m MockPopularArticle) Modified() time.Time { return m.modified }
+func (m MockPopularArticle) SetModified(newValue time.Time) {m.modified = newValue}
 func (m MockPopularArticle) Recommend() int      { return m.recommendCount }
 func (m MockPopularArticle) Date() string        { return m.date }
 func (m MockPopularArticle) Title() string       { return m.title }
@@ -248,6 +250,7 @@ type MockForwardArticleToBoardRecord struct {
 
 func (m MockForwardArticleToBoardRecord) Filename() string       { return m.filename }
 func (m MockForwardArticleToBoardRecord) Modified() time.Time    { return m.modified }
+func (m MockForwardArticleToBoardRecord) SetModified(newValue time.Time) {m.modified = newValue}
 func (m MockForwardArticleToBoardRecord) Recommend() int         { return m.recommendCount }
 func (m MockForwardArticleToBoardRecord) Date() string           { return m.date }
 func (m MockForwardArticleToBoardRecord) Title() string          { return m.title }
