@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/Ptt-official-app/go-bbs"
-	// TODO: remove direct access pttbbs, impliment it in go-bbs package
+	// TODO: remove direct access pttbbs, implement it in go-bbs package
 	"github.com/Ptt-official-app/go-bbs/pttbbs"
 )
 
