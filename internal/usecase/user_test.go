@@ -96,21 +96,13 @@ func TestGetUserArticles(t *testing.T) {
 
 func TestGetUserComments(t *testing.T) {
 	userID := "user"
-	expectBoardID := "SYSOP"
 	mockRepository := &MockRepository{}
 	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
 
-	dataItems, err := mockUsecase.GetUserComments(context.TODO(), userID)
+	_, err := mockUsecase.GetUserComments(context.TODO(), userID)
 
 	if err != nil {
 		t.Errorf("GetUserComment with %s expect nil, got %v", userID, err)
-	}
-
-	item, ok := dataItems[0].(map[string]interface{})
-	if !ok {
-		t.Errorf("unexpect type of item")
-	} else if item["board_id"] != expectBoardID {
-		t.Errorf(`item["board_id"] expect %s, got %s`, expectBoardID, item["board_id"])
 	}
 }
 

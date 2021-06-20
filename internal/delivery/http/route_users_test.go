@@ -282,17 +282,6 @@ func TestGetUserComments(t *testing.T) {
 	if err != nil {
 		t.Errorf("get unexpect json: %w", err)
 	}
-
-	t.Logf("got response %v", rr.Body.String())
-	responsedData := responsedMap["data"].(map[string]interface{})
-	items := responsedData["items"].([]interface{})
-	firstItem := items[0].(map[string]interface{})
-
-	expectedValue := "SYSOP"
-	if firstItem["board_id"].(string) != expectedValue {
-		t.Errorf("handler returned unexpected body, favorite_no_highlight not match: got %v want value %v",
-			firstItem, expectedValue)
-	}
 }
 
 // TestGetUserDrafts is a test function which will test getUserDrafts (/v1/users/{{user_id}}/drafts/{{draft_id}})

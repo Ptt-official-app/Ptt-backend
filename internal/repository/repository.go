@@ -40,7 +40,7 @@ type Repository interface {
 	GetUserPreferences(ctx context.Context, userID string) (map[string]string, error)
 	// GetUserComments return user's history comments
 	// TODO: return a slice of concrete type not interface
-	GetUserComments(ctx context.Context, userID string) ([]interface{}, error)
+	GetUserComments(ctx context.Context, userID string) ([]bbs.UserCommentRecord, error)
 	// GetUserDrafts returns user's draft according to draftID
 	GetUserDrafts(ctx context.Context, userID, draftID string) (UserDraft, error)
 	// UpdateUserDraft updates user's draft according to draftID

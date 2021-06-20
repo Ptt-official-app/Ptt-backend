@@ -23,7 +23,7 @@ type Usecase interface {
 	GetUserArticles(ctx context.Context, userID string) ([]interface{}, error) // FIXME: use concrete type rather than []interface{}
 	GetUserPreferences(ctx context.Context, userID string) (map[string]string, error)
 	// GetUserComments returns history comments of a user
-	GetUserComments(ctx context.Context, userID string) ([]interface{}, error) // FIXME: use concrete type from go-bbs instead of []interface{}
+	GetUserComments(ctx context.Context, userID string) ([]bbs.UserCommentRecord, error) // FIXME: use concrete type from go-bbs instead of []interface{}
 	// GetUserDrafts returns user's draft by given draft id
 	GetUserDrafts(ctx context.Context, userID, draftID string) (repository.UserDraft, error)
 	// UpdateUserDraft returns updated content
