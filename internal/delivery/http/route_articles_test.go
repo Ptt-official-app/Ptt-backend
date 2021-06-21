@@ -27,3 +27,7 @@ func (usecase *MockUsecase) ForwardArticleToEmail(ctx context.Context, userID, b
 func (usecase *MockUsecase) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
 	return nil, nil
 }
+
+func (usecase *MockUsecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
+	return nil, nil
+}

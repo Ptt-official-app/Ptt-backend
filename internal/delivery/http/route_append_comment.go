@@ -16,7 +16,12 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 
 	appendType := r.PostFormValue("type")
 	text := r.PostFormValue("text")
-	if appendType == "" || text == "" {
+
+	updateUsefulness := false
+	if appendType == "↑" || appendType == "↓" {
+		updateUsefulness = true
+	}
+	if appendType == "" || (!updateUsefulness && text == "") {
 		w.WriteHeader(500)
 		return
 	}
@@ -42,14 +47,25 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 		return
 	}
 
-	res, err := delivery.usecase.AppendComment(
-		ctx,
-		userID,
-		boardID,
-		filename,
-		appendType,
-		text,
-	)
+	var res repository.PushRecord
+	if updateUsefulness {
+		res, err = delivery.usecase.UpdateUsefulness(
+			ctx,
+			userID,
+			boardID,
+			filename,
+			appendType,
+		)
+	} else {
+		res, err = delivery.usecase.AppendComment(
+			ctx,
+			userID,
+			boardID,
+			filename,
+			appendType,
+			text,
+		)
+	}
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
