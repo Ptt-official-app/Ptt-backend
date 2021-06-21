@@ -269,10 +269,17 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	dataList := make([]interface{}, 0, len(dataItems))
+	for _, board := range dataItems {
+		dataList = append(dataList, map[string]interface{}{
+			"CommentOrder": board.CommentOrder(),
+			"CommentOwner": board.CommentOwner(),
+			"COmmentTime":  board.CommentTime(),
+		})
+	}
+
 	responseMap := map[string]interface{}{
-		"data": map[string]interface{}{
-			"items": dataItems,
-		},
+		"data": dataList,
 	}
 
 	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
