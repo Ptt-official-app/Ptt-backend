@@ -66,6 +66,8 @@ type Usecase interface {
 	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (repository.ForwardArticleToBoardRecord, error)
 	// ForwardArticleToEmail returns forwarding to email results
 	ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error
+	// UpdateUsefulness update article usefulness
+	UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error)
 
 	// mail.go
 	UpdateMail(mail mail.Mail) error

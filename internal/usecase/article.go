@@ -18,6 +18,10 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 	return articles, nil
 }
 
+func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
+	return nil, nil
+}
+
 // AppendComment append comment to specific article
 func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {
 	result, err := usecase.repo.AppendComment(ctx, userID, boardID, filename, appendType, text)
