@@ -272,9 +272,9 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	dataList := make([]interface{}, 0, len(dataItems))
 	for _, board := range dataItems {
 		dataList = append(dataList, map[string]interface{}{
-			"CommentOrder": board.CommentOrder(),
-			"CommentOwner": board.CommentOwner(),
-			"COmmentTime":  board.CommentTime(),
+			"comment_order": board.CommentOrder(),
+			"comment_owner": board.CommentOwner(),
+			"comment_time":  board.CommentTime(),
 		})
 	}
 
