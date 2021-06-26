@@ -48,7 +48,7 @@ func TestGetUsers(t *testing.T) {
 
 }
 
-func TestGetUserArticles(t *testing.T) {
+func TestGetUserPreferences(t *testing.T) {
 
 	repo := repository{
 		userRecords: []bbs.UserRecord{
