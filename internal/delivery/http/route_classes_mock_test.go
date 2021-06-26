@@ -27,9 +27,9 @@ func (b *MockClassBoardRecord) ClassID() string { return b.classID }
 
 func (b *MockClassBoardRecord) BM() []string { return make([]string, 0) }
 
-func (usecase *MockUsecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
+func (usecase *MockUsecase) GetClasses(ctx context.Context, userID, classID string) ([]bbs.BoardRecord, error) {
 	result := make([]bbs.BoardRecord, 0)
 	result = append(result, NewMockClassBoardRecord(classID, "", true))
 	result = append(result, NewMockClassBoardRecord(classID, "TEST", false))
-	return result
+	return result, nil
 }
