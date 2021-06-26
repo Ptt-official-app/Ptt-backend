@@ -25,9 +25,9 @@ type Usecase interface {
 	// GetUserComments returns history comments of a user
 	GetUserComments(ctx context.Context, userID string) ([]bbs.UserCommentRecord, error) // FIXME: use concrete type from go-bbs instead of []interface{}
 	// GetUserDrafts returns user's draft by given draft id
-	GetUserDrafts(ctx context.Context, userID, draftID string) (repository.UserDraft, error)
+	GetUserDrafts(ctx context.Context, userID, draftID string) (bbs.UserDraft, error)
 	// UpdateUserDraft returns updated content
-	UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (repository.UserDraft, error)
+	UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (bbs.UserDraft, error)
 	DeleteUserDraft(ctx context.Context, userID, draftID string) error
 
 	// board.go

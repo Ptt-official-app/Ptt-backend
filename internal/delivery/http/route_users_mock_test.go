@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -68,13 +67,13 @@ type MockUserDraft struct {
 }
 
 func (m MockUserDraft) Raw() []byte { return m.raw }
-func (usecase *MockUsecase) GetUserDrafts(ctx context.Context, userID string, draftID string) (repository.UserDraft, error) {
+func (usecase *MockUsecase) GetUserDrafts(ctx context.Context, userID string, draftID string) (bbs.UserDraft, error) {
 	return MockUserDraft{
 		raw: []byte("this is a draft"),
 	}, nil
 }
 
-func (usecase *MockUsecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (repository.UserDraft, error) {
+func (usecase *MockUsecase) UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (bbs.UserDraft, error) {
 	return MockUserDraft{
 		raw: text,
 	}, nil
