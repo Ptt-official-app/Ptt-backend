@@ -95,16 +95,11 @@ func (repo *repository) GetUserComments(_ context.Context, userID string) ([]bbs
 	return result, nil
 }
 
-// TODO: use bbs.UserDraft instead
-type UserDraft interface {
-	Raw() []byte
+func (repo *repository) GetUserDrafts(_ context.Context, userID, draftID string) (bbs.UserDraft, error) {
+	return repo.db.GetUserDrafts(userID, draftID)
 }
 
-func (repo *repository) GetUserDrafts(_ context.Context, userID, draftID string) (UserDraft, error) {
-	return nil, nil
-}
-
-func (repo *repository) UpdateUserDraft(_ context.Context, userID, draftID string, text []byte) (UserDraft, error) {
+func (repo *repository) UpdateUserDraft(_ context.Context, userID, draftID string, text []byte) (bbs.UserDraft, error) {
 	return nil, nil
 }
 

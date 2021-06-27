@@ -42,9 +42,9 @@ type Repository interface {
 	// TODO: return a slice of concrete type not interface
 	GetUserComments(ctx context.Context, userID string) ([]bbs.UserCommentRecord, error)
 	// GetUserDrafts returns user's draft according to draftID
-	GetUserDrafts(ctx context.Context, userID, draftID string) (UserDraft, error)
+	GetUserDrafts(ctx context.Context, userID, draftID string) (bbs.UserDraft, error)
 	// UpdateUserDraft updates user's draft according to draftID
-	UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (UserDraft, error)
+	UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (bbs.UserDraft, error)
 	// DeleteUserDraft deletes user's draft according to draftID
 	DeleteUserDraft(ctx context.Context, userID, draftID string) error
 
