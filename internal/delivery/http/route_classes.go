@@ -52,7 +52,21 @@ func (delivery *Delivery) getClassesList(w http.ResponseWriter, r *http.Request,
 		}
 	}
 
-	boards := delivery.usecase.GetClasses(context.Background(), userID, classID)
+	boards, err := delivery.usecase.GetClasses(context.Background(), userID, classID)
+	if err != nil {
+		delivery.logger.Warningf("find classes %s failed: %v", classID, err)
+		w.WriteHeader(http.StatusInternalServerError)
+		m := map[string]string{
+			"error":             "find_classes_error",
+			"error_description": "get classes for " + classID + " failed",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getClassesList write error response err: %w", err)
+		}
+		return
+	}
 
 	dataList := []interface{}{}
 	for bid, b := range boards {

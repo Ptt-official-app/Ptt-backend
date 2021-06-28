@@ -101,7 +101,7 @@ func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID str
 	return nil, fmt.Errorf("board record not found")
 }
 
-func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord {
+func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) ([]bbs.BoardRecord, error) {
 	boards := make([]bbs.BoardRecord, 0)
 	for _, board := range usecase.repo.GetBoards(ctx) {
 		// TODO: Show Board by user level
@@ -117,7 +117,10 @@ func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) 
 		// }
 		boards = append(boards, board)
 	}
-	return boards
+	if len(boards) == 0 {
+		return nil, fmt.Errorf("class id not found")
+	}
+	return boards, nil
 }
 
 func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, cond *ArticleSearchCond) []interface{} {

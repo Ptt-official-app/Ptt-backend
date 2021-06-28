@@ -40,7 +40,7 @@ type Usecase interface {
 	// GetBoardPostsLimition returns all posts limit of a board
 	GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error)
 	// GetClasses returns board records in a class
-	GetClasses(ctx context.Context, userID, classID string) []bbs.BoardRecord
+	GetClasses(ctx context.Context, userID, classID string) ([]bbs.BoardRecord, error)
 	// GetBoardArticles returns articles of a board
 	GetBoardArticles(ctx context.Context, boardID string, cond *ArticleSearchCond) []interface{} // FIXME: use concrete type rather than []interface{}
 	// GetBoardArticle returns an article file given board id and file name
