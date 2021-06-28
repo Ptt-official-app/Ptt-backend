@@ -280,7 +280,9 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	}
 
 	responseMap := map[string]interface{}{
-		"data": dataList,
+		"data": map[string]interface{}{
+			"items": dataList,
+		},
 	}
 
 	responseByte, _ := json.MarshalIndent(responseMap, "", "  ")
