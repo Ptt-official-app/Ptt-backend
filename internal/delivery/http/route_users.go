@@ -124,7 +124,16 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 	dataItems, err := delivery.usecase.GetUserFavorites(ctx, userID)
 	if err != nil {
 		delivery.logger.Errorf("failed to get user favorites: %s\n", err)
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
+		m := map[string]string{
+			"error":             "find_userrec_error",
+			"error_description": err.Error(),
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("getUserFavorites error response err: %w", err)
+		}
 		return
 	}
 
