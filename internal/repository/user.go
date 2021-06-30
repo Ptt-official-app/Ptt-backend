@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/Ptt-official-app/go-bbs"
+	// TODO: remove direct access pttbbs, implement it in go-bbs package
+	"github.com/Ptt-official-app/go-bbs/pttbbs"
 )
 
 // BBSUserRecord : currently interface `bbs.UserRecord` of go-bbs
@@ -61,28 +63,60 @@ func (repo *repository) GetUserArticles(_ context.Context, boardID string) ([]bb
 
 // TODO: no required method in go-bbs and we use a mock, replace it when available
 func (repo *repository) GetUserPreferences(_ context.Context, userID string) (map[string]string, error) {
-	result := map[string]string{
-		"favorite_no_highlight":      "No value",
-		"favorite_add_new":           "No value",
-		"friend":                     "No value",
-		"board_sort":                 "No value",
-		"ad_banner":                  "No value",
-		"ad_banner_user_song":        "No value",
-		"dbcs_aware":                 "No value",
-		"dbcs_no_interupting_escape": "No value",
-		"dbcs_drop_repeat":           "No value",
-		"no_modification_mark":       "No value",
-		"colored_modification_mark":  "No value",
-		"default_backup":             "No value",
-		"new_angel_pager":            "No value",
-		"reject_outside_mail":        "No value",
-		"secure_login":               "No value",
-		"foreign":                    "No value",
-		"live_right":                 "No value",
-		"menu_lightbar":              "No value",
-		"cursor_ascii":               "No value",
-		"pager_ui":                   "No value",
+
+	var u bbs.UserRecord = nil
+	for _, it := range repo.userRecords {
+		if it.UserID() == userID {
+			u = it
+		}
 	}
+
+	if u == nil {
+		// not found
+		return nil, fmt.Errorf("userrecord not found")
+	}
+
+	c := u.UserFlag()
+	logger.Debugf("userflag of %s is %X", userID, c)
+
+	rawRec, isPttbbs := u.(*pttbbs.Userec)
+	pagerUIType := "origin"
+	if isPttbbs {
+		switch rawRec.PagerUIType {
+		case 0:
+			pagerUIType = "origin"
+		case 1:
+			pagerUIType = "new"
+		case 2:
+			pagerUIType = "ofo"
+		default:
+			break
+		}
+	}
+
+	result := map[string]string{
+		"favorite_no_highlight":      fmt.Sprintf("%v", c&pttbbs.UfFavNohilight != 0),
+		"favorite_add_new":           fmt.Sprintf("%v", c&pttbbs.UfFavAddnew != 0),
+		"friend":                     fmt.Sprintf("%v", c&pttbbs.UfFriend != 0),
+		"board_sort":                 fmt.Sprintf("%v", c&pttbbs.UfBrdsort != 0),
+		"ad_banner":                  fmt.Sprintf("%v", c&pttbbs.UfAdbanner != 0),
+		"ad_banner_user_song":        fmt.Sprintf("%v", c&pttbbs.UfAdbannerUsong != 0),
+		"dbcs_aware":                 fmt.Sprintf("%v", c&pttbbs.UfDbcsAware != 0),
+		"dbcs_no_interupting_escape": fmt.Sprintf("%v", c&pttbbs.UfDbcsNointresc != 0),
+		"dbcs_drop_repeat":           fmt.Sprintf("%v", c&pttbbs.UfDbscDropRepeat != 0),
+		"no_modification_mark":       fmt.Sprintf("%v", c&pttbbs.UfNoModmark != 0),
+		"colored_modification_mark":  fmt.Sprintf("%v", c&pttbbs.UfColoredModmark != 0),
+		"default_backup":             fmt.Sprintf("%v", c&pttbbs.UfDefbackup != 0),
+		"new_angel_pager":            fmt.Sprintf("%v", c&pttbbs.UfNewAngelPager != 0),
+		"reject_outside_mail":        fmt.Sprintf("%v", c&pttbbs.UfRejOuttamail != 0),
+		"secure_login":               fmt.Sprintf("%v", c&pttbbs.UfSecureLogin != 0),
+		"foreign":                    fmt.Sprintf("%v", c&pttbbs.UfForeign != 0),
+		"live_right":                 fmt.Sprintf("%v", c&pttbbs.UfLiveright != 0),
+		"menu_lightbar":              fmt.Sprintf("%v", c&pttbbs.UfMenuLightbar != 0),
+		"cursor_ascii":               fmt.Sprintf("%v", c&pttbbs.UfCursorASCII != 0),
+		"pager_ui":                   pagerUIType,
+	}
+
 	return result, nil
 }
 
