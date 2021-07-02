@@ -5,6 +5,8 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
@@ -272,10 +274,21 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	dataList := make([]interface{}, 0, len(dataItems))
 	for _, board := range dataItems {
 		// TODO: comment need more information
+		comment := board.Comment()
+		r, _ := utf8.DecodeRuneInString(comment)
+		if r != 0 {
+			//移除無法解析的 utf8字元
+			comment = comment[:len(comment) - 10]
+			comment = strings.TrimSpace(comment)
+		}
+		
 		dataList = append(dataList, map[string]interface{}{
 			"comment_order": board.CommentOrder(),
-			"comment_owner": board.CommentOwner(),
+			"comment_owner": board.Owner(),
 			"comment_time":  board.CommentTime(),
+			"title": comment,
+			"filename" : board.Filename(),
+			"ip": board.IP(),
 		})
 	}
 
