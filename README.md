@@ -29,6 +29,8 @@ go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-b
 
 歷次測試結果：
 * [2021060401](https://docs.google.com/spreadsheets/d/1dyfmWZJaTiDrSMIFZ6ynmfeTWU3h45ScW1eyKFJU494/edit?usp=sharing)
+* [2021062101](https://docs.google.com/spreadsheets/d/1RGIQPN6KfiCzWRQe-BeTXFUTvdwytOv0Yhd5a8ixCLk/edit?usp=sharing)
+* [2021070501](https://docs.google.com/spreadsheets/d/1thxyY9jf2GkK3DMgGO1bAHWE3BmsFb4p5Ot5eAgbaII/edit?usp=sharing)
 
 ## 貢獻者相關
 
