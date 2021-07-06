@@ -120,7 +120,7 @@ func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) 
 	return boards
 }
 
-func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, cond *ArticleSearchCond) []interface{} {
+func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, cond *ArticleSearchCond) []bbs.ArticleRecord {
 	var articles []bbs.ArticleRecord
 	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
 	if err != nil {
@@ -137,23 +137,7 @@ func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, co
 		articles = articleRecords
 	}
 
-	items := []interface{}{}
-	for _, f := range articles {
-		m := map[string]interface{}{
-			"filename": f.Filename(),
-			// Bug(pichu): f.Modified time will be 0 when file is vote
-			"modified_time":   f.Modified(),
-			"recommend_count": f.Recommend(),
-			"post_date":       f.Date(),
-			"title":           f.Title(),
-			"money":           fmt.Sprintf("%v", f.Money()),
-			"owner":           f.Owner(),
-			// "aid": ""
-			"url": getArticleURL(boardID, f.Filename()),
-		}
-		items = append(items, m)
-	}
-	return items
+	return articles
 }
 
 func (usecase *usecase) GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error) {

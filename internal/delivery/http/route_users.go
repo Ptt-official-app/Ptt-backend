@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strings"
 	"unicode/utf8"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 // getUsers is a http handler function which will rewrite to correct route
@@ -272,6 +274,7 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	}
 
 	dataList := make([]interface{}, 0, len(dataItems))
+	var result bbs.ArticleRecord
 	for _, board := range dataItems {
 		// TODO: comment need more information
 		comment := board.Comment()
@@ -282,12 +285,28 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 			comment = strings.TrimSpace(comment)
 		}
 
+		searchCond := &usecase.ArticleSearchCond{}
+		ctx := context.Background()
+		articles := delivery.usecase.GetBoardArticles(ctx, board.BoardID(), searchCond)
+
+		for _, article := range articles {
+			if article.Filename() == board.Filename() {
+				result = article
+			}
+		}
+
 		dataList = append(dataList, map[string]interface{}{
+			"board_id":        board.BoardID(),
+			"filename":        board.Filename(),
+			"moddified_time":  result.Modified(),
+			"recommend_count": 0,
+			"post_date":       strings.TrimSpace(result.Date()),
+			"title":           comment,
+			// TODO: generate article url by config file
+			"url":           fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", board.BoardID(), board.Filename()),
 			"comment_order": board.CommentOrder(),
 			"comment_owner": board.Owner(),
 			"comment_time":  board.CommentTime(),
-			"title":         comment,
-			"filename":      board.Filename(),
 			"ip":            board.IP(),
 		})
 	}
