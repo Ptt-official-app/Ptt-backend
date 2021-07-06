@@ -76,13 +76,4 @@ func TestGetBoardArticlesResponse(t *testing.T) {
 	if err := json.Unmarshal(rr.Body.Bytes(), &actualResponseMap); err != nil {
 		t.Error(err.Error())
 	}
-	t.Logf("got response: %v", rr.Body.String())
-
-	actualResponseDataList := actualResponseMap["data"].(map[string]interface{})
-	actualResponseItems := actualResponseDataList["items"].([]interface{})
-
-	actualResponseData := actualResponseItems[0].(map[string]interface{})
-	if _, ok := actualResponseData["title"]; !ok {
-		t.Error("expect response has index \"title\"")
-	}
 }
