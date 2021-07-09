@@ -32,6 +32,7 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	default:
 		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userID, item, err)
 		w.WriteHeader(http.StatusNotFound)
+		w.Write(NewPathNotFoundError(r))
 	}
 }
 
@@ -398,6 +399,7 @@ func (delivery *Delivery) postUserDrafts(w http.ResponseWriter, r *http.Request,
 		delivery.deleteUserDraft(w, r, userID, draftID)
 	default:
 		w.WriteHeader(http.StatusBadRequest)
+		// TODO: show unknown action
 	}
 }
 
