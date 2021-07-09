@@ -73,6 +73,10 @@ type Usecase interface {
 	UpdateMail(mail mail.Mail) error
 }
 
+type SupportWebUsecase interface {
+	GetArticleURL(boardID string, filename string) string
+}
+
 type usecase struct {
 	logger       logging.Logger
 	globalConfig *config.Config
