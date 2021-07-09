@@ -58,9 +58,29 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 		RecommendCountLessEqualIsSet:    recommendCountLessEqualIsSet,
 	}
 
+	items := []interface{}{}
+	articles := delivery.usecase.GetBoardArticles(context.Background(), boardID, searchCond)
+
+	// Articles to output format, please refer: https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit#heading=h.bnhpxsiwnbey
+	for _, a := range articles {
+		item := map[string]interface{}{
+			"filename":        a.Filename(),
+			"modified_time":   a.Modified(),
+			"recommend_count": a.Recommend(),
+			"post_date":       a.Date(),
+			"title":           a.Title(),
+			"money":           a.Money(),
+			"owner":           a.Owner(),
+			// TODO: generate aid and url
+			// "aid": a.Aid(),
+			// "url": a.Url(),
+		}
+		items = append(items, item)
+	}
+
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"items": delivery.usecase.GetBoardArticles(context.Background(), boardID, searchCond),
+			"items": items,
 		},
 	}
 
