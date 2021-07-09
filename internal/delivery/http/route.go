@@ -27,6 +27,10 @@ func (delivery *Delivery) routeToken(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		delivery.postToken(w, r)
+	default:
+		w.Header().Set("Allow", strings.Join([]string{http.MethodPost}, ","))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(NewMethodNotAllowedError(r, []string{http.MethodPost}))
 	}
 }
 
