@@ -56,6 +56,17 @@ func NewPermissionError(r *http.Request, err error) []byte {
 	return b
 }
 
+// NewPermissionError generates a error payload for generic server error
+func NewServerError(r *http.Request, err error) []byte {
+	m := map[string]string{
+		"error":             "server_error",
+		"error_description": err.Error(),
+	}
+
+	b, _ := json.MarshalIndent(m, "", "  ")
+	return b
+}
+
 // NewNoRequriedParameterError generates a error payload for telling client which
 // parameter is required
 func NewNoRequiredParameterError(r *http.Request, requireParameter string) []byte {

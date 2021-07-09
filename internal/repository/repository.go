@@ -26,7 +26,7 @@ type Repository interface {
 	GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error)
 	// GetBoardPostsLimit returns posts limited record of a board
 	// TODO: replace PostsLimitedBoardRecord with real bbs record
-	GetBoardPostsLimit(ctx context.Context, boardID string) (PostsLimitedBoardRecord, error)
+	// GetBoardPostsLimit(ctx context.Context, boardID string) (PostsLimitedBoardRecord, error)
 
 	// user.go
 	// GetUsers returns all user records
