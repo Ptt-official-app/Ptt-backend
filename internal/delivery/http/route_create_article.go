@@ -13,7 +13,8 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 	article := r.PostFormValue("article")
 
 	if title == "" || article == "" {
-		w.WriteHeader(http.StatusUnprocessableEntity)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write(NewNoRequiredParameterError(r, "title"))
 		return
 	}
 
