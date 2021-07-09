@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
@@ -12,7 +13,7 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 	title := r.PostFormValue("title")
 	article := r.PostFormValue("article")
 
-	if title == "" || article == "" {
+	if title == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write(NewNoRequiredParameterError(r, "title"))
 		return
@@ -35,6 +36,7 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
+		w.Write(NewPermissionError(r, fmt.Errorf("check add article permission: %w", err)))
 		return
 	}
 

@@ -43,7 +43,17 @@ func NewNoPermissionForReadBoardArticlesError(r *http.Request, boardID string) [
 
 	b, _ := json.MarshalIndent(m, "", "  ")
 	return b
+}
 
+// NewPermissionError generates a error payload for generic permission error
+func NewPermissionError(r *http.Request, err error) []byte {
+	m := map[string]string{
+		"error":             "permission_error",
+		"error_description": err.Error(),
+	}
+
+	b, _ := json.MarshalIndent(m, "", "  ")
+	return b
 }
 
 // NewNoRequriedParameterError generates a error payload for telling client which
