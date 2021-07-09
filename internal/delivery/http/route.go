@@ -13,6 +13,13 @@ func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
 	mux.HandleFunc("/v1/popular-articles", delivery.routePopularArticles)
 	mux.HandleFunc("/v1/classes/", delivery.routeClasses)
 	mux.HandleFunc("/v1/users/", delivery.routeUsers)
+
+	mux.HandleFunc("/", delivery.notFoundHandler)
+}
+
+func (delivery *Delivery) notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write(NewPathNotFoundError(r))
 }
 
 func (delivery *Delivery) routeToken(w http.ResponseWriter, r *http.Request) {
