@@ -23,6 +23,7 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
+		w.Write(NewNoPermissionForReadBoardArticlesError(r, boardID))
 		return
 	}
 

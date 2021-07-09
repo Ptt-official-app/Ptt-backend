@@ -185,14 +185,10 @@ func (usecase *usecase) checkPermissionReadUserInformation(token string, userInf
 
 func (usecase *usecase) checkPermissionReadBoardSettings(token string, userInfo map[string]string) error {
 	// TODO: 判斷管理群的權限
-	tokenUserID, err := usecase.GetUserIDFromToken(token)
+	_, err := usecase.GetUserIDFromToken(token)
 
 	if err != nil {
 		return fmt.Errorf("get user id from token failed: %w", err)
-	}
-
-	if tokenUserID != userInfo["board_id"] {
-		return fmt.Errorf("token user id is not the same userInfo user id")
 	}
 
 	return nil

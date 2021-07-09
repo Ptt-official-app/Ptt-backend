@@ -32,3 +32,16 @@ func NewMethodNotAllowedError(r *http.Request, supportedMethods []string) []byte
 	return b
 
 }
+
+// NewNoPermissionForReadBoardArticlesError generates a error payload for telling client
+// their don't have permission to read boardID
+func NewNoPermissionForReadBoardArticlesError(r *http.Request, boardID string) []byte {
+	m := map[string]string{
+		"error":             "no_permission_for_read_board_articles",
+		"error_description": "user don't have permission for read board " + boardID,
+	}
+
+	b, _ := json.MarshalIndent(m, "", "  ")
+	return b
+
+}
