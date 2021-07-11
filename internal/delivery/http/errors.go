@@ -79,3 +79,14 @@ func NewNoRequiredParameterError(r *http.Request, requireParameter string) []byt
 	return b
 
 }
+
+// NewBoardError generates a error payload when create board fail
+func NewBoardError(r *http.Request, boardID string) []byte {
+	m := map[string]string{
+		"error":             "new_board_error",
+		"error_description": "new board " + boardID + " failed",
+	}
+	b, _ := json.MarshalIndent(m, "", "  ")
+
+	return b
+}

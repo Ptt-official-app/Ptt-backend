@@ -119,9 +119,9 @@ func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID
 	return []bbs.ArticleRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardPostsLimit(ctx context.Context, boardID string) (repository.PostsLimitedBoardRecord, error) {
-	return &MockPostsLimitedBoardRecord{}, nil
-}
+// func (repo *MockRepository) GetBoardPostsLimit(ctx context.Context, boardID string) (repository.PostsLimitedBoardRecord, error) {
+// 	return &MockPostsLimitedBoardRecord{}, nil
+// }
 
 type MockBoardRecord struct {
 	boardID          string
