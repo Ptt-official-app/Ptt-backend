@@ -15,7 +15,10 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 
 	if title == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write(NewNoRequiredParameterError(r, "title"))
+		_, err := w.Write(NewNoRequiredParameterError(r, "title"))
+		if err != nil {
+			delivery.logger.Errorf("write NewNoRequiredParameterError error: %w", err)
+		}
 		return
 	}
 
@@ -36,7 +39,10 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write(NewPermissionError(r, fmt.Errorf("check add article permission: %w", err)))
+		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("check add article permission: %w", err)))
+		if err2 != nil {
+			delivery.logger.Errorf("write NewPermissionError error: %w", err)
+		}
 		return
 	}
 
@@ -44,7 +50,10 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 	// 改成 _ 避免 declared but not used
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		w.Write(NewServerError(r, fmt.Errorf("create article error: %w", err)))
+		_, err2 := w.Write(NewServerError(r, fmt.Errorf("create article error: %w", err)))
+		if err2 != nil {
+			delivery.logger.Errorf("write NewServerError error: %w", err)
+		}
 		return
 	}
 

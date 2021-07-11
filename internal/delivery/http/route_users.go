@@ -32,7 +32,10 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	default:
 		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userID, item, err)
 		w.WriteHeader(http.StatusNotFound)
-		w.Write(NewPathNotFoundError(r))
+		_, err := w.Write(NewPathNotFoundError(r))
+		if err != nil {
+			delivery.logger.Errorf("write NewPathNotFoundError error: %w", err)
+		}
 	}
 }
 
