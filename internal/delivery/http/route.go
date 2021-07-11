@@ -168,7 +168,7 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 	action := r.PostFormValue("action")
 	if action == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		b := NewBoardError(r, boardID)
+		b := NewNewBoardError(r, boardID)
 		_, err = w.Write(b)
 		if err != nil {
 			delivery.logger.Errorf("postBoards write error response err: %w", err)
