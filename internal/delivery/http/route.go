@@ -1,6 +1,7 @@
 package http
 
 import (
+	"encoding/json"
 	"net/http"
 	"strings"
 )
@@ -112,7 +113,16 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 
 	action := r.PostFormValue("action")
 	if action == "" {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusInternalServerError)
+		m := map[string]string{
+			"error":             "create_board_error",
+			"error_description": "create board " + boardID + " failed because it has not been implemented yet",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("postBoards write error response err: %w", err)
+		}
 		return
 	}
 
