@@ -19,7 +19,10 @@ func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
 
 func (delivery *Delivery) notFoundHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
-	w.Write(NewPathNotFoundError(r))
+	_, err := w.Write(NewPathNotFoundError(r))
+	if err != nil {
+		delivery.logger.Errorf("handle not found handler failed: %w", err)
+	}
 }
 
 func (delivery *Delivery) routeToken(w http.ResponseWriter, r *http.Request) {
@@ -30,7 +33,10 @@ func (delivery *Delivery) routeToken(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.Header().Set("Allow", strings.Join([]string{http.MethodPost}, ","))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write(NewMethodNotAllowedError(r, []string{http.MethodPost}))
+		_, err := w.Write(NewMethodNotAllowedError(r, []string{http.MethodPost}))
+		if err != nil {
+			delivery.logger.Errorf("write NewMethodNotAllowedError error: %w", err)
+		}
 	}
 }
 
@@ -46,7 +52,10 @@ func (delivery *Delivery) routeBoards(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.Header().Set("Allow", strings.Join([]string{http.MethodGet, http.MethodPost}, ","))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet, http.MethodPost}))
+		_, err := w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet, http.MethodPost}))
+		if err != nil {
+			delivery.logger.Errorf("write NewMethodNotAllowedError error: %w", err)
+		}
 	}
 }
 
@@ -58,7 +67,10 @@ func (delivery *Delivery) routePopularBoards(w http.ResponseWriter, r *http.Requ
 	default:
 		w.Header().Set("Allow", strings.Join([]string{http.MethodGet}, ","))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
+		_, err := w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
+		if err != nil {
+			delivery.logger.Errorf("write NewMethodNotAllowedError error: %w", err)
+		}
 	}
 }
 
@@ -70,7 +82,10 @@ func (delivery *Delivery) routePopularArticles(w http.ResponseWriter, r *http.Re
 	default:
 		w.Header().Set("Allow", strings.Join([]string{http.MethodGet}, ","))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
+		_, err := w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
+		if err != nil {
+			delivery.logger.Errorf("write NewMethodNotAllowedError error: %w", err)
+		}
 	}
 }
 
@@ -83,7 +98,10 @@ func (delivery *Delivery) routeClasses(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.Header().Set("Allow", strings.Join([]string{http.MethodGet}, ","))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
+		_, err := w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
+		if err != nil {
+			delivery.logger.Errorf("write NewMethodNotAllowedError error: %w", err)
+		}
 	}
 }
 
@@ -99,7 +117,10 @@ func (delivery *Delivery) routeUsers(w http.ResponseWriter, r *http.Request) {
 	default:
 		w.Header().Set("Allow", strings.Join([]string{http.MethodGet, http.MethodPost}, ","))
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet, http.MethodPost}))
+		_, err := w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet, http.MethodPost}))
+		if err != nil {
+			delivery.logger.Errorf("write NewMethodNotAllowedError error: %w", err)
+		}
 	}
 }
 
@@ -131,7 +152,10 @@ func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNotFound)
-	w.Write(NewPathNotFoundError(r))
+	_, err2 := w.Write(NewPathNotFoundError(r))
+	if err2 != nil {
+		delivery.logger.Errorf("write NewPathNotFoundError error: %w", err)
+	}
 
 	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardID, item, err)
 }
@@ -160,7 +184,10 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusNotFound)
-	w.Write(NewPathNotFoundError(r))
+	_, err2 := w.Write(NewPathNotFoundError(r))
+	if err2 != nil {
+		delivery.logger.Errorf("write NewPathNotFoundError error: %w", err)
+	}
 
 	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardID, item, err)
 }

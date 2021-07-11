@@ -119,10 +119,6 @@ func (repo *MockRepository) GetBoardTreasureRecords(ctx context.Context, boardID
 	return []bbs.ArticleRecord{}, nil
 }
 
-func (repo *MockRepository) GetBoardPostsLimit(ctx context.Context, boardID string) (repository.PostsLimitedBoardRecord, error) {
-	return &MockPostsLimitedBoardRecord{}, nil
-}
-
 type MockBoardRecord struct {
 	boardID          string
 	title            string
@@ -185,12 +181,6 @@ func (m *MockPopularArticle) Title() string                  { return m.title }
 func (m *MockPopularArticle) Money() int                     { return m.money }
 func (m *MockPopularArticle) Owner() string                  { return m.owner }
 func (m *MockPopularArticle) BoardID() string                { return m.boardID }
-
-type MockPostsLimitedBoardRecord struct{}
-
-func (m *MockPostsLimitedBoardRecord) PostLimitPosts() uint8 { return 0 }
-
-func (m *MockPostsLimitedBoardRecord) EnableNewPost() bool { return false }
 
 func (repo *MockRepository) GetUserArticles(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error) {
 	articleRecords := []*MockArticleRecord{
