@@ -29,19 +29,8 @@ func (usecase *MockUsecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRe
 }
 
 // GetBoardArticles returns the mock board articles.
-func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []interface{} {
-	return []interface{}{
-		map[string]interface{}{
-			"filename":        "test-001",
-			"modified_time":   "2009-01-01T12:59:59Z",
-			"recommend_count": 9,
-			"post_date":       "2009-01-01",
-			"title":           "post for testing",
-			"money":           "10",
-			"owner":           "tester",
-			"url":             "http://test/test-001.html",
-		},
-	}
+func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
+	return []bbs.ArticleRecord{}
 }
 
 // TODO: Implement GetBoardArticle

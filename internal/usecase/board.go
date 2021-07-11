@@ -123,7 +123,7 @@ func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) 
 	return boards, nil
 }
 
-func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, cond *ArticleSearchCond) []interface{} {
+func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, cond *ArticleSearchCond) []bbs.ArticleRecord {
 	var articles []bbs.ArticleRecord
 	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
 	if err != nil {
@@ -140,23 +140,7 @@ func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, co
 		articles = articleRecords
 	}
 
-	items := []interface{}{}
-	for _, f := range articles {
-		m := map[string]interface{}{
-			"filename": f.Filename(),
-			// Bug(pichu): f.Modified time will be 0 when file is vote
-			"modified_time":   f.Modified(),
-			"recommend_count": f.Recommend(),
-			"post_date":       f.Date(),
-			"title":           f.Title(),
-			"money":           fmt.Sprintf("%v", f.Money()),
-			"owner":           f.Owner(),
-			// "aid": ""
-			"url": getArticleURL(boardID, f.Filename()),
-		}
-		items = append(items, m)
-	}
-	return items
+	return articles
 }
 
 func (usecase *usecase) GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error) {
@@ -167,6 +151,7 @@ func (usecase *usecase) GetBoardArticle(ctx context.Context, boardID, filename s
 	return buf, nil
 }
 
+// TODO: return ArticleRecord, build payload on repository layer
 func (usecase *usecase) GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} {
 	fileHeaders, err := usecase.repo.GetBoardTreasureRecords(ctx, boardID, treasuresID)
 	if err != nil {
@@ -197,7 +182,6 @@ func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID stri
 	// TODO: Get user Level
 	return true
 }
-
 func getArticleURL(boardID string, filename string) string {
 	// TODO: generate article url by config file
 	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)

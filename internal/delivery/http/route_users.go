@@ -4,9 +4,13 @@ import (
 	"context"
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 // getUsers is a http handler function which will rewrite to correct route
@@ -28,6 +32,7 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 	default:
 		delivery.logger.Noticef("user id: %v not exist but be queried, info: %v err: %v", userID, item, err)
 		w.WriteHeader(http.StatusNotFound)
+		w.Write(NewPathNotFoundError(r))
 	}
 }
 
@@ -287,9 +292,47 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	dataList := make([]interface{}, 0, len(dataItems))
+	var result bbs.ArticleRecord
+	for _, board := range dataItems {
+		// TODO: comment need more information
+		comment := board.Comment()
+		r, _ := utf8.DecodeRuneInString(comment)
+		if r != 0 {
+			//移除無法解析的 utf8字元
+			comment = comment[:len(comment)-10]
+			comment = strings.TrimSpace(comment)
+		}
+
+		searchCond := &usecase.ArticleSearchCond{}
+		ctx := context.Background()
+		articles := delivery.usecase.GetBoardArticles(ctx, board.BoardID(), searchCond)
+
+		for _, article := range articles {
+			if article.Filename() == board.Filename() {
+				result = article
+			}
+		}
+
+		dataList = append(dataList, map[string]interface{}{
+			"board_id":        board.BoardID(),
+			"filename":        board.Filename(),
+			"moddified_time":  result.Modified(),
+			"recommend_count": 0,
+			"post_date":       strings.TrimSpace(result.Date()),
+			"title":           comment,
+			// TODO: generate article url by config file
+			"url":           fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", board.BoardID(), board.Filename()),
+			"comment_order": board.CommentOrder(),
+			"comment_owner": board.Owner(),
+			"comment_time":  board.CommentTime(),
+			"ip":            board.IP(),
+		})
+	}
+
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"items": dataItems,
+			"items": dataList,
 		},
 	}
 
@@ -356,6 +399,7 @@ func (delivery *Delivery) postUserDrafts(w http.ResponseWriter, r *http.Request,
 		delivery.deleteUserDraft(w, r, userID, draftID)
 	default:
 		w.WriteHeader(http.StatusBadRequest)
+		// TODO: show unknown action
 	}
 }
 

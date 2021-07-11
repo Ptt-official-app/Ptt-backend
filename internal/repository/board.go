@@ -8,15 +8,15 @@ import (
 )
 
 // TODO: go-bbs lacks following interfaces, remove when go-bbs will have implemented functions
-type PostsLimitedBoardRecord interface {
-	EnableNewPost() bool
-}
+// type PostsLimitedBoardRecord interface {
+// 	EnableNewPost() bool
+// }
 
-type postsLimitedBoardRecord struct{}
+// type postsLimitedBoardRecord struct{}
 
-func (r *postsLimitedBoardRecord) EnableNewPost() bool {
-	return false
-}
+// func (r *postsLimitedBoardRecord) EnableNewPost() bool {
+// 	return false
+// }
 
 func (repo *repository) GetBoards(_ context.Context) []bbs.BoardRecord {
 	return repo.boardRecords
@@ -34,10 +34,10 @@ func (repo *repository) GetBoardTreasureRecords(_ context.Context, boardID strin
 	return repo.db.ReadBoardTreasureRecordsFile(boardID, treasureIDs)
 }
 
-func (repo *repository) GetBoardPostsLimit(_ context.Context, boardID string) (PostsLimitedBoardRecord, error) {
-	// TODO: replace postsLimitedBoardRecord to real bbs record
-	return &postsLimitedBoardRecord{}, nil
-}
+// func (repo *repository) GetBoardPostsLimit(_ context.Context, boardID string) (PostsLimitedBoardRecord, error) {
+// 	// TODO: replace postsLimitedBoardRecord to real bbs record
+// 	return &postsLimitedBoardRecord{}, nil
+// }
 
 func loadBoardFile(db *bbs.DB) ([]bbs.BoardRecord, error) {
 	boardRecords, err := db.ReadBoardRecords()

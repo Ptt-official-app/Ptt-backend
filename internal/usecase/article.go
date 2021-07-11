@@ -87,3 +87,8 @@ func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, titl
 
 	return articles[0], nil // todo: get first for temporary
 }
+
+func (usercase *usecase) GetArticleURL(boardID string, filename string) string {
+	// TODO: generate article url by config file
+	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)
+}

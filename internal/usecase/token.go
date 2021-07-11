@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"errors"
+	// "errors"
 	"fmt"
 	"time"
 
@@ -132,17 +132,17 @@ func (usecase *usecase) checkAppendCommentPermission(token string, userInfo map[
 func (usecase *usecase) checkCreateArticlePermission(ctx context.Context, token string, userInfo map[string]string) error {
 	// TODO:
 	// get board data and check whether board allow create articles
-	boardID, ok := userInfo["boardID"]
-	if !ok {
-		return errors.New("no board_id key") // todo: define error
-	}
-	boardLimit, err := usecase.repo.GetBoardPostsLimit(ctx, boardID)
-	if err != nil {
-		return fmt.Errorf("create article permission failed: %w", err)
-	}
-	if !boardLimit.EnableNewPost() {
-		return errors.New("this board not allow create new article")
-	}
+	// boardID, ok := userInfo["board_id"]
+	// if !ok {
+	// 	return errors.New("no board_id key") // todo: define error
+	// }
+	// boardLimit, err := usecase.repo.GetBoardPostsLimit(ctx, boardID)
+	// if err != nil {
+	// 	return fmt.Errorf("create article permission failed: %w", err)
+	// }
+	// if !boardLimit.EnableNewPost() {
+	// 	return errors.New("this board not allow create new article")
+	// }
 
 	// get board ban list and check whether user on the list
 	// TODO: repo 新增各板水桶名單
@@ -185,14 +185,10 @@ func (usecase *usecase) checkPermissionReadUserInformation(token string, userInf
 
 func (usecase *usecase) checkPermissionReadBoardSettings(token string, userInfo map[string]string) error {
 	// TODO: 判斷管理群的權限
-	tokenUserID, err := usecase.GetUserIDFromToken(token)
+	_, err := usecase.GetUserIDFromToken(token)
 
 	if err != nil {
 		return fmt.Errorf("get user id from token failed: %w", err)
-	}
-
-	if tokenUserID != userInfo["board_id"] {
-		return fmt.Errorf("token user id is not the same userInfo user id")
 	}
 
 	return nil

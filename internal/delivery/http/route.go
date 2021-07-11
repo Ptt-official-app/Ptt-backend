@@ -14,6 +14,13 @@ func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
 	mux.HandleFunc("/v1/popular-articles", delivery.routePopularArticles)
 	mux.HandleFunc("/v1/classes/", delivery.routeClasses)
 	mux.HandleFunc("/v1/users/", delivery.routeUsers)
+
+	mux.HandleFunc("/", delivery.notFoundHandler)
+}
+
+func (delivery *Delivery) notFoundHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	w.Write(NewPathNotFoundError(r))
 }
 
 func (delivery *Delivery) routeToken(w http.ResponseWriter, r *http.Request) {
@@ -21,6 +28,10 @@ func (delivery *Delivery) routeToken(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodPost:
 		delivery.postToken(w, r)
+	default:
+		w.Header().Set("Allow", strings.Join([]string{http.MethodPost}, ","))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(NewMethodNotAllowedError(r, []string{http.MethodPost}))
 	}
 }
 
@@ -33,6 +44,10 @@ func (delivery *Delivery) routeBoards(w http.ResponseWriter, r *http.Request) {
 		delivery.getBoards(w, r)
 	case http.MethodPost:
 		delivery.postBoards(w, r)
+	default:
+		w.Header().Set("Allow", strings.Join([]string{http.MethodGet, http.MethodPost}, ","))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet, http.MethodPost}))
 	}
 }
 
@@ -41,6 +56,10 @@ func (delivery *Delivery) routePopularBoards(w http.ResponseWriter, r *http.Requ
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getPopularBoardList(w, r)
+	default:
+		w.Header().Set("Allow", strings.Join([]string{http.MethodGet}, ","))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
 	}
 }
 
@@ -49,6 +68,10 @@ func (delivery *Delivery) routePopularArticles(w http.ResponseWriter, r *http.Re
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getPopularArticles(w, r)
+	default:
+		w.Header().Set("Allow", strings.Join([]string{http.MethodGet}, ","))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
 	}
 }
 
@@ -58,6 +81,10 @@ func (delivery *Delivery) routeClasses(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		delivery.getClasses(w, r)
+	default:
+		w.Header().Set("Allow", strings.Join([]string{http.MethodGet}, ","))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet}))
 	}
 }
 
@@ -70,6 +97,10 @@ func (delivery *Delivery) routeUsers(w http.ResponseWriter, r *http.Request) {
 		delivery.getUsers(w, r)
 	case http.MethodPost:
 		delivery.postUsers(w, r)
+	default:
+		w.Header().Set("Allow", strings.Join([]string{http.MethodGet, http.MethodPost}, ","))
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		w.Write(NewMethodNotAllowedError(r, []string{http.MethodGet, http.MethodPost}))
 	}
 }
 
@@ -100,8 +131,8 @@ func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 404
 	w.WriteHeader(http.StatusNotFound)
+	w.Write(NewPathNotFoundError(r))
 
 	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardID, item, err)
 }
@@ -138,8 +169,8 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// 404
 	w.WriteHeader(http.StatusNotFound)
+	w.Write(NewPathNotFoundError(r))
 
 	delivery.logger.Noticef("board id: %v not exist but be queried, info: %v err: %v", boardID, item, err)
 }
