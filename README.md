@@ -17,8 +17,9 @@ go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-b
 
 * [RESTful API 文件](https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit?usp=sharing)
 * [go-bbs Package](https://github.com/Ptt-official-app/go-bbs)
+* [Openapi](http://localhost:8081/swagger) 
 
-[Openapi](http://localhost:8081/swagger) 使用 docker-compose 啟動，docker rootless 設定請參閱 [Manage Docker as a non-root user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+使用 docker-compose 啟動，docker rootless 設定請參閱 [Manage Docker as a non-root user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 ```sh
 docker-compose up -d
