@@ -15,9 +15,7 @@ const (
 	endpoint   = "messages"
 )
 
-var (
-	_ Mail = &mailgunProvider{}
-)
+var _ Mail = &mailgunProvider{}
 
 type mailgunProvider struct {
 	domain  string

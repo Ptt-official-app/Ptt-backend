@@ -6,8 +6,7 @@ import (
 )
 
 // implements usecase.Usecase
-type MockUsecase struct {
-}
+type MockUsecase struct{}
 
 func NewMockUsecase() usecase.Usecase {
 	return &MockUsecase{}

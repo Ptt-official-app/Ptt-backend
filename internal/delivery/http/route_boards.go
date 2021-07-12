@@ -102,7 +102,6 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
-
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
@@ -164,7 +163,6 @@ func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Reques
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
-
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)

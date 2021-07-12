@@ -17,6 +17,7 @@ func (repo *MockRepository) GetBoards(ctx context.Context) []bbs.BoardRecord {
 func (repo *MockRepository) GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error) {
 	return []byte{}, nil
 }
+
 func (repo *MockRepository) GetBoardArticleRecords(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error) {
 	articleRecords := []*MockArticleRecord{
 		{

@@ -24,7 +24,6 @@ func newSMTPProvider(url *url.URL) *smtpProvider {
 func (s *smtpProvider) Send(from, to, title string, body []byte) error {
 	toArr := []string{to}
 	err := smtp.SendMail(s.url.Host, s.plainAuth, from, toArr, body)
-
 	if err != nil {
 		return err
 	}

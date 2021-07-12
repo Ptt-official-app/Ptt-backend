@@ -14,6 +14,7 @@ func (repo *MockRepository) GetUsers(ctx context.Context) ([]bbs.UserRecord, err
 	})
 	return ret, nil
 }
+
 func (repo *MockRepository) GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error) {
 	return []bbs.FavoriteRecord{}, nil
 }

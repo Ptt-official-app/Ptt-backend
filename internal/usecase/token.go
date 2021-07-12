@@ -119,8 +119,8 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 }
 
 func (usecase *usecase) checkAppendCommentPermission(token string, userInfo map[string]string) error {
-	//boardID := userInfo["board_id"]
-	//userID := userInfo["user_id"]
+	// boardID := userInfo["board_id"]
+	// userID := userInfo["user_id"]
 
 	// TODO: 判斷在該版是否被水桶
 	// TODO: 判斷該版是否允許推文
@@ -153,8 +153,8 @@ func (usecase *usecase) checkCreateArticlePermission(ctx context.Context, token 
 }
 
 func (usecase *usecase) checkForwardArticlePermission(token string, userInfo map[string]string) error {
-	//boardID := userInfo["board_id"]
-	//userID := userInfo["user_id"]
+	// boardID := userInfo["board_id"]
+	// userID := userInfo["user_id"]
 
 	// TODO: 判斷是否有轉錄的權限
 	// TODO: 判斷在該版是否允許發文
@@ -171,7 +171,6 @@ func (usecase *usecase) checkForwardArticlePermission(token string, userInfo map
 func (usecase *usecase) checkPermissionReadUserInformation(token string, userInfo map[string]string) error {
 	// TODO: 判斷管理群的權限
 	tokenUserID, err := usecase.GetUserIDFromToken(token)
-
 	if err != nil {
 		return fmt.Errorf("get user id from token failed: %w", err)
 	}
@@ -186,7 +185,6 @@ func (usecase *usecase) checkPermissionReadUserInformation(token string, userInf
 func (usecase *usecase) checkPermissionReadBoardSettings(token string, userInfo map[string]string) error {
 	// TODO: 判斷管理群的權限
 	_, err := usecase.GetUserIDFromToken(token)
-
 	if err != nil {
 		return fmt.Errorf("get user id from token failed: %w", err)
 	}

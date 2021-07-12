@@ -14,9 +14,7 @@ const (
 	testDomain = "pttapp.cc"
 )
 
-var (
-	testQuery = url.Values{"api_key": {testAPIKey}, "domain": {testDomain}}
-)
+var testQuery = url.Values{"api_key": {testAPIKey}, "domain": {testDomain}}
 
 func TestMailgunSend_ReturnNoError(t *testing.T) {
 	expectPath := path.Join("/", apiVersion, testDomain, endpoint)
@@ -56,7 +54,6 @@ func TestMailgunSend_ReturnNoError(t *testing.T) {
 			http.Error(w, fmt.Sprintf(`FormValue("text"): %q does not match %q`, reqText, string(testText)), http.StatusBadRequest)
 			return
 		}
-
 	}))
 	defer testServer.Close()
 
