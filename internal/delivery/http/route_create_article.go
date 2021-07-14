@@ -51,7 +51,7 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 
 	record, err := delivery.usecase.CreateArticle(ctx, userID, boardID, title, article)
 	// 改成 _ 避免 declared but not used
-	if err != nil {
+	if err != nil || record == nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, err2 := w.Write(NewServerError(r, fmt.Errorf("create article error: %w", err)))
 		if err2 != nil {
