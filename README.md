@@ -44,14 +44,15 @@ go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-b
 
 * 如果參與這個專案要花多久時間
 
-建議至少每周花1小時參與這個專案
-
-如果想解決 issue 估計每個 issue 都落在 4\~8 小時左右，超過的話我們會拆分
+> 建議至少每周花1小時參與這個專案
+>
+> 如果想解決 issue 估計每個 issue 都落在 4\~8 小時左右，超過的話我們會拆分
 
 * 協作方式是什麼
 
-可參考 [FOR_DEVELOPERS.md](https://github.com/Ptt-official-app/Ptt-backend/blob/development/FOR_DEVELOPERS.md) 的開發流程
+> 請參考[給開發者的開發流程](https://github.com/Ptt-official-app/Ptt-backend/blob/development/FOR_DEVELOPERS.md#%E9%96%8B%E7%99%BC%E6%B5%81%E7%A8%8B)
 
 * 直接討論方式與軟體
 
-[slack](https://g0v-tw.slack.com/archives/C01K6RAR17Y)
+> 根據專案之初的投票，目前 go-bbs 以及 Ptt-backend 比較即時的討論在 [g0v slack](https://join.g0v.tw) 的 [#bbs channel](https://g0v-tw.slack.com/archives/C01K6RAR17Y)
+
