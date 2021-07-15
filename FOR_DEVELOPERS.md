@@ -184,8 +184,14 @@ $ tar -jxvf dump.shm.lastest.tar.bz2
 
 ### 狀況 1: 直接使用 `go build`
 ```bash
-$ go build
+$ ./make.bash build
 $ ./Ptt-backend
+```
+如果是 windows 的話
+
+```bat
+$ .\make.bat build
+$ .\Ptt-backend.exe
 ```
 
 #### Troubleshoot
