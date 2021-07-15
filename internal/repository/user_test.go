@@ -30,7 +30,6 @@ func (u *MockUser) Plan() map[string]interface{}         { return map[string]int
 func (u *MockUser) UserFlag() uint32                     { return 0x02000A60 }
 
 func TestGetUsers(t *testing.T) {
-
 	repo := repository{
 		userRecords:  []bbs.UserRecord{},
 		boardRecords: []bbs.BoardRecord{},
@@ -45,11 +44,9 @@ func TestGetUsers(t *testing.T) {
 	if actual == nil {
 		t.Errorf("GetUsers got %v, expected not equal nil", actual)
 	}
-
 }
 
 func TestGetUserPreferences(t *testing.T) {
-
 	repo := repository{
 		userRecords: []bbs.UserRecord{
 			&MockUser{
@@ -71,5 +68,4 @@ func TestGetUserPreferences(t *testing.T) {
 	if actual["board_sort"] != "true" {
 		t.Errorf("GetUserPreferences boart_sort got %v, expected true", actual["board_sort"])
 	}
-
 }

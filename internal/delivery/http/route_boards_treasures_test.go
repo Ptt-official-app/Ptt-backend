@@ -50,5 +50,4 @@ func TestFetchBoardTreasures(t *testing.T) {
 			t.Errorf("returned body url not found")
 		}
 	}
-
 }

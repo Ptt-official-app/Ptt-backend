@@ -63,7 +63,6 @@ func (repo *repository) GetUserArticles(_ context.Context, boardID string) ([]bb
 
 // TODO: no required method in go-bbs and we use a mock, replace it when available
 func (repo *repository) GetUserPreferences(_ context.Context, userID string) (map[string]string, error) {
-
 	var u bbs.UserRecord = nil
 	for _, it := range repo.userRecords {
 		if it.UserID() == userID {

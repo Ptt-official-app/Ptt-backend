@@ -71,7 +71,6 @@ func TestGetUserInformation(t *testing.T) {
 
 // TestParseUserPath is a test function which will test getUsers route mapping
 func TestParseUserPath(t *testing.T) {
-
 	type TestCase struct {
 		input          string
 		expectdUserID  string
@@ -111,7 +110,6 @@ func TestParseUserPath(t *testing.T) {
 		actualUserID, actualItem, actualItemID, err := parseUserPath(input)
 		if err != nil {
 			t.Errorf("error on index %d, got: %v", index, err)
-
 		}
 
 		if actualUserID != expectdUserID {
@@ -127,7 +125,6 @@ func TestParseUserPath(t *testing.T) {
 		}
 
 	}
-
 }
 
 // TestGetUserInformation is a test function which will test getUserInformation (/v1/users/{{user_id}}/favorites)
@@ -211,12 +208,10 @@ func TestGetUserPreference(t *testing.T) {
 		t.Errorf("handler returned unexpected body, favorite_no_highlight not match: got %v want value %v",
 			firstItem, expectedValue)
 	}
-
 }
 
 // TestGetUserArticles is a test function which will test getUserArticles (/v1/users/{{user_id}}/articles)
 func TestGetUserArticles(t *testing.T) {
-
 	userID := "id"
 	mockUsecase := NewMockUsecase()
 	mockDelivery := NewHTTPDelivery(mockUsecase)

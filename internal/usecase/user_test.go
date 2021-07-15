@@ -9,7 +9,6 @@ import (
 )
 
 func TestGetUserByID(t *testing.T) {
-
 	resp := &MockRepository{}
 
 	usecase := NewUsecase(&config.Config{}, resp)
@@ -35,7 +34,6 @@ func TestGetUserByID(t *testing.T) {
 		t.Errorf("getUserByID with pichu excepted userid: pichu, got %v", rec.UserID())
 		return
 	}
-
 }
 
 func TestGetUserInformation_InputNotExistUser_ReturnError(t *testing.T) {
@@ -75,13 +73,11 @@ func TestGetUserInformation_InputPichu_ReturnData(t *testing.T) {
 }
 
 func TestGetUserArticles(t *testing.T) {
-
 	userID := "user"
 	mockRepository := &MockRepository{}
 	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
 
 	dataItems, err := mockUsecase.GetUserArticles(context.TODO(), userID)
-
 	if err != nil {
 		t.Errorf("GetUserArticles with userID excepted nil error, got %v", err)
 		return
@@ -91,7 +87,6 @@ func TestGetUserArticles(t *testing.T) {
 		t.Errorf("GetUserArticles with userID excepted not nil, got %v", dataItems)
 		return
 	}
-
 }
 
 func TestGetUserComments(t *testing.T) {
@@ -100,7 +95,6 @@ func TestGetUserComments(t *testing.T) {
 	mockUsecase := NewUsecase(&config.Config{}, mockRepository)
 
 	_, err := mockUsecase.GetUserComments(context.TODO(), userID)
-
 	if err != nil {
 		t.Errorf("GetUserComment with %s expect nil, got %v", userID, err)
 	}

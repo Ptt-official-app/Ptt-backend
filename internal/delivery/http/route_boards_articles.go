@@ -19,7 +19,6 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
-
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
@@ -106,7 +105,6 @@ func (delivery *Delivery) getBoardArticlesFile(w http.ResponseWriter, r *http.Re
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadBoardInformation}, map[string]string{
 		"board_id": boardID,
 	})
-
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)

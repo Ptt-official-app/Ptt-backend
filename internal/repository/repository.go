@@ -8,9 +8,7 @@ import (
 	"github.com/Ptt-official-app/go-bbs"
 )
 
-var (
-	logger = logging.NewLogger()
-)
+var logger = logging.NewLogger()
 
 // Repository directly interacts with database via db handler.
 type Repository interface {

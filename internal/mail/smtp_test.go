@@ -7,7 +7,6 @@ import (
 
 func TestSmtpMail(t *testing.T) {
 	provider, err := NewMailProvider("smtp://username@mail.smtp.com:587")
-
 	if err != nil {
 		t.Errorf("can't get smtp provider")
 	}

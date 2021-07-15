@@ -182,6 +182,7 @@ func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID stri
 	// TODO: Get user Level
 	return true
 }
+
 func getArticleURL(boardID string, filename string) string {
 	// TODO: generate article url by config file
 	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)

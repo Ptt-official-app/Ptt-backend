@@ -12,7 +12,6 @@ func TestGetPopularArticles(t *testing.T) {
 
 	usecase := NewUsecase(&config.Config{}, repo)
 	articles, err := usecase.GetPopularArticles(context.TODO())
-
 	if err != nil {
 		t.Errorf("GetPopularArticles expected err == nil, got %v", err)
 	}
@@ -25,7 +24,6 @@ func TestGetPopularArticles(t *testing.T) {
 	if articles[0].Title() != expectedFirstArticleTitle {
 		t.Errorf("GetPopularArticles should return first article with title %s, got %s", expectedFirstArticleTitle, articles[0].Title())
 	}
-
 }
 
 func TestForwardArticleToEmail(t *testing.T) {
@@ -40,7 +38,6 @@ func TestForwardArticleToEmail(t *testing.T) {
 	usecase := NewUsecase(&config.Config{}, repo)
 	_ = usecase.UpdateMail(mail)
 	err := usecase.ForwardArticleToEmail(context.TODO(), userID, boardID, filename, email)
-
 	if err != nil {
 		t.Errorf("ForwardArticleToEmail failed %v", err)
 	}

@@ -30,7 +30,6 @@ func NewMethodNotAllowedError(r *http.Request, supportedMethods []string) []byte
 
 	b, _ := json.MarshalIndent(m, "", "  ")
 	return b
-
 }
 
 // NewNoPermissionForReadBoardArticlesError generates a error payload for telling client
@@ -77,5 +76,4 @@ func NewNoRequiredParameterError(r *http.Request, requireParameter string) []byt
 
 	b, _ := json.MarshalIndent(m, "", "  ")
 	return b
-
 }

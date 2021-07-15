@@ -61,7 +61,6 @@ func (delivery *Delivery) getUserInformation(w http.ResponseWriter, r *http.Requ
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
-
 	if err != nil {
 		delivery.logger.Warningf("unauthorized get user information for %s: %v", userID, err)
 		w.WriteHeader(http.StatusUnauthorized)
@@ -113,7 +112,6 @@ func (delivery *Delivery) getUserFavorites(w http.ResponseWriter, r *http.Reques
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
-
 	if err != nil {
 		m := map[string]string{
 			"error":             "permission_error",
@@ -167,7 +165,6 @@ func (delivery *Delivery) getUserArticles(w http.ResponseWriter, r *http.Request
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
-
 	if err != nil {
 		m := map[string]string{
 			"error":             "permission_error",
@@ -212,7 +209,6 @@ func (delivery *Delivery) getUserPreferences(w http.ResponseWriter, r *http.Requ
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
-
 	if err != nil {
 		m := map[string]string{
 			"error":             "permission_error",
@@ -264,7 +260,6 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
-
 	if err != nil {
 		m := map[string]string{
 			"error":             "permission_error",
@@ -302,7 +297,7 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 		comment := board.Comment()
 		r, _ := utf8.DecodeRuneInString(comment)
 		if r != 0 {
-			//移除無法解析的 utf8字元
+			// 移除無法解析的 utf8字元
 			comment = comment[:len(comment)-10]
 			comment = strings.TrimSpace(comment)
 		}
@@ -354,7 +349,6 @@ func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, 
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionReadUserInformation}, map[string]string{
 		"user_id": userID,
 	})
-
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
@@ -413,7 +407,6 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionUpdateDraft}, map[string]string{
 		"user_id": userID,
 	})
-
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
@@ -470,7 +463,6 @@ func (delivery *Delivery) deleteUserDraft(w http.ResponseWriter, r *http.Request
 	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionDeleteDraft}, map[string]string{
 		"user_id": userID,
 	})
-
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)

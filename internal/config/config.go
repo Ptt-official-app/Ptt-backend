@@ -17,9 +17,7 @@ type Config struct {
 	MailDriver            string
 }
 
-var (
-	logger = logging.NewLogger()
-)
+var logger = logging.NewLogger()
 
 func NewDefaultConfig() (*Config, error) {
 	return NewConfig("./conf/config_default.toml", "config.toml")
