@@ -13,17 +13,14 @@ go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-b
 
 想要更加地投入可以參考下面的 *貢獻者相關* 跟 *Q&A*
 
+## 如何編譯執行
+
+請參考[「給開發者」 編譯與執行章節](https://github.com/Ptt-official-app/Ptt-backend/blob/development/FOR_DEVELOPERS.md#%E7%B7%A8%E8%AD%AF%E8%88%87%E5%9F%B7%E8%A1%8C)
+
 ## 文件檔案部分
 
 * [RESTful API 文件](https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit?usp=sharing)
 * [go-bbs Package](https://github.com/Ptt-official-app/go-bbs)
-* [Openapi](http://localhost:8081/swagger) 
-
-使用 docker-compose 啟動，docker rootless 設定請參閱 [Manage Docker as a non-root user](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
-
-```sh
-docker-compose up -d
-```
 
 ## 軟體測試測試表
 
@@ -39,7 +36,7 @@ docker-compose up -d
 
 ## 貢獻者相關
 
-如果想要參與開發與維護專案可參考: [FOR_DEVELOPERS.md](https://github.com/Ptt-official-app/Ptt-backend/blob/development/FOR_DEVELOPERS.md)
+如果想要參與開發與維護專案可參考: [給開發者](https://github.com/Ptt-official-app/Ptt-backend/blob/development/FOR_DEVELOPERS.md)
 
 也可直接發 issue 討論相關問題
 
