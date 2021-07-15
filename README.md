@@ -8,10 +8,10 @@ go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-b
 
 ## 如何參與這個專案
 
-1. 要有個 GitHub 帳號
-2. 參與 issue 討論
+1. 要有個 [GitHub 帳號](https://github.com/join)
+2. 參與 [issue 討論](https://github.com/Ptt-official-app/Ptt-backend/issues)
 
-想要更加地投入可以參考下面的 *貢獻者相關* 跟 *Q&A*
+想要更加地投入可以參考下面的 [*貢獻者相關*](https://github.com/Ptt-official-app/Ptt-backend#%E8%B2%A2%E7%8D%BB%E8%80%85%E7%9B%B8%E9%97%9C) 跟 [*Q&A*](https://github.com/Ptt-official-app/Ptt-backend#qa)
 
 ## 如何編譯執行
 
