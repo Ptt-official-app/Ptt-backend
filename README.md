@@ -2,9 +2,14 @@
 
 ## 這專案是做什麼的，跟什麼有關係？
 
-Ptt-backend 是做 BBS (Bulletin Board System) 的開源專案
-但 BBS 有很多種，Ptt 只是 BBS 的其中一種
-go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-backend 使用
+Ptt-backend 是做 [BBS (Bulletin Board System)](https://zh.wikipedia.org/wiki/BBS) 的開源專案，
+但 BBS 有很多種，[Ptt](https://www.ptt.cc/index.html) 只是 BBS 的其中一種。
+
+[go-bbs](https://github.com/Ptt-official-app/go-bbs) 是與 Ptt-backend 有關的專案，解析 BBS 儲存在硬碟（或是共享記憶體）中的資料提供給 Ptt-backend 使用。
+
+另外我們有個[測試站](https://pttapp.cc/)，可以透過這個測試站進行測試，你也可以在上面註冊新帳號。
+
+請注意，**密碼以及資料請勿使用真實資料**，該測試站上的資料會被用作開發測試用途，因此任何人都可以拿到上面[雜湊 (Hash)](https://zh.wikipedia.org/wiki/%E6%95%A3%E5%88%97%E5%87%BD%E6%95%B8) 過後的密碼以及資料。
 
 ## 如何參與這個專案？
 
@@ -19,14 +24,15 @@ go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-b
 
 ## 文件檔案部分？
 
-* [RESTful API 文件](https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit?usp=sharing)
-* [go-bbs Package](https://github.com/Ptt-official-app/go-bbs)
+請參閱 [RESTful API 文件](https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit?usp=sharing)
+
+另外我們也歡迎協助幫忙維護 Swagger 的志工。
 
 ## 軟體測試測試表：
 
 測試表目前以 Google Sheet 寫成，這份測試表適合讓對於不熟悉程式語言的開發者了解目前各項功能的狀態。
 
-測試表： [連結](https://docs.google.com/spreadsheets/d/1uo4AJuSi5xTXEht2o2EHogLivCJlJqlLaeqoj1RceDY/edit?usp=sharing)
+測試表母表： [連結](https://docs.google.com/spreadsheets/d/1uo4AJuSi5xTXEht2o2EHogLivCJlJqlLaeqoj1RceDY/edit?usp=sharing)
 
 歷次測試結果：
 
@@ -38,7 +44,7 @@ go-bbs 是與 Ptt-backend 有關的專案，解析儲存的檔案提供給 Ptt-b
 
 如果想要參與開發與維護專案可參考: [給開發者](https://github.com/Ptt-official-app/Ptt-backend/blob/development/FOR_DEVELOPERS.md)
 
-也可直接發 issue 討論相關問題
+也可直接[發 issue](https://github.com/Ptt-official-app/Ptt-backend/issues/new/choose) 討論相關問題。
 
 ## Q&A：
 
