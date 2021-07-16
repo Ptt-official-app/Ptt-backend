@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -105,6 +106,10 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
+		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("check get board information permission : %w", err)))
+		if err2 != nil {
+			delivery.logger.Errorf("write NewPermissionError error: %w", err)
+		}
 		return
 	}
 
