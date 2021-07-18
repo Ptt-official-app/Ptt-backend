@@ -84,6 +84,87 @@ components:
         time:
           type: string
           format: date-time
+    ArticleObjectInResponse:
+      properties:
+        filename:
+          type: string
+          description: '檔案名稱，Filename ，例如M.1161080752.A.241。'
+        modified_time:
+          type: string
+          format: date-time
+          description: '修改時間'
+        recommend_count:
+          type: integer
+          format: int64
+          description: '推文數'
+        post_date:
+          type: string
+          format: date
+          description: '發文時間，以01/02表示'
+        title:
+          type: string
+          description: '文章標題'
+        money:
+          type: integer
+          description: '文章稿費'
+        aid:
+          type: string
+          description: '文章代碼(AID)，例如 #15DA-m91。'
+        url:
+          type: string
+          description: '文章網址'
+    UserPreferencesObjectInResponse:
+      properties:
+        favorite_no_highlight:
+          type: string
+        favorite_add_new:
+          type: string
+        friend:
+          type: string
+        board_sort:
+          type: string
+        ad_banner:
+          type: string
+        ad_banner_user_song:
+          type: string
+        dbcs_aware:
+          type: string
+        dbcs_no_interupting_escape:
+          type: string
+        dbcs_drop_repeat:
+          type: string
+        no_modification_mark:
+          type: string
+        colored_modification_mark:
+          type: string
+        default_backup:
+          type: string
+        new_angel_pager:
+          type: string
+        reject_outside_mail:
+          type: string
+        secure_login:
+          type: string
+        foreign:
+          type: string
+        live_right:
+          type: string
+        menu_lightbar:
+          type: string
+        cursor_ascii:
+          type: string
+        pager_ui:
+          type: string
+
+  parameters:
+    UserIdParam: # <-- Arbitrary name for the definition that will be used to refer to it.
+                 # Not necessarily the same as the parameter name.
+      name: user_id
+      in: path
+      required: true
+      description: '使用者 id'
+      schema:
+        type: string
 
 paths:
   /v1/token:
@@ -141,12 +222,7 @@ paths:
       security:
         - BearerAuth: [ ]
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: '使用者 id'
-          schema:
-            type: string
+        - $ref: '#/components/parameters/UserIdParam'
       responses:
         '200':
           description: 'ok'
@@ -237,12 +313,7 @@ paths:
       security:
         - BearerAuth: [ ]
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: '使用者 id'
-          schema:
-            type: string
+        - $ref: '#/components/parameters/UserIdParam'
       responses:
         '200':
           description: 'ok'
@@ -270,12 +341,7 @@ paths:
       security:
         - BearerAuth: [ ]
       parameters:
-        - name: user_id
-          in: path
-          required: true
-          description: '使用者 id'
-          schema:
-            type: string
+        - $ref: '#/components/parameters/UserIdParam'
       requestBody:
         required: true
         content:
@@ -327,6 +393,60 @@ paths:
                             - $ref: '#/components/schemas/BoardObjectInResponse'
                             - $ref: '#/components/schemas/LineObjectInResponse'
                             - $ref: '#/components/schemas/FolderObjectInResponse'
+      tags:
+        - 使用者部分
+
+  /v1/users/{user_id}/articles:
+    get:
+      summary: '該使用者的文章列表'
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    properties:
+                      items:
+                        type: array
+                        items:
+                          allOf:
+                            - properties:
+                                board_id:
+                                  type: string
+                                comment_count:
+                                  type: integer
+                                  format: int64
+                                  description: '留言數'
+                                owner:
+                                  type: string
+                            - $ref: '#/components/schemas/ArticleObjectInResponse'
+
+      tags:
+        - 使用者部分
+
+  /v1/users/{user_id}/preferences:
+    get:
+      summary: '該使用者的偏好設定'
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/UserIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                      $ref: '#/components/schemas/UserPreferencesObjectInResponse'
+
       tags:
         - 使用者部分
 
@@ -534,34 +654,8 @@ paths:
                       items:
                         type: array
                         items:
-                          properties:
-                            filename:
-                              type: string
-                              description: '檔案名稱，Filename ，例如M.1161080752.A.241。'
-                            modified_time:
-                              type: string
-                              format: date-time
-                              description: '修改時間'
-                            recommend_count:
-                              type: integer
-                              format: int64
-                              description: '推文數'
-                            post_date:
-                              type: string
-                              format: date
-                              description: '發文時間，以01/02表示'
-                            title:
-                              type: string
-                              description: '文章標題'
-                            money:
-                              type: integer
-                              description: '文章稿費'
-                            aid:
-                              type: string
-                              description: '文章代碼(AID)，例如 #15DA-m91。'
-                            url:
-                              type: string
-                              description: '文章網址'
+                          $ref: '#/components/schemas/ArticleObjectInResponse'
+
       tags:
         - 文章列表部分
 
