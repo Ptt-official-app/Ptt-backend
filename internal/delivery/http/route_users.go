@@ -350,6 +350,7 @@ func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, 
 		"user_id": userID,
 	})
 	if err != nil {
+		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
 		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("get user draft permission error : %w", err)))
 		if err2 != nil {
@@ -411,6 +412,7 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 		"user_id": userID,
 	})
 	if err != nil {
+		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
 		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("update user draft permission error : %w", err)))
 		if err2 != nil {
@@ -470,6 +472,7 @@ func (delivery *Delivery) deleteUserDraft(w http.ResponseWriter, r *http.Request
 		"user_id": userID,
 	})
 	if err != nil {
+		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
 		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("delete user draft permission error : %w", err)))
 		if err2 != nil {
