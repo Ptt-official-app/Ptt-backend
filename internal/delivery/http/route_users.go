@@ -350,7 +350,7 @@ func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, 
 		"user_id": userID,
 	})
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusUnauthorized)
 		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("get user draft permission error : %w", err)))
 		if err2 != nil {
 			delivery.logger.Errorf("write NewServerError error: %w", err)
@@ -360,7 +360,7 @@ func (delivery *Delivery) getUserDrafts(w http.ResponseWriter, r *http.Request, 
 
 	buf, err := delivery.usecase.GetUserDrafts(ctx, userID, draftID)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusUnauthorized)
 		m := map[string]string{
 			"error":             "find_userrec_error",
 			"error_description": err.Error(),
@@ -411,7 +411,7 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 		"user_id": userID,
 	})
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusUnauthorized)
 		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("update user draft permission error : %w", err)))
 		if err2 != nil {
 			delivery.logger.Errorf("write NewServerError error: %w", err)
@@ -470,7 +470,7 @@ func (delivery *Delivery) deleteUserDraft(w http.ResponseWriter, r *http.Request
 		"user_id": userID,
 	})
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusUnauthorized)
 		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("delete user draft permission error : %w", err)))
 		if err2 != nil {
 			delivery.logger.Errorf("write NewServerError error: %w", err)
