@@ -86,8 +86,18 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 	return result, nil
 }
 
-func (repo *MockRepository) CreateArticle(ctx context.Context, userID, boardID, title, article string) error {
-	return nil
+func (repo *MockRepository) CreateArticle(ctx context.Context, userID, boardID, title, article string) bbs.ArticleRecord {
+	record := MockArticleRecord{
+		filename:       "filename1",
+		modified:       time.Time{},
+		recommendCount: 10,
+		owner:          "SYSOP",
+		date:           "",
+		title:          "[討論] 偶爾要發個廢文",
+		money:          0,
+	}
+
+	return &record
 }
 
 func (repo *MockRepository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {

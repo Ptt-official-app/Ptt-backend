@@ -81,11 +81,23 @@ func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, titl
 	}
 
 	articles, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
+
 	if err != nil {
 		return nil, fmt.Errorf("get article records failed: %w", err)
 	}
 
-	return articles[0], nil // todo: get first for temporary
+	var isLatestArticle bbs.ArticleRecord
+	for i := 0; i < len(articles); i++ {
+		if nil == isLatestArticle && articles[i] != nil && articles[i].Owner() == userID && articles[i].Title() == title {
+			isLatestArticle = articles[i]
+		}
+	}
+
+	if nil == isLatestArticle {
+		return nil, fmt.Errorf("get author latest article records failed: %w", err)
+	}
+
+	return isLatestArticle, nil
 }
 
 func (usecase *usecase) GetArticleURL(boardID string, filename string) string {
