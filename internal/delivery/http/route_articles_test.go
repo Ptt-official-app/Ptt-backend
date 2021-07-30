@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"time"
 
 	"github.com/Ptt-official-app/go-bbs"
 
@@ -25,9 +26,36 @@ func (usecase *MockUsecase) ForwardArticleToEmail(ctx context.Context, userID, b
 }
 
 func (usecase *MockUsecase) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
-	return nil, nil
+	return &MockArticleRecord{
+		filename:       "filename1",
+		modified:       time.Time{},
+		recommendCount: 10,
+		owner:          "SYSOP",
+		date:           "",
+		title:          "[討論] 偶爾要發個廢文",
+		money:          0,
+	}, nil
 }
 
 func (usecase *MockUsecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
 	return nil, nil
 }
+
+type MockArticleRecord struct {
+	filename       string
+	modified       time.Time
+	recommendCount int
+	owner          string
+	date           string
+	title          string
+	money          int
+}
+
+func (m *MockArticleRecord) Filename() string               { return m.filename }
+func (m *MockArticleRecord) Modified() time.Time            { return m.modified }
+func (m *MockArticleRecord) SetModified(newValue time.Time) { m.modified = newValue }
+func (m *MockArticleRecord) Recommend() int                 { return m.recommendCount }
+func (m *MockArticleRecord) Owner() string                  { return m.owner }
+func (m *MockArticleRecord) Date() string                   { return m.date }
+func (m *MockArticleRecord) Title() string                  { return m.title }
+func (m *MockArticleRecord) Money() int                     { return m.money }

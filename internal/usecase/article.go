@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/Ptt-official-app/go-bbs"
 
@@ -75,6 +76,9 @@ func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, board
 
 // CreateArticle create a new article on a board
 func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
+	now := time.Now()
+	bbsDate := fmt.Sprintf("%02d/%02d", now.Month(), now.Day())
+
 	err := usecase.repo.CreateArticle(ctx, userID, boardID, title, article)
 	if err != nil {
 		return nil, err
@@ -88,8 +92,9 @@ func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, titl
 
 	var isLatestArticle bbs.ArticleRecord
 	for i := 0; i < len(articles); i++ {
-		if nil == isLatestArticle && articles[i] != nil && articles[i].Owner() == userID && articles[i].Title() == title {
+		if articles[i] != nil && articles[i].Owner() == userID && articles[i].Title() == title && articles[i].Date() == bbsDate {
 			isLatestArticle = articles[i]
+			break
 		}
 	}
 
