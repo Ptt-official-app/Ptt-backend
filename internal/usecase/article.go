@@ -90,19 +90,13 @@ func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, titl
 		return nil, fmt.Errorf("get article records failed: %w", err)
 	}
 
-	var isLatestArticle bbs.ArticleRecord
 	for i := 0; i < len(articles); i++ {
 		if articles[i] != nil && articles[i].Owner() == userID && articles[i].Title() == title && articles[i].Date() == bbsDate {
-			isLatestArticle = articles[i]
-			break
+			return articles[i], nil
 		}
 	}
 
-	if nil == isLatestArticle {
-		return nil, fmt.Errorf("get author latest article records failed: %w", err)
-	}
-
-	return isLatestArticle, nil
+	return nil, fmt.Errorf("get author latest article records failed: %w", err)
 }
 
 func (usecase *usecase) GetArticleURL(boardID string, filename string) string {
