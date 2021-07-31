@@ -44,7 +44,7 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 		w.WriteHeader(http.StatusUnauthorized)
 		_, err2 := w.Write(NewNoPermissionForCreateBoardArticlesError(r, boardID))
 		if err2 != nil {
-			delivery.logger.Errorf("write no permission article error: %w", err)
+			delivery.logger.Errorf("write NewServerError error: %w", err)
 		}
 		return
 	}
