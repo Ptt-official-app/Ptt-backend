@@ -43,18 +43,20 @@ func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, titl
 func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) error {
 	// get file name
 
-	r, err := repo.db.NewArticleRecord(map[string]interface{}{
-		"title":    title,
-		"owner":    userID,
-		"date":     time.Now().Format("01/02"),
-		"board_id": boardID,
-	})
-	if err != nil {
-		return err
-	}
-	err = repo.db.AddArticleRecordFileRecord(boardID, r)
+	// r, err := repo.db.NewArticleRecord(map[string]interface{}{
+	// 	"title":    title,
+	// 	"owner":    userID,
+	// 	"date":     time.Now().Format("01/02"),
+	// 	"board_id": boardID,
+	// })
+	// if err != nil {
+	// 	return err
+	// }
+	// err = repo.db.AddArticleRecordFileRecord(boardID, r)
 
-	return err
+	// return err
+
+	return nil
 }
 
 type ForwardArticleToBoardRecord interface {
