@@ -59,9 +59,19 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 		return
 	}
 
+	raw, err := delivery.usecase.GetRawArticle(record.Filename(), boardID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err2 := w.Write(NewServerError(r, fmt.Errorf("get raw article error: %w", err)))
+		if err2 != nil {
+			delivery.logger.Errorf("write NewServerError error: %w", err)
+		}
+		return
+	}
+
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"raw": r.PostForm.Encode(),
+			"raw": raw,
 			"parsed": map[string]interface{}{
 				"is_header_modied": false,
 				"author_id":        userID,

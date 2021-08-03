@@ -37,6 +37,10 @@ func (usecase *MockUsecase) CreateArticle(ctx context.Context, userID, boardID, 
 	}, nil
 }
 
+func (usecase *MockUsecase) GetRawArticle(boardID, filename string) (string, error) {
+	return "test", nil
+}
+
 func (usecase *MockUsecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
 	return nil, nil
 }

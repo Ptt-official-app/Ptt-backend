@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/Ptt-official-app/go-bbs"
@@ -40,23 +41,40 @@ func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, titl
 
 // CreateArticle
 // TODO: return result from bbs response
-func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) error {
+func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) (bbs.ArticleRecord, error) {
 	// get file name
+	now := time.Now().Format("01/02")
+	record, err := repo.db.NewArticleRecord(boardID, userID, now, title)
+	if err != nil {
+		fmt.Println("NewArticleRecord error:", err)
+		return nil, err;
+	}
 
-	// r, err := repo.db.NewArticleRecord(map[string]interface{}{
-	// 	"title":    title,
-	// 	"owner":    userID,
-	// 	"date":     time.Now().Format("01/02"),
-	// 	"board_id": boardID,
-	// })
-	// if err != nil {
-	// 	return err
-	// }
-	// err = repo.db.AddArticleRecordFileRecord(boardID, r)
+	err = repo.db.AddArticleRecordFileRecord(boardID, record)
+	if err != nil {
+		fmt.Println("AddArticleRecordFileRecord error:", err)
+		return nil, err;
+		
+	}
+	
+	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(content))
+	if err != nil {
+		fmt.Println("WriteBoardArticleFile error: %w", err)
+		return nil, err;
+	}
 
-	// return err
+	return record, nil
+}
 
-	return nil
+func (repo *repository) GetRawArticle(boardID, filename string) (string, error) {
+	data, err := repo.db.ReadBoardArticleFile(boardID, filename)
+
+	if err != nil {
+		fmt.Println("ReadrBoardArticleFile error: %w", err)
+		return "", err
+	}
+
+	return bbs.Big5ToUtf8(data), nil
 }
 
 type ForwardArticleToBoardRecord interface {

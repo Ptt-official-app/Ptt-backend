@@ -53,7 +53,9 @@ type Repository interface {
 	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error)
 	// CreateArticle
 	// TODO: return result from bbs response
-	CreateArticle(ctx context.Context, userID, boardID, title, article string) error
+	CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error)
+	// GetRawArticle
+	GetRawArticle(boardID, filename string) (string, error)
 	// ForwardArticleToBoard returns forwarding to board results
 	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (ForwardArticleToBoardRecord, error)
 }
