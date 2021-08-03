@@ -32,6 +32,11 @@ func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticl
 }
 
 func (repo *repository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error) {
+	// Append comment into board article file
+	err := repo.db.AppendBoardArticleFile(filename, bbs.Utf8ToBig5(text))
+	if err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 
@@ -54,7 +59,6 @@ func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, titl
 	if err != nil {
 		fmt.Println("AddArticleRecordFileRecord error:", err)
 		return nil, err
-
 	}
 
 	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(content))
