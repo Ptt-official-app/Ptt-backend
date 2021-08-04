@@ -44,9 +44,9 @@ func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, titl
 func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) (bbs.ArticleRecord, error) {
 	// get file name
 	now := time.Now().Format("01/02")
-	record, err := repo.db.NewArticleRecord(boardID, userID, now, title)
+	record, err := repo.db.CreateArticleRecord(boardID, userID, now, title)
 	if err != nil {
-		fmt.Println("NewArticleRecord error:", err)
+		fmt.Println("CreateArticleRecord error:", err)
 		return nil, err
 	}
 
