@@ -59,7 +59,7 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 		return
 	}
 
-	raw, err := delivery.usecase.GetRawArticle(record.Filename(), boardID)
+	raw, err := delivery.usecase.GetRawArticle(boardID, record.Filename())
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, err2 := w.Write(NewServerError(r, fmt.Errorf("get raw article error: %w", err)))
