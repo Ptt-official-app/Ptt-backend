@@ -88,7 +88,6 @@ func (usecase *usecase) GetArticleURL(boardID string, filename string) string {
 	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)
 }
 
-
 func (usecase *usecase) GetRawArticle(boardID, filename string) (string, error) {
 	raw, err := usecase.repo.GetRawArticle(boardID, filename)
 	if err != nil {

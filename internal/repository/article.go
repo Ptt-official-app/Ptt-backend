@@ -47,20 +47,20 @@ func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, titl
 	record, err := repo.db.NewArticleRecord(boardID, userID, now, title)
 	if err != nil {
 		fmt.Println("NewArticleRecord error:", err)
-		return nil, err;
+		return nil, err
 	}
 
 	err = repo.db.AddArticleRecordFileRecord(boardID, record)
 	if err != nil {
 		fmt.Println("AddArticleRecordFileRecord error:", err)
-		return nil, err;
-		
+		return nil, err
+
 	}
-	
+
 	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(content))
 	if err != nil {
 		fmt.Println("WriteBoardArticleFile error: %w", err)
-		return nil, err;
+		return nil, err
 	}
 
 	return record, nil

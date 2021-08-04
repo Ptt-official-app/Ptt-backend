@@ -87,7 +87,7 @@ func (repo *MockRepository) GetPopularArticles(ctx context.Context) ([]repositor
 }
 
 func (repo *MockRepository) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
-	return  &MockArticleRecord{
+	return &MockArticleRecord{
 		filename:       "filename1",
 		modified:       time.Time{},
 		recommendCount: 10,
