@@ -90,3 +90,26 @@ func NewNewBoardError(r *http.Request) []byte {
 
 	return b
 }
+
+// TokenPermission generates a error payload for telling client token is not pass
+func TokenPermissionError(r *http.Request, err error) []byte {
+	m := map[string]string{
+		"error":             "token is not pass",
+		"error_description": err.Error(),
+	}
+
+	b, _ := json.MarshalIndent(m, "", "  ")
+	return b
+}
+
+// NewNoPermissionForReadBoardArticlesError generates a error payload for telling client
+// they don't have permission to read boardID
+func NewNoPermissionForCreateBoardArticlesError(r *http.Request, boardID string) []byte {
+	m := map[string]string{
+		"error":             "no_permission_for_create_board_articles",
+		"error_description": "user don't have permission for create board article" + boardID,
+	}
+
+	b, _ := json.MarshalIndent(m, "", "  ")
+	return b
+}

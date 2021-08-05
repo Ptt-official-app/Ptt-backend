@@ -75,20 +75,24 @@ func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, board
 
 // CreateArticle create a new article on a board
 func (usecase *usecase) CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error) {
-	err := usecase.repo.CreateArticle(ctx, userID, boardID, title, article)
+	record, err := usecase.repo.CreateArticle(ctx, userID, boardID, title, article)
 	if err != nil {
 		return nil, err
 	}
 
-	articles, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
-	if err != nil {
-		return nil, fmt.Errorf("get article records failed: %w", err)
-	}
-
-	return articles[0], nil // todo: get first for temporary
+	return record, nil
 }
 
 func (usecase *usecase) GetArticleURL(boardID string, filename string) string {
 	// TODO: generate article url by config file
 	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)
+}
+
+func (usecase *usecase) GetRawArticle(boardID, filename string) (string, error) {
+	raw, err := usecase.repo.GetRawArticle(boardID, filename)
+	if err != nil {
+		return "", err
+	}
+
+	return raw, nil
 }
