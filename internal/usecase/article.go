@@ -3,6 +3,8 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"strings"
+	"unicode/utf8"
 
 	"github.com/Ptt-official-app/go-bbs"
 
@@ -19,7 +21,47 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 }
 
 func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
-	return nil, nil
+	cond := &ArticleSearchCond{
+		Title: filename,
+	}
+	articleRecord := usecase.GetBoardArticles(ctx, boardID, cond)
+
+	if articleRecord[0].Owner() == userID {
+		return nil, fmt.Errorf("Owners cannot push their own article")
+	}
+
+	article, err := usecase.GetBoardArticle(ctx, boardID, filename)
+	if err != nil {
+		return nil, fmt.Errorf("GetBoardArticle error: %w", err)
+	}
+
+	articleStr := string(article)
+
+	cur := 0
+	numRecommend := 0
+	for cur < len(articleStr) && cur >= 0 {
+		cur = strings.Index(articleStr[cur:], userID)
+		r, _ := utf8.DecodeLastRuneInString(articleStr[:cur])
+		if r == utf8.RuneError {
+			return nil, fmt.Errorf("DecodeLastRuneError in usecase UpdateUsefulness")
+		}
+		if numRecommend < 1 && string(r) == "\u2191" {
+			numRecommend++
+		}
+
+		if numRecommend > -1 && string(r) == "\u2193" {
+			numRecommend--
+		}
+	}
+
+	if (appendType == "\u2191" && numRecommend == 1) || (appendType == "\u2193" && numRecommend == -1) {
+		return nil, fmt.Errorf("Cannot push this time")
+	} else {
+
+		p := usecase.repo.GetPushRecord(ctx, userID, boardID, filename, appendType)
+	}
+
+	return p, nil
 }
 
 // AppendComment append comment to specific article
