@@ -41,6 +41,10 @@ func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, f
 	numRecommend := 0
 	for cur < len(articleStr) && cur >= 0 {
 		cur = strings.Index(articleStr[cur:], userID)
+		if cur < 0 {
+			break
+		}
+
 		r, _ := utf8.DecodeLastRuneInString(articleStr[:cur])
 		if r == utf8.RuneError {
 			return nil, fmt.Errorf("DecodeLastRuneError in usecase UpdateUsefulness")
