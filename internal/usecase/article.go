@@ -22,7 +22,7 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 
 func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
 	cond := &ArticleSearchCond{
-		Title: filename,
+		Filename: filename,
 	}
 	articleRecord := usecase.GetBoardArticles(ctx, boardID, cond)
 
@@ -39,7 +39,7 @@ func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, f
 
 	cur := 0
 	numRecommend := 0
-	for cur < len(articleStr) && cur >= 0 {
+	for {
 		cur = strings.Index(articleStr[cur:], userID)
 		if cur < 0 {
 			break
@@ -61,7 +61,6 @@ func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, f
 	if (appendType == "\u2191" && numRecommend == 1) || (appendType == "\u2193" && numRecommend == -1) {
 		return nil, fmt.Errorf("Cannot push this time")
 	} else {
-
 		p := usecase.repo.GetPushRecord(ctx, userID, boardID, filename, appendType)
 	}
 

@@ -9,6 +9,7 @@ import (
 )
 
 type ArticleSearchCond struct {
+	Filename                        string
 	Title                           string
 	Author                          string
 	RecommendCountValue             int
@@ -131,7 +132,8 @@ func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, co
 		// The board may not contain any article
 	}
 
-	if len(strings.TrimSpace(cond.Title)) > 0 ||
+	if len(strings.TrimSpace(cond.Filename)) > 0 ||
+		len(strings.TrimSpace(cond.Title)) > 0 ||
 		len(strings.TrimSpace(cond.Author)) > 0 ||
 		cond.RecommendCountGreaterEqualIsSet ||
 		cond.RecommendCountLessEqualIsSet {
@@ -192,6 +194,11 @@ func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []
 	var targetArticles []bbs.ArticleRecord
 
 	for _, f := range fileHeaders {
+		// filename should be exactly the same.
+		if cond.Filename != "" && strings.Compare(f.Filename(), cond.Filename) != 0 {
+			continue
+		}
+
 		if !strings.Contains(strings.ToLower(f.Title()), strings.ToLower(cond.Title)) {
 			continue
 		}
