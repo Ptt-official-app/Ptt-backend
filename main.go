@@ -16,7 +16,7 @@ import (
 )
 
 func main() {
-	var logLevel = flag.Uint("logLevel", 1, `log level: 0: Off; 1: Emergency; 2: Alert; 3: Critical; 4: Error; 5: Warning; 6: Notice; 7: Info; 8: Debug; 9: All`)
+	var logLevel = flag.Uint("logLevel", 4, `log level: 0: Emergency; 1: Alert; 2: Critical; 3: Error; 4: Warning; 5: Notice; 6: Info; 7: Debug`)
 	flag.Usage = func() {
 		os.Stderr.WriteString("Usage: \n  Ptt-backend [ options ]\n\n")
 		os.Stderr.WriteString("Options:\n")
