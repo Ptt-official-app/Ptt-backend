@@ -40,6 +40,7 @@ Ptt-backend 是做 [BBS (Bulletin Board System)](https://zh.wikipedia.org/wiki/B
 * [2021062101](https://docs.google.com/spreadsheets/d/1RGIQPN6KfiCzWRQe-BeTXFUTvdwytOv0Yhd5a8ixCLk/edit?usp=sharing)
 * [2021070501](https://docs.google.com/spreadsheets/d/1thxyY9jf2GkK3DMgGO1bAHWE3BmsFb4p5Ot5eAgbaII/edit?usp=sharing)
 * [2021072001](https://docs.google.com/spreadsheets/d/1Dv0eZNTLU_NKiehR15qp8iPXAXZ85j2tWj_7h1rxUKg/edit?usp=sharing)
+* [2021082101](https://docs.google.com/spreadsheets/d/1p-HTUe-x-6CMVUjmLXty8hPJuoNL_kn8YsCZlJrvRzM/edit?usp=sharing)
 
 ## 貢獻者相關：
 
