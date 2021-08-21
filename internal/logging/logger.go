@@ -78,7 +78,7 @@ type Logger interface {
 	// Debug: debug-level messages
 	Debugf(f string, v ...interface{})
 	// function for apply color and output to target file
-	Log(f string, setting LogSetting, v ...interface{})
+	Logf(f string, setting LogSetting, v ...interface{})
 }
 
 type logger struct {
@@ -98,47 +98,48 @@ func NewLogger() Logger {
 	}
 }
 
-// Emergencyf implements Logger.Emergencyf by printing Emergency level messages to standard output.
+// Emergencyf implements Logger.Emergencyf by printing Emergency level messages to Logger.output.
 func (l *logger) Emergencyf(f string, v ...interface{}) {
-	l.Log(f, Emergency, v...)
+	l.Logf(f, Emergency, v...)
 }
 
-// Alertf implements Logger.Alertf by printing Alert level messages to standard output.
+// Alertf implements Logger.Alertf by printing Alert level messages to Logger.output.
 func (l *logger) Alertf(f string, v ...interface{}) {
-	l.Log(f, Alert, v...)
+	l.Logf(f, Alert, v...)
 }
 
-// Criticalf implements Logger.Criticalf by printing Critical level messages to standard output.
+// Criticalf implements Logger.Criticalf by printing Critical level messages to Logger.output.
 func (l *logger) Criticalf(f string, v ...interface{}) {
-	l.Log(f, Critical, v...)
+	l.Logf(f, Critical, v...)
 }
 
-// Errorf implements Logger.Errorf by printing Error level messages to standard output.
+// Errorf implements Logger.Errorf by printing Error level messages to Logger.output.
 func (l *logger) Errorf(f string, v ...interface{}) {
-	l.Log(f, Error, v...)
+	l.Logf(f, Error, v...)
 }
 
-// Warningf implements Logger.Warningf by printing Warning level messages to standard output.
+// Warningf implements Logger.Warningf by printing Warning level messages to Logger.output.
 func (l *logger) Warningf(f string, v ...interface{}) {
-	l.Log(f, Warning, v...)
+	l.Logf(f, Warning, v...)
 }
 
-// Noticef implements Logger.Noticef by printing Notice level messages to standard output.
+// Noticef implements Logger.Noticef by printing Notice level messages to Logger.output.
 func (l *logger) Noticef(f string, v ...interface{}) {
-	l.Log(f, Notice, v...)
+	l.Logf(f, Notice, v...)
 }
 
-// Informationalf implements Logger.Informationalf by printing Informational level messages to standard output.
+// Informationalf implements Logger.Informationalf by printing Informational level messages to Logger.output.
 func (l *logger) Informationalf(f string, v ...interface{}) {
-	l.Log(f, Informational, v...)
+	l.Logf(f, Informational, v...)
 }
 
-// Debugf implements Logger.Debugf by printing Debug level messages to standard output.
+// Debugf implements Logger.Debugf by printing Debug level messages to logger.output.
 func (l *logger) Debugf(f string, v ...interface{}) {
-	l.Log(f, Debug, v...)
+	l.Logf(f, Debug, v...)
 }
 
-func (l *logger) Log(f string, setting LogSetting, v ...interface{}) {
+// Logf implements Logger.Logf by printing messages to logger.output with LogSetting.
+func (l *logger) Logf(f string, setting LogSetting, v ...interface{}) {
 	if l.level >= setting.Level {
 		fileinfo, err := l.output.Stat()
 		outStr := time.Now().Format("2006-01-02 15:04:05")
