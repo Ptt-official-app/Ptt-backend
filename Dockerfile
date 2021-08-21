@@ -30,6 +30,10 @@ COPY --from=Configure dump.shm .
 COPY conf/ /conf/
 COPY --from=Builder /root/Ptt-backend .
 
+RUN chown bbs:bbs -R dump.shm conf
+
 EXPOSE 8081/tcp
+
+USER bbs
 
 CMD [ "/Ptt-backend" ]
