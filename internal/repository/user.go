@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/go-bbs"
+
 	// TODO: remove direct access pttbbs, implement it in go-bbs package
 	"github.com/Ptt-official-app/go-bbs/pttbbs"
 )
@@ -63,6 +65,7 @@ func (repo *repository) GetUserArticles(_ context.Context, boardID string) ([]bb
 
 // TODO: no required method in go-bbs and we use a mock, replace it when available
 func (repo *repository) GetUserPreferences(_ context.Context, userID string) (map[string]string, error) {
+	var logger = logging.NewLogger()
 	var u bbs.UserRecord = nil
 	for _, it := range repo.userRecords {
 		if it.UserID() == userID {
@@ -141,6 +144,7 @@ func (repo *repository) DeleteUserDraft(_ context.Context, userID, draftID strin
 }
 
 func loadUserRecords(db *bbs.DB) ([]bbs.UserRecord, error) {
+	var logger = logging.NewLogger()
 	userRecords, err := db.ReadUserRecords()
 	if err != nil {
 		logger.Errorf("get user rec error: %v", err)

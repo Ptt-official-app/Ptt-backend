@@ -4,11 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/go-bbs"
 )
-
-var logger = logging.NewLogger()
 
 // Repository directly interacts with database via db handler.
 type Repository interface {
