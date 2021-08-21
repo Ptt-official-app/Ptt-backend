@@ -265,6 +265,11 @@ $ .\Ptt-backend.exe
 7. pr assign 給你自己
 8. 增加 reviewer
 
+
+### Test Sheet 腳本
+
+在 testing-script 裡面有可以簡單測試 Google Sheet 版本 Test Sheet 的腳本，不過目前只支援 Linux 或是 macOS 的系統 (是 bash 腳本)，歡迎多加利用。
+
 ### Q&A
 
 * 有測試相關問題想請教怎辦? 
