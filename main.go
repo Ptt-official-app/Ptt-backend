@@ -24,7 +24,9 @@ func main() {
 	}
 	flag.Parse()
 
-	os.Setenv("LOG_LEVEL", strconv.Itoa(int(*logLevel)))
+	if _, ok := os.LookupEnv("LOG_LEVEL"); !ok {
+		os.Setenv("LOG_LEVEL", strconv.Itoa(int(*logLevel)))
+	}
 
 	logger := logging.NewLogger()
 
