@@ -151,6 +151,9 @@ func (l *logger) Logf(f string, setting LogSetting, v ...interface{}) {
 
 		outStr += fmt.Sprintf(f, v...)
 		outStr += "\n"
-		l.output.WriteString(outStr)
+		_, err = l.output.WriteString(outStr)
+		if err != nil {
+			os.Stderr.WriteString(err.Error())
+		}
 	}
 }

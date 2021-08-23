@@ -3,6 +3,8 @@ package logging
 import (
 	"bufio"
 	"io"
+	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -11,7 +13,7 @@ import (
 
 // newFile returns a temporally file
 func newFile(testName string, t *testing.T) (f *os.File) {
-	f, err := os.CreateTemp(t.TempDir(), "_Ptt-backend_"+testName)
+	f, err := ioutil.TempFile(t.TempDir(), "_Ptt-backend_"+testName)
 	if err != nil {
 		t.Fatalf("TempFile %s: %s", testName, err)
 	}
@@ -31,13 +33,14 @@ var settingList []LogSetting = []LogSetting{
 
 func testLoggerLevel(t *testing.T, targetLevel uint) {
 	tempFile := newFile("testing level "+strconv.Itoa(int(targetLevel)), t)
-	defer func() {
-		tempFile.Close()
-	}()
 	testLogger := &logger{
 		output: tempFile,
 		level:  targetLevel,
 	}
+	defer func() {
+		tempFile.Close()
+		os.Remove(tempFile.Name())
+	}()
 	testLogger.Emergencyf("")
 	testLogger.Alertf("")
 	testLogger.Criticalf("")
@@ -46,7 +49,10 @@ func testLoggerLevel(t *testing.T, targetLevel uint) {
 	testLogger.Noticef("")
 	testLogger.Informationalf("")
 	testLogger.Debugf("")
-	tempFile.Seek(0, 0)
+	_, err := tempFile.Seek(0, 0)
+	if err != nil {
+		log.Fatalf("Get error %s\n", err.Error())
+	}
 	reader := bufio.NewReader(tempFile)
 	idx := 0
 	for line, _, err := reader.ReadLine(); ; line, _, err = reader.ReadLine() {
@@ -65,7 +71,7 @@ func testLoggerLevel(t *testing.T, targetLevel uint) {
 		if result[2] != settingList[idx].Name {
 			t.Fatalf("Expect log level %s, but get %s", settingList[idx].Name, result[2])
 		}
-		idx += 1
+		idx++
 	}
 
 	if idx-1 != int(targetLevel) {
