@@ -59,7 +59,7 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 	if len(allBoards) == 0 {
 		usecase.logger.Warningf("GetPopularBoards : GetBoards did not obtain data")
 	}
-	
+
 	filtedBoards := []bbs.BoardRecord{}
 	for index := range allBoards {
 		if shouldBeDisplayOnPouplarList(allBoards[index]) {
