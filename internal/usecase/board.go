@@ -82,7 +82,7 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 func shouldBeDisplayOnPouplarList(board bbs.BoardRecord) bool {
 	// Initially filter boards by board status or other values
 	// TODO:Need to add filter conditions,here is an example
-	if classID := board.ClassID(); classID != "" && board.IsClass() == false {
+	if classID := board.ClassID(); classID != "" && !board.IsClass() {
 		return true
 	}
 	return false
