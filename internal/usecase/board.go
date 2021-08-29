@@ -63,7 +63,7 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 
 	filtedBoards := []bbs.BoardRecord{}
 	for index := range allBoards {
-		if shouldBeDisplayOnPouplarList(&allBoards[index]) {
+		if shouldBeDisplayOnPouplarList(allBoards[index]) {
 			filtedBoards = append(filtedBoards, allBoards[index])
 		}
 	}
@@ -80,10 +80,10 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 	return (filtedBoards)[:100], nil
 }
 
-func shouldBeDisplayOnPouplarList(board *bbs.BoardRecord) bool {
+func shouldBeDisplayOnPouplarList(board bbs.BoardRecord) bool {
 	// Initially filter boards by board status or other values
 	// TODO:Need to add filter conditions,here is an example
-	if classID := (*board).ClassID(); classID != "" {
+	if classID := board.ClassID(); classID != "" && !board.IsClass() {
 		return true
 	}
 	return false

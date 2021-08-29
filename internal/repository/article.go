@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/Ptt-official-app/go-bbs"
@@ -31,6 +32,11 @@ func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticl
 }
 
 func (repo *repository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error) {
+	// Append comment into board article file
+	err := repo.db.AppendBoardArticleFile(filename, bbs.Utf8ToBig5(text))
+	if err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 
@@ -40,21 +46,39 @@ func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, titl
 
 // CreateArticle
 // TODO: return result from bbs response
-func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) error {
+func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) (bbs.ArticleRecord, error) {
 	// get file name
-
-	r, err := repo.db.NewArticleRecord(map[string]interface{}{
-		"title":    title,
-		"owner":    userID,
-		"date":     time.Now().Format("01/02"),
-		"board_id": boardID,
-	})
+	now := time.Now().Format("01/02")
+	record, err := repo.db.CreateArticleRecord(boardID, userID, now, title)
 	if err != nil {
-		return err
+		fmt.Println("CreateArticleRecord error:", err)
+		return nil, err
 	}
-	err = repo.db.AddArticleRecordFileRecord(boardID, r)
 
-	return err
+	err = repo.db.AddArticleRecordFileRecord(boardID, record)
+	if err != nil {
+		fmt.Println("AddArticleRecordFileRecord error:", err)
+		return nil, err
+	}
+
+	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(content))
+	if err != nil {
+		fmt.Println("WriteBoardArticleFile error: %w", err)
+		return nil, err
+	}
+
+	return record, nil
+}
+
+func (repo *repository) GetRawArticle(boardID, filename string) (string, error) {
+	data, err := repo.db.ReadBoardArticleFile(boardID, filename)
+
+	if err != nil {
+		fmt.Println("ReadrBoardArticleFile error: %w", err)
+		return "", err
+	}
+
+	return bbs.Big5ToUtf8(data), nil
 }
 
 type ForwardArticleToBoardRecord interface {

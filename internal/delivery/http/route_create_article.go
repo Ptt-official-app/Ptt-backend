@@ -27,6 +27,10 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		_, err := w.Write(TokenPermissionError(r, err))
+		if err != nil {
+			delivery.logger.Errorf("write NewNoRequiredParameterError error: %w", err)
+		}
 		return
 	}
 
@@ -37,17 +41,15 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 		"user_id":  userID,
 	})
 	if err != nil {
-		// TODO: record unauthorized access
 		w.WriteHeader(http.StatusUnauthorized)
-		_, err2 := w.Write(NewPermissionError(r, fmt.Errorf("check add article permission: %w", err)))
+		_, err2 := w.Write(NewNoPermissionForCreateBoardArticlesError(r, boardID))
 		if err2 != nil {
-			delivery.logger.Errorf("write NewPermissionError error: %w", err)
+			delivery.logger.Errorf("write NewServerError error: %w", err)
 		}
 		return
 	}
 
-	_, err = delivery.usecase.CreateArticle(ctx, userID, boardID, title, article)
-	// 改成 _ 避免 declared but not used
+	record, err := delivery.usecase.CreateArticle(ctx, userID, boardID, title, article)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, err2 := w.Write(NewServerError(r, fmt.Errorf("create article error: %w", err)))
@@ -57,18 +59,28 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 		return
 	}
 
+	raw, err := delivery.usecase.GetRawArticle(boardID, record.Filename())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		_, err2 := w.Write(NewServerError(r, fmt.Errorf("get raw article error: %w", err)))
+		if err2 != nil {
+			delivery.logger.Errorf("write NewServerError error: %w", err)
+		}
+		return
+	}
+
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"raw": r.PostForm.Encode(),
+			"raw": raw,
 			"parsed": map[string]interface{}{
 				"is_header_modied": false,
 				"author_id":        userID,
-				"author_name":      nil, // res.Owner(), // 等待 go-bbs articles 實作
-				"title":            nil, // res.Title(), // 等待 go-bbs articles 實作
-				"post_time":        nil, // res.Date(), // 等待 go-bbs articles 實作
-				"board_name":       "",  // todo: go-bbs articles 需實作新介面取得資訊
+				"board_name":       boardID, // todo: go-bbs articles 需實作新介面取得資訊
+				"author_name":      record.Owner(),
+				"title":            record.Title(),
+				"post_time":        record.Date(),
 				"text": map[string]string{
-					"text": "", // todo: // todo: go-bbs articles 需實作新介面取得資訊
+					"text": article, // todo: go-bbs articles 需實作新介面取得資訊
 				},
 				"signature":   map[string]string{},
 				"sender_info": map[string]string{}, // todo: go-bbs articles 需實作新介面取得資訊(user info)
@@ -79,6 +91,6 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 	b, _ := json.MarshalIndent(responseMap, "", "  ")
 	_, err = w.Write(b)
 	if err != nil {
-		delivery.logger.Errorf("getBoardTreasures write success response err: %w", err)
+		delivery.logger.Errorf("getBoardArticles write success response err: %w", err)
 	}
 }

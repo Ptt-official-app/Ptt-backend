@@ -5,10 +5,14 @@ services:
     image: swaggerapi/swagger-ui:v3.42.0
     container_name: swagger
     ports:
-      - 8081:8080
+      - 8080:8080
     volumes:
       - .:/tmp
     environment:
       SWAGGER_JSON: '/tmp/swagger.yaml'
       BASE_URL: '/swagger'
 
+  ptt-backend:
+    build: ./
+    ports:
+      - 8081:8081

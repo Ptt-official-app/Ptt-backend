@@ -3,7 +3,7 @@ module github.com/Ptt-official-app/Ptt-backend
 go 1.16
 
 require (
-	github.com/Ptt-official-app/go-bbs v0.7.0
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/Ptt-official-app/go-bbs v0.11.0
+	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/pelletier/go-toml v1.8.1
 )

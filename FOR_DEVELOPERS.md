@@ -131,38 +131,57 @@ ASCII 圖片產圖引擎
 測試案例盡量避免只有一行 reflect.DeepEqual，可以使用 reflect.DeepEqual，
 但是如果能夠多比對其他欄位輸出更多錯誤訊息會對未來的開發者更有幫助。
 
+---
+
 ## 開發環境建置
 
 安裝下列的應用程式來建構開發環境：
 
-| 應用程式名稱 | 應用程式版本(有特定版本才填寫) | 安裝要求 |
-| ------- | ------- | ------- |
-|[Golang](https://golang.org/dl/)|1.16 以上|必要|
-|[GoLand](https://www.jetbrains.com/go/promo/)| |如果使用 GoLand * 推薦給新手|
-|[Sublime Text 3](https://classic.yarnpkg.com/zh-Hant/)| |如果使用 Sublime Text，記得安裝 Gofmt 套件|
-|[docker engine](https://docs.docker.com/engine/install/)| 1.13.0+ | |
-|[docker compose](https://docs.docker.com/compose/install/)| 1.10.0+ |使用 `docker compose` 執行本專案時|
+| 應用程式名稱                                               | 應用程式版本(有特定版本才填寫) | 安裝要求                                   |
+| -------                                                    | -------                        | -------                                    |
+| [Golang](https://golang.org/dl/)                           | 1.16 以上                      | 必要                                       |
+| [GoLand](https://www.jetbrains.com/go/promo/)              |                                | 如果使用 GoLand * 推薦給新手               |
+| [Sublime Text 3](https://classic.yarnpkg.com/zh-Hant/)     |                                | 如果使用 Sublime Text，記得安裝 Gofmt 套件 |
+| [docker engine](https://docs.docker.com/engine/install/)   | 1.13.0+                        |                                            |
+| [docker compose](https://docs.docker.com/compose/install/) | 1.10.0+                        | 使用 `docker compose` 執行本專案時         |
 
 ### Sublime Text 3 的套件
 
 要使用 Sublime Text 3，請安裝以下套件。
 
-| 套件 | 安裝要求 |
-| ------- | ------- |
-|[Gofmt](https://packagecontrol.io/packages/Gofmt)|可選|
-|[ConvertToUTF8](https://ephrain.net/sublime-text-%E8%AE%93-sublime-text-%E6%94%AF%E6%8F%B4-big5-%E7%B7%A8%E7%A2%BC%E7%9A%84%E6%96%87%E5%AD%97%E6%AA%94/)|可選|
+| 套件                                                                                                                                                     | 安裝要求 |
+| -------                                                                                                                                                  | -------  |
+| [Gofmt](https://packagecontrol.io/packages/Gofmt)                                                                                                        | 必須     |
+| [ConvertToUTF8](https://ephrain.net/sublime-text-%E8%AE%93-sublime-text-%E6%94%AF%E6%8F%B4-big5-%E7%B7%A8%E7%A2%BC%E7%9A%84%E6%96%87%E5%AD%97%E6%AA%94/) | 可選     |
 
 ---
 
 ## 安裝與設定
 
-### Clone Ptt-backend 專案
+### 使用 docker-compose
+
+* 請使用 1.10.0 以上的版本，可以使用 `docker-compose version` 來確認
+
+```bash
+$ docker-compose up
+```
+
+### 使用 docker
+
+```bash
+$ docker build -t ptt-backend
+$ docker run -p 8081:8081 --name ptt-backend
+```
+
+### 手動安裝
+
+#### Clone Ptt-backend 專案
 
 ```bash
 $ git clone https://github.com/Ptt-official-app/Ptt-backend.git
 ```
 
-### 下載測試伺服器靜態資料與配置設定檔
+#### 下載測試伺服器靜態資料與配置設定檔
 ```bash
 # 下載 BBS Home
 $ wget http://pttapp.cc/data-archives/bbs_backup_lastest.tar.xz
@@ -179,14 +198,15 @@ $ tar -jxvf dump.shm.lastest.tar.bz2
 
 ## 編譯與執行
 
-
 請在工作目錄 `./Ptt-backend` 下執行此命令。
 
 ### 狀況 1: 直接使用 `go build`
+
 ```bash
 $ ./make.bash build
 $ ./Ptt-backend
 ```
+
 如果是 windows 的話
 
 ```bat
@@ -264,6 +284,11 @@ $ .\Ptt-backend.exe
 6. 開發完後推送 [pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
 7. pr assign 給你自己
 8. 增加 reviewer
+
+
+### Test Sheet 腳本
+
+在 testing-script 裡面有可以簡單測試 Google Sheet 版本 Test Sheet 的腳本，不過目前只支援 Linux 或是 macOS 的系統 (是 bash 腳本)，歡迎多加利用。
 
 ### Q&A
 
