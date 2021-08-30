@@ -32,7 +32,7 @@ func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, f
 
 	article, err := usecase.GetBoardArticle(ctx, boardID, filename)
 	if err != nil {
-		return nil, fmt.Errorf("GetBoardArticle error: %w", err)
+		return nil, fmt.Errorf("UpdateUsefulness error: %w", err)
 	}
 
 	articleStr := string(article)
@@ -60,10 +60,12 @@ func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, f
 
 	if (appendType == "\u2191" && numRecommend == 1) || (appendType == "\u2193" && numRecommend == -1) {
 		return nil, fmt.Errorf("Cannot push this time")
-	} else {
-		p := usecase.repo.GetPushRecord(ctx, userID, boardID, filename, appendType)
 	}
 
+	p, err := usecase.repo.AppendComment(ctx, userID, boardID, filename, appendType, "")
+	if err != nil {
+		return nil, fmt.Errorf("UpdateUsefulness error: %w", err)
+	}
 	return p, nil
 }
 
