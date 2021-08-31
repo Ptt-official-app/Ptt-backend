@@ -21,13 +21,21 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 }
 
 func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
-	cond := &ArticleSearchCond{
-		Filename: filename,
-	}
-	articleRecord := usecase.GetBoardArticles(ctx, boardID, cond)
+	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
 
-	if articleRecord[0].Owner() == userID {
-		return nil, fmt.Errorf("Owners cannot push their own article")
+	if err != nil {
+		return nil, fmt.Errorf("UpdateUsefulness error: %w", err)
+	}
+
+	var owner string
+	for _, record := range articleRecords {
+		if record.Filename() == filename {
+			owner = record.Owner()
+		}
+	}
+
+	if owner == userID {
+		return nil, fmt.Errorf("UpdateUsefuleness error: Owners cannot push their own article")
 	}
 
 	article, err := usecase.GetBoardArticle(ctx, boardID, filename)
@@ -47,7 +55,7 @@ func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, f
 
 		r, _ := utf8.DecodeLastRuneInString(articleStr[:cur])
 		if r == utf8.RuneError {
-			return nil, fmt.Errorf("DecodeLastRuneError in usecase UpdateUsefulness")
+			return nil, fmt.Errorf("UpdateUsefulness error: DecodeLastRuneError")
 		}
 		if numRecommend < 1 && string(r) == "\u2191" {
 			numRecommend++

@@ -18,14 +18,12 @@ func TestSearchArticles(t *testing.T) {
 	}
 
 	mockArticle1 := MockArticleRecord{
-		filename:       "discuss_writing_article",
 		recommendCount: 10,
 		owner:          "SYSOP",
 		title:          "[討論] 偶爾要發個廢文",
 	}
 
 	mockArticle2 := MockArticleRecord{
-		filename:       "unicode123",
 		recommendCount: -20,
 		owner:          "XDXD",
 		title:          "[問題] UNICODE",
@@ -34,7 +32,6 @@ func TestSearchArticles(t *testing.T) {
 	cases := []TestCase{
 		{
 			input: &ArticleSearchCond{
-				Filename:                        "discuss_writing_article",
 				Title:                           "廢文",
 				Author:                          "s",
 				RecommendCountGreaterEqual:      0,
@@ -46,7 +43,6 @@ func TestSearchArticles(t *testing.T) {
 		},
 		{
 			input: &ArticleSearchCond{
-				Filename:                     "",
 				Title:                        "",
 				Author:                       "X",
 				RecommendCountLessEqual:      10,
@@ -65,12 +61,6 @@ func TestSearchArticles(t *testing.T) {
 				Author: "sysop",
 			},
 			expectedItems: []bbs.ArticleRecord{&mockArticle1},
-		},
-		{
-			input: &ArticleSearchCond{
-				Filename: "unicode123",
-			},
-			expectedItems: []bbs.ArticleRecord{&mockArticle2},
 		},
 	}
 

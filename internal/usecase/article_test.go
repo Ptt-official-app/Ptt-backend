@@ -26,6 +26,30 @@ func TestGetPopularArticles(t *testing.T) {
 	}
 }
 
+func TestUpdateUsefulness(t *testing.T) {
+	repo := &MockRepository{}
+	userID := "mockUserID"
+	boardID := "board1"
+	filename := "filename1"
+	appendType := "↑"
+
+	usecase := NewUsecase(&config.Config{}, repo)
+
+	record, err := usecase.UpdateUsefulness(context.TODO(), userID, boardID, filename, appendType)
+
+	if err != nil {
+		t.Errorf("UpdateUsefulness expected err == nil, got %v", err)
+	}
+
+	if record.Type() != appendType {
+		t.Errorf("Push record with incorrect appendType, want %s, get %s", appendType, record.Type())
+	}
+
+	if record.ID() != userID {
+		t.Errorf("Push record with incorrect userID, want %s, get %s", userID, record.ID())
+	}
+}
+
 func TestForwardArticleToEmail(t *testing.T) {
 	repo := &MockRepository{}
 
