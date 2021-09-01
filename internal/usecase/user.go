@@ -77,12 +77,12 @@ func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]i
 		for index := range articleRecords {
 			if articleRecords[index].Owner() == userID {
 				dataItems = append(dataItems, map[string]interface{}{
-					"board_id":        board.BoardID(), 
+					"board_id":        board.BoardID(),
 					"filename":        articleRecords[index].Filename(),
 					"modified_time":   articleRecords[index].Modified(),
 					"recommend_count": articleRecords[index].Recommend(),
-					"comment_count":   0,  // FIXME: use concrete value rather than 0
-					"post_date":       articleRecords[index].Date(), 
+					"comment_count":   0, // FIXME: use concrete value rather than 0
+					"post_date":       articleRecords[index].Date(),
 					"title":           articleRecords[index].Title(),
 					"money":           articleRecords[index].Money(),
 					"owner":           articleRecords[index].Owner(),
