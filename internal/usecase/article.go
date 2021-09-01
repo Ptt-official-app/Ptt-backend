@@ -67,7 +67,7 @@ func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, f
 	}
 
 	if (appendType == "\u2191" && numRecommend == 1) || (appendType == "\u2193" && numRecommend == -1) {
-		return nil, fmt.Errorf("Cannot push this time")
+		return nil, fmt.Errorf("User with userID:%s has already pushed.", userID)
 	}
 
 	p, err := usecase.repo.AppendComment(ctx, userID, boardID, filename, appendType, "")
