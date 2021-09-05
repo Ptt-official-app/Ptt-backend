@@ -41,7 +41,7 @@ func TestGetClassesList(t *testing.T) {
 	responseData := responseMap["data"]
 	for i, d := range responseData {
 		board := d.(map[string]interface{})
-		expectedID := fmt.Sprintf("%v", i+1)
+		expectedID := fmt.Sprintf("%v", i+ClassIDBase)
 		if board["type"] == "class" && board["id"] != expectedID {
 			t.Errorf("handler returned unexpected body, id not match: got %v want %v",
 				board, expectedID)
