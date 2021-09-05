@@ -72,7 +72,7 @@ func (delivery *Delivery) getClassesList(w http.ResponseWriter, r *http.Request,
 	for bid, b := range boards {
 		m := marshalBoardHeader(b)
 		if b.IsClass() {
-			m["id"] = fmt.Sprintf("%v", bid+1)
+			m["id"] = fmt.Sprintf("%v", bid + ClassIDBase)
 		}
 		dataList = append(dataList, m)
 	}
