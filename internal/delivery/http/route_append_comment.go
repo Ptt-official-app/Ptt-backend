@@ -68,6 +68,15 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 	}
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		m := map[string]string{
+			"error":             "append_comment_error",
+			"error_description": err.Error(),
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("AppendComment error response err: %w", err)
+		}
 		return
 	}
 
