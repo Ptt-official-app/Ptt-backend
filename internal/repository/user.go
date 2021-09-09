@@ -133,7 +133,12 @@ func (repo *repository) GetUserDrafts(_ context.Context, userID, draftID string)
 }
 
 func (repo *repository) UpdateUserDraft(_ context.Context, userID, draftID string, text []byte) (bbs.UserDraft, error) {
-	return nil, nil
+	content := bbs.NewUserDraft(text)
+	err := repo.db.WriteUserDraft(userID, draftID, content)
+	if err != nil {
+		return nil, err
+	}
+	return content, nil
 }
 
 func (repo *repository) DeleteUserDraft(_ context.Context, userID, draftID string) error {

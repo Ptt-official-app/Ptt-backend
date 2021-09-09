@@ -1,7 +1,11 @@
+github.com/Ptt-official-app/go-bbs v0.8.1 h1:1nz8CSJ20ymafek4JMdc3zXmdErk1t7kHepELNxww2M=
+github.com/Ptt-official-app/go-bbs v0.8.1/go.mod h1:DpQzgRPn7UaJulx7Sh/w3eQTqCGFCA/xVmmWL6wV81M=
 github.com/Ptt-official-app/go-bbs v0.10.2 h1:gChx9wVjeHVh2UXqB83Di+1Ow9vU6dzRcoCF5E4BP6k=
 github.com/Ptt-official-app/go-bbs v0.10.2/go.mod h1:GIvqHmbZxpDvbs4K75xKyvbttkNFHotZtinN4hBSl6g=
 github.com/Ptt-official-app/go-bbs v0.11.0 h1:yqL7ptcXJ3VoKO2t+TLhXYCrWZ+wpNwN8w7xgCXK4N0=
 github.com/Ptt-official-app/go-bbs v0.11.0/go.mod h1:DpQzgRPn7UaJulx7Sh/w3eQTqCGFCA/xVmmWL6wV81M=
+github.com/Ptt-official-app/go-bbs v0.11.1 h1:Y8wORywM5jugu5MIie5QGZHC0Is027ImRDg3EWdAsvQ=
+github.com/Ptt-official-app/go-bbs v0.11.1/go.mod h1:DpQzgRPn7UaJulx7Sh/w3eQTqCGFCA/xVmmWL6wV81M=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/dgrijalva/jwt-go v3.2.0+incompatible/go.mod h1:E3ru+11k8xSBh+hMPgOLZmtrrCbhqsmaPHjLKYnJCaQ=

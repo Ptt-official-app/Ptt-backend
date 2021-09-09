@@ -435,6 +435,7 @@ func (delivery *Delivery) updateUserDraft(w http.ResponseWriter, r *http.Request
 	}
 
 	buf, err := delivery.usecase.UpdateUserDraft(ctx, userID, draftID, text)
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		m := map[string]string{
