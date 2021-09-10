@@ -25,6 +25,34 @@ type PushRecord interface {
 	Time() time.Time
 }
 
+type Push struct {
+	appendType string
+	id         string
+	ipAddr     string
+	text       string
+	time       time.Time
+}
+
+func (p *Push) Type() string {
+	return p.appendType
+}
+
+func (p *Push) ID() string {
+	return p.id
+}
+
+func (p *Push) IPAddr() string {
+	return p.ipAddr
+}
+
+func (p *Push) Text() string {
+	return p.text
+}
+
+func (p *Push) Time() time.Time {
+	return p.time
+}
+
 func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error) {
 	// Note: go-bbs has not implemented this yet
 	// TODO: delegate to repo.db when it is ready
@@ -37,7 +65,15 @@ func (repo *repository) AppendComment(ctx context.Context, userID, boardID, file
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+
+	p := &Push{
+		appendType: appendType,
+		id:         userID,
+		ipAddr:     "", // not sure how to get IPAddr
+		text:       text,
+		time:       time.Now(),
+	}
+	return p, nil
 }
 
 func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, title, content string) (bbs.ArticleRecord, error) {
