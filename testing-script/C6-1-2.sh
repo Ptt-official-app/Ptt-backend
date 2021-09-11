@@ -14,7 +14,7 @@ NEW_FILENAME=`curl -v -s http://localhost:8081/v1/boards/test/articles -H "Autho
 
 echo $NEW_FILENAME
 
-curl -v http://localhost:8081/v1/boards/test/articles/$NEW_FILENAME -d 'action=append_comment'  --data-urlencode 'type＝推' -d 'text=test push'
+curl -v http://localhost:8081/v1/boards/test/articles/$NEW_FILENAME -d 'action=append_comment'  --data-urlencode 'type=推' --data-urlencode 'text=test push'
 
 
 

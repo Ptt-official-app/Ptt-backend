@@ -6,7 +6,8 @@
 
 
 ACCESS_TOKEN=`./get_sysop_token.sh`
-curl -v -s http://localhost:8081/v1/boards/test/articles -H "Authorization: bearer $ACCESS_TOKEN" -d 'action=add_article' --data-urlencode 'title=[測試] test' --data-urlencode 'article=12345'
+curl -v -s http://localhost:8081/v1/boards/test/articles -H "Authorization: bearer $ACCESS_TOKEN" -d 'action=add_article' --data-urlencode 'title=[測試] test0904' --data-urlencode 'article=1234中文5'
 
 
-curl -v -s http://localhost:8081/v1/boards/test/articles -H "Authorization: bearer $ACCESS_TOKEN" 
+# curl -v -s http://localhost:8081/v1/boards/test/articles -H "Authorization: bearer $ACCESS_TOKEN" 
+# curl -v -s http://localhost:8081/v1/boards/test/articles/M.1630766114.A.4BB -H "Authorization: bearer $ACCESS_TOKEN" 

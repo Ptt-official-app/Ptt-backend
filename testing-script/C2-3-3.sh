@@ -8,6 +8,6 @@ if [ "$#" -lt 2 ]; then
 	exit -1
 fi
 
-curl http://localhost:8081/v1/users/$1/favorites -H "Authorization: bearer $2" -d 'action=add_favorite' -d 'type=folder' -d 'totle=test'
+curl http://localhost:8081/v1/users/$1/favorites -H "Authorization: bearer $2" -d 'action=add_favorite' -d 'type=folder' -d 'title=test'
 
 curl http://localhost:8081/v1/users/$1/favorites -H "Authorization: bearer $2"

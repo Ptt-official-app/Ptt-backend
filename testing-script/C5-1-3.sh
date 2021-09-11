@@ -11,4 +11,4 @@ fi
 ACCESS_TOKEN=`./get_sysop_token.sh`
 
 # curl -s http://localhost:8081/v1/boards/SYSOP/articles -H "Authorization: bearer $ACCESS_TOKEN" -d action=add_article --data-urlencode title=Test --data-urlencode article=Test
-curl -s http://localhost:8081/v1/boards/test/articles?recommend_count_gt=10 -H "Authorization: bearer $ACCESS_TOKEN"
+curl -s http://localhost:8081/v1/boards/test/articles?recommend_count_ge=1 -H "Authorization: bearer $ACCESS_TOKEN"
