@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 // getClasses HandleFunc handles path start with `/v1/classes`
@@ -52,6 +53,13 @@ func (delivery *Delivery) getClassesList(w http.ResponseWriter, r *http.Request,
 		}
 	}
 
+	if classID != "1" {
+		i, err := strconv.Atoi(classID)
+		if err == nil {
+			classID = fmt.Sprintf("%v", i-ClassIDBase)
+		}
+	}
+
 	boards, err := delivery.usecase.GetClasses(context.Background(), userID, classID)
 	if err != nil {
 		delivery.logger.Warningf("find classes %s failed: %v", classID, err)
@@ -72,7 +80,7 @@ func (delivery *Delivery) getClassesList(w http.ResponseWriter, r *http.Request,
 	for bid, b := range boards {
 		m := marshalBoardHeader(b)
 		if b.IsClass() {
-			m["id"] = fmt.Sprintf("%v", bid+ClassIDBase)
+			m["id"] = fmt.Sprintf("%v", bid+1+ClassIDBase)
 		}
 		dataList = append(dataList, m)
 	}

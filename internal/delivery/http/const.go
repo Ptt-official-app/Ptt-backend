@@ -1,5 +1,5 @@
 package http
 
 const (
-	ClassIDBase = 2
+	ClassIDBase = 1
 )
