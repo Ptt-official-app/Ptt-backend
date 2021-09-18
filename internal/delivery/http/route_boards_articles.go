@@ -46,29 +46,41 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 
 	recommendCountGreaterEqual, err := getRecommendCount("recommend_count_ge")
 	if err != nil {
-		delivery.logger.Errorf("recommend_count_ge should be integer")
 		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write(NewParameterShouldBeIntegerError(r, "recommend_count_ge"))
+		if err != nil {
+			delivery.logger.Errorf("got error %w when write ParameterShouldBeIntegerError", err)
+		}
 		return
 	}
 
 	recommendCountGreaterThan, err := getRecommendCount("recommend_count_gt")
 	if err != nil {
-		delivery.logger.Errorf("recommend_count_gt should be integer")
 		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write(NewParameterShouldBeIntegerError(r, "recommend_count_gt"))
+		if err != nil {
+			delivery.logger.Errorf("got error %w when write ParameterShouldBeIntegerError", err)
+		}
 		return
 	}
 
 	recommendCountLessEqual, err := getRecommendCount("recommend_count_le")
 	if err != nil {
-		delivery.logger.Errorf("recommend_count_le should be integer")
 		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write(NewParameterShouldBeIntegerError(r, "recommend_count_le"))
+		if err != nil {
+			delivery.logger.Errorf("got error %w when write ParameterShouldBeIntegerError", err)
+		}
 		return
 	}
 
 	recommendCountLessThan, err := getRecommendCount("recommend_count_lt")
 	if err != nil {
-		delivery.logger.Errorf("recommend_count_lt should be integer")
 		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write(NewParameterShouldBeIntegerError(r, "recommend_count_lt"))
+		if err != nil {
+			delivery.logger.Errorf("got error %w when write ParameterShouldBeIntegerError", err)
+		}
 		return
 	}
 

@@ -282,6 +282,19 @@ func TestGetBoardArticlesFunction(t *testing.T) {
 	if rr.Code != http.StatusBadRequest {
 		t.Fatalf("expect status code %d but got %d", http.StatusBadRequest, rr.Code)
 	}
+	decoder = json.NewDecoder(rr.Body)
+	actual = make(map[string]interface{})
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("decode body error: %s", err.Error())
+	}
+	expect = map[string]interface{}{
+		"error":             "parameter_should_be_integer",
+		"error_description": "recommend_count_gt should be integer",
+	}
+	if !reflect.DeepEqual(expect, actual) {
+		t.Fatalf("expect %v, but get %v", expect, actual)
+	}
 
 	v = url.Values{}
 	v.Set("recommend_count_ge", "a")
@@ -292,6 +305,19 @@ func TestGetBoardArticlesFunction(t *testing.T) {
 	delivery.getBoardArticles(rr, req, "test")
 	if rr.Code != http.StatusBadRequest {
 		t.Fatalf("expect status code %d but got %d", http.StatusBadRequest, rr.Code)
+	}
+	decoder = json.NewDecoder(rr.Body)
+	actual = make(map[string]interface{})
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("decode body error: %s", err.Error())
+	}
+	expect = map[string]interface{}{
+		"error":             "parameter_should_be_integer",
+		"error_description": "recommend_count_ge should be integer",
+	}
+	if !reflect.DeepEqual(expect, actual) {
+		t.Fatalf("expect %v, but get %v", expect, actual)
 	}
 
 	v = url.Values{}
@@ -304,6 +330,19 @@ func TestGetBoardArticlesFunction(t *testing.T) {
 	if rr.Code != http.StatusBadRequest {
 		t.Fatalf("expect status code %d but got %d", http.StatusBadRequest, rr.Code)
 	}
+	decoder = json.NewDecoder(rr.Body)
+	actual = make(map[string]interface{})
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("decode body error: %s", err.Error())
+	}
+	expect = map[string]interface{}{
+		"error":             "parameter_should_be_integer",
+		"error_description": "recommend_count_lt should be integer",
+	}
+	if !reflect.DeepEqual(expect, actual) {
+		t.Fatalf("expect %v, but get %v", expect, actual)
+	}
 
 	v = url.Values{}
 	v.Set("recommend_count_le", "a")
@@ -314,5 +353,18 @@ func TestGetBoardArticlesFunction(t *testing.T) {
 	delivery.getBoardArticles(rr, req, "test")
 	if rr.Code != http.StatusBadRequest {
 		t.Fatalf("expect status code %d but got %d", http.StatusBadRequest, rr.Code)
+	}
+	decoder = json.NewDecoder(rr.Body)
+	actual = make(map[string]interface{})
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("decode body error: %s", err.Error())
+	}
+	expect = map[string]interface{}{
+		"error":             "parameter_should_be_integer",
+		"error_description": "recommend_count_le should be integer",
+	}
+	if !reflect.DeepEqual(expect, actual) {
+		t.Fatalf("expect %v, but get %v", expect, actual)
 	}
 }
