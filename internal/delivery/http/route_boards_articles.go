@@ -29,33 +29,86 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	var recommendCountGreaterEqual, recommendCountLessEqual int
+	var recommendCountGreater, recommendCountLess int
 	var recommendCountGreaterEqualIsSet, recommendCountLessEqualIsSet bool
 	queryParam := r.URL.Query()
-	recommendCountGreaterEqualParam := queryParam.Get("recommend_count_ge")
-	recommendCountGreaterEqualIsSet = recommendCountGreaterEqualParam != ""
-	recommendCountGreaterEqual, err = strconv.Atoi(recommendCountGreaterEqualParam)
+	getRecommendCount := func(name string) (*int, error) {
+		recommendCountParam := queryParam.Get(name)
+		if recommendCountParam == "" {
+			return nil, nil
+		}
+		recommendCount, err := strconv.Atoi(recommendCountParam)
+		if err != nil {
+			return nil, err
+		}
+		return &recommendCount, nil
+	}
 
-	if err != nil && recommendCountGreaterEqualIsSet {
+	recommendCountGreaterEqual, err := getRecommendCount("recommend_count_ge")
+	if err != nil {
 		delivery.logger.Errorf("recommend_count_ge should be integer")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	recommendCountLessEqualParam := queryParam.Get("recommend_count_le")
-	recommendCountLessEqualIsSet = recommendCountLessEqualParam != ""
-	recommendCountLessEqual, err = strconv.Atoi(recommendCountLessEqualParam)
-	if err != nil && recommendCountLessEqualIsSet {
+	recommendCountGreaterThan, err := getRecommendCount("recommend_count_gt")
+	if err != nil {
+		delivery.logger.Errorf("recommend_count_gt should be integer")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	recommendCountLessEqual, err := getRecommendCount("recommend_count_le")
+	if err != nil {
 		delivery.logger.Errorf("recommend_count_le should be integer")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
+	recommendCountLessThan, err := getRecommendCount("recommend_count_lt")
+	if err != nil {
+		delivery.logger.Errorf("recommend_count_lt should be integer")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if recommendCountLessThan == nil && recommendCountLessEqual == nil {
+		recommendCountLessEqualIsSet = false
+	} else if recommendCountLessThan != nil && recommendCountLessEqual != nil {
+		recommendCountLessEqualIsSet = true
+		recommendCountLess = *recommendCountLessThan - 1
+		if recommendCountLess > *recommendCountLessEqual {
+			recommendCountLess = *recommendCountLessEqual
+		}
+	} else if recommendCountLessThan != nil {
+		recommendCountLessEqualIsSet = true
+		recommendCountLess = *recommendCountLessThan - 1
+	} else {
+		recommendCountLessEqualIsSet = true
+		recommendCountLess = *recommendCountLessEqual
+	}
+
+	if recommendCountGreaterThan == nil && recommendCountGreaterEqual == nil {
+		recommendCountGreaterEqualIsSet = false
+	} else if recommendCountGreaterThan != nil && recommendCountGreaterEqual != nil {
+		recommendCountGreaterEqualIsSet = true
+		recommendCountGreater = *recommendCountGreaterThan + 1
+		if recommendCountGreater < *recommendCountGreaterEqual {
+			recommendCountGreater = *recommendCountGreaterEqual
+		}
+	} else if recommendCountGreaterThan != nil {
+		recommendCountGreaterEqualIsSet = true
+		recommendCountGreater = *recommendCountGreaterThan + 1
+	} else {
+		recommendCountGreaterEqualIsSet = true
+		recommendCountGreater = *recommendCountGreaterEqual
+	}
+
 	searchCond := &usecase.ArticleSearchCond{
 		Title:                           queryParam.Get("title_contain"),
 		Author:                          queryParam.Get("author"),
-		RecommendCountGreaterEqual:      recommendCountGreaterEqual,
-		RecommendCountLessEqual:         recommendCountLessEqual,
+		RecommendCountGreaterEqual:      recommendCountGreater,
+		RecommendCountLessEqual:         recommendCountLess,
 		RecommendCountGreaterEqualIsSet: recommendCountGreaterEqualIsSet,
 		RecommendCountLessEqualIsSet:    recommendCountLessEqualIsSet,
 	}

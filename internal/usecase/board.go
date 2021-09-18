@@ -12,11 +12,9 @@ type ArticleSearchCond struct {
 	Title                           string
 	Author                          string
 	RecommendCountValue             int
-	RecommendCountLessThan          int
 	RecommendCountLessEqual         int
 	RecommendCountEqual             int
 	RecommendCountNotEqual          int
-	RecommendCountGreaterThan       int
 	RecommendCountGreaterEqual      int
 	RecommendCountGreaterEqualIsSet bool
 	RecommendCountLessEqualIsSet    bool
