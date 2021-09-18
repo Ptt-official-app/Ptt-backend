@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -97,7 +98,37 @@ func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, titl
 		return nil, err
 	}
 
-	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(content))
+	var userData bbs.UserRecord = nil
+	records, err := repo.GetUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, record := range records {
+		if record.UserID() == userID {
+			userData = record
+		}
+	}
+	if userData == nil {
+		return nil, errors.New("user ID not found")
+	}
+
+	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(fmt.Sprintf(`作者: %s (%s) 看板: %s
+標題: %s
+時間: %s
+
+
+%s
+
+--
+※ 發信站: 新批踢踢(ptt2.cc), 來自: %s
+※ 文章網址: http://www.ptt.cc/bbs/%s/%s.html
+`, userID, userData.Nickname(), boardID,
+		title,
+		time.Now().Format(time.ANSIC),
+		content,
+		userData.LastHost(),
+		boardID, record.Filename(),
+	)))
 	if err != nil {
 		fmt.Println("WriteBoardArticleFile error: %w", err)
 		return nil, err
