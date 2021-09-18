@@ -12,7 +12,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	UseCase "github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	"github.com/Ptt-official-app/go-bbs"
 )
@@ -89,7 +88,7 @@ func TestGetBoardArticlesResponse(t *testing.T) {
 type MockArticleUsecase struct {
 	MockUsecase
 	token            string
-	getBoardArticles func(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord
+	getBoardArticles func(ctx context.Context, boardID string, cond *UseCase.ArticleSearchCond) []bbs.ArticleRecord
 }
 
 func (usecase *MockArticleUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *UseCase.ArticleSearchCond) []bbs.ArticleRecord {
@@ -99,7 +98,7 @@ func (usecase *MockArticleUsecase) GetBoardArticles(ctx context.Context, boardID
 	return []bbs.ArticleRecord{}
 }
 
-func (usecase *MockArticleUsecase) CheckPermission(token string, permissionID []usecase.Permission, userInfo map[string]string) error {
+func (usecase *MockArticleUsecase) CheckPermission(token string, permissionID []UseCase.Permission, userInfo map[string]string) error {
 	if token != usecase.token || token == "" {
 		return errors.New("invalid token")
 	}
