@@ -13,5 +13,5 @@ echo "add success: $NEW_FILENAME"
 
 
 
-curl http://localhost:8081/v1/boards/test/articles/$NEW_FILENAME -d 'action=forward_article'  --data-urlencode 'board_id=test' 
+curl http://localhost:8081/v1/boards/test/articles/$NEW_FILENAME -d 'action=forward_article'  --data-urlencode 'board_id=test' -H "Authorization: bearer $ACCESS_TOKEN"
 curl  -s http://localhost:8081/v1/boards/test/articles -H "Authorization: bearer $ACCESS_TOKEN" | jq -r '[.data.items[] | select(.title == "[測試] test")][-1] | .filename'

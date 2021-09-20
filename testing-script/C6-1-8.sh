@@ -17,4 +17,4 @@ echo "add success: $NEW_FILENAME"
 
 
 
-curl http://localhost:8081/v1/boards/test/articles/$NEW_FILENAME -d 'action=forward_article'  --data-urlencode "email=$1"
+curl http://localhost:8081/v1/boards/test/articles/$NEW_FILENAME -H "Authorization: bearer $ACCESS_TOKEN" -d 'action=forward_article'  --data-urlencode "email=$1"

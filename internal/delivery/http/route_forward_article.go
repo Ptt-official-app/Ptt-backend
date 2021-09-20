@@ -14,10 +14,14 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 	delivery.logger.Debugf("forwardArticle: %v", r)
 
 	toEmail := r.PostFormValue("email")
-	toBoard := r.PostFormValue("board")
+	toBoard := r.PostFormValue("board_id")
 	// either email or boardID must be valid
 	if toEmail == "" && toBoard == "" {
-		w.WriteHeader(500)
+		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write(NewNoRequiredParameterError(r, "email or board_id"))
+		if err != nil {
+			delivery.logger.Errorf("write NewNoRequiredParameterError error: %w", err)
+		}
 		return
 	}
 
@@ -25,32 +29,30 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 
 	ctx := context.Background()
 
-	// Check permission for whether article is allow forwarding `from` board
-	err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionForwardArticle}, map[string]string{
-		"board_id":   boardID,
-		"article_id": filename,
-	})
-	if err != nil {
-		// TODO: record unauthorized access
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
 	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		_, err := w.Write(TokenPermissionError(r, err))
+		if err != nil {
+			delivery.logger.Errorf("write TokenPermissionError error: %w", err)
+		}
 		return
 	}
 
 	if toBoard != "" {
 		// Check permission for whether article is allow forwarding `to` board
-		err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionForwardAddArticle}, map[string]string{
-			"board_id":   toBoard,
+		err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionForwardArticleToBoard}, map[string]string{
+			"board_id":   boardID,
+			"to_board":   toBoard,
 			"article_id": filename,
 		})
 		if err != nil {
 			// TODO: record unauthorized access
 			w.WriteHeader(http.StatusUnauthorized)
+			_, err := w.Write(NewNoPermissionForCreateBoardArticlesError(r, toBoard))
+			if err != nil {
+				delivery.logger.Errorf("write NoPermissionForCreateBoardArticlesError error: %w", err)
+			}
 			return
 		}
 
@@ -63,11 +65,30 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 		)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			_, err := w.Write(NewNoPermissionForCreateBoardArticlesError(r, toBoard))
+			if err != nil {
+				delivery.logger.Errorf("write NoPermissionForCreateBoardArticlesError error: %w", err)
+			}
+			delivery.logger.Noticef("user %s forward file %s from board %s to board %s failed with error %s", userID, filename, boardID, toBoard, err.Error())
 			return
 		}
 	}
 
 	if toEmail != "" {
+		err := delivery.usecase.CheckPermission(token, []usecase.Permission{usecase.PermissionForwardArticleToEmail}, map[string]string{
+			"board_id":   boardID,
+			"to_email":   toEmail,
+			"article_id": filename,
+		})
+		if err != nil {
+			// TODO: record unauthorized access
+			w.WriteHeader(http.StatusUnauthorized)
+			_, err := w.Write(NewNoPermissionForForwardArticleToEmailError(r, filename, toEmail))
+			if err != nil {
+				delivery.logger.Errorf("write NoPermissionForForwardArticleToEmailError error: %w", err)
+			}
+			return
+		}
 		err = delivery.usecase.ForwardArticleToEmail(
 			ctx,
 			userID,
@@ -77,6 +98,11 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 		)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			_, err := w.Write(NewNoPermissionForForwardArticleToEmailError(r, filename, toEmail))
+			if err != nil {
+				delivery.logger.Errorf("write NoPermissionForForwardArticleToEmailError error: %w", err)
+			}
+			delivery.logger.Noticef("user %s forward file %s from board %s to email %s failed with error %s", userID, filename, toEmail, toBoard, err.Error())
 			return
 		}
 	}
