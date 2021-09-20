@@ -324,7 +324,10 @@ func TestForwardArticleFunction(t *testing.T) {
 		"error":             "no_permission_for_create_board_articles",
 		"error_description": "user don't have permission to create an article in board " + toBoardID,
 	}
-	decoder.Decode(&actual)
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("decode response body failed: %s", err.Error())
+	}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("expected %s, but got %s", expected, actual)
 	}
@@ -349,7 +352,10 @@ func TestForwardArticleFunction(t *testing.T) {
 		"error":             "no_permission_for_forward_board_article_to_email",
 		"error_description": "user don't have permission to forward article random-filename to email " + email,
 	}
-	decoder.Decode(&actual)
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("decode response body failed: %s", err.Error())
+	}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("expected %s, but got %s", expected, actual)
 	}
@@ -372,7 +378,10 @@ func TestForwardArticleFunction(t *testing.T) {
 		"error":             "no_permission_for_create_board_articles",
 		"error_description": "user don't have permission to create an article in board " + toBoardID,
 	}
-	decoder.Decode(&actual)
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("decode response body failed: %s", err.Error())
+	}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("expected %s, but got %s", expected, actual)
 	}
@@ -397,7 +406,10 @@ func TestForwardArticleFunction(t *testing.T) {
 		"error":             "no_permission_for_forward_board_article_to_email",
 		"error_description": "user don't have permission to forward article random-filename to email " + email,
 	}
-	decoder.Decode(&actual)
+	err = decoder.Decode(&actual)
+	if err != nil {
+		t.Fatalf("decode response body failed: %s", err.Error())
+	}
 	if !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("expected %s, but got %s", expected, actual)
 	}
