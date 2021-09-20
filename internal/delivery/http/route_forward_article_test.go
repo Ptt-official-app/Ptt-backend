@@ -121,7 +121,9 @@ func (usecase *MockForwardArticleToBoardUseCase) CheckPermission(token string, p
 		case UseCase.PermissionForwardArticleToBoard:
 			fallthrough
 		case UseCase.PermissionForwardArticleToEmail:
-			usecase.checkPermissionParameters(permission, params)
+			if usecase.checkPermissionParameters != nil {
+				usecase.checkPermissionParameters(permission, params)
+			}
 			if usecase.token != token {
 				return errors.New("token not match")
 			}
@@ -133,11 +135,24 @@ func (usecase *MockForwardArticleToBoardUseCase) CheckPermission(token string, p
 }
 
 func (usecase *MockForwardArticleToBoardUseCase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (repository.ForwardArticleToBoardRecord, error) {
-	return nil, usecase.forwardArticleToBoard(userID, boardID, filename, boardName)
+	if usecase.forwardArticleToBoard != nil {
+		return nil, usecase.forwardArticleToBoard(userID, boardID, filename, boardName)
+	}
+	return nil, nil
 }
 
 func (usecase *MockForwardArticleToBoardUseCase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error {
-	return usecase.forwardArticleToEmail(userID, boardID, filename, email)
+	if usecase.forwardArticleToEmail != nil {
+		return usecase.forwardArticleToEmail(userID, boardID, filename, email)
+	}
+	return nil
+}
+
+func (usecase *MockForwardArticleToBoardUseCase) GetUserIDFromToken(token string) (string, error) {
+	if token == "" {
+		return "", errors.New("token not found")
+	}
+	return "id", nil
 }
 
 func TestForwardArticleFunction(t *testing.T) {
@@ -154,12 +169,16 @@ func TestForwardArticleFunction(t *testing.T) {
 	token := usecase.CreateAccessTokenWithUsername(userData.UserID())
 
 	// check token error
-	req := httptest.NewRequest("POST", fmt.Sprintf("/v1/boards/%s/articles/%s", boardID, filename), nil)
+	body := url.Values{}
+	body.Add("action", "forward_article")
+	body.Add("board_id", toBoardID)
+	req := httptest.NewRequest("POST", fmt.Sprintf("/v1/boards/%s/articles/%s", boardID, filename), strings.NewReader(body.Encode()))
 	rr := httptest.NewRecorder()
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	delivery.forwardArticle(rr, req, boardID, filename)
 	expected := map[string]interface{}{
-		"error":             "no_required_parameter",
-		"error_description": "required parameter: email or board_id not found",
+		"error":             "token is not pass",
+		"error_description": "token not found",
 	}
 	actual := make(map[string]interface{})
 	err = json.Unmarshal(rr.Body.Bytes(), &actual)
@@ -180,7 +199,7 @@ func TestForwardArticleFunction(t *testing.T) {
 	}
 
 	// check forward article to board
-	body := url.Values{}
+	body = url.Values{}
 	body.Add("action", "forward_article")
 	body.Add("board_id", toBoardID)
 	req = httptest.NewRequest("POST",
@@ -246,7 +265,7 @@ func TestForwardArticleFunction(t *testing.T) {
 	usecase.checkPermissionParameters = func(permission UseCase.Permission, permissionParameters map[string]string) {
 		permissionChecked = true
 		if permission != UseCase.PermissionForwardArticleToEmail {
-			t.Fatalf("expect permission check %s, but got %s", UseCase.PermissionForwardArticleToBoard, permission)
+			t.Fatalf("expect permission check %s, but got %s", UseCase.PermissionForwardArticleToEmail, permission)
 		}
 		if pBoardID, ok := permissionParameters["board_id"]; !ok || pBoardID != boardID {
 			t.Fatalf("expect board id %s, but got %s", boardID, pBoardID)
@@ -282,4 +301,105 @@ func TestForwardArticleFunction(t *testing.T) {
 	if !isForwardToEmail {
 		t.Fatalf("forwardArticleToBoard function is not called")
 	}
+
+	// test forward to board failed
+	body = url.Values{}
+	body.Add("action", "forward_article")
+	body.Add("board_id", toBoardID)
+	req = httptest.NewRequest("POST",
+		fmt.Sprintf("/v1/boards/%s/articles/%s", boardID, filename),
+		strings.NewReader(body.Encode()))
+	rr = httptest.NewRecorder()
+	req.Header.Add("Authorization", "bearer "+token)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	usecase.checkPermissionParameters = func(permission UseCase.Permission, permissionParameters map[string]string) {
+	}
+	usecase.forwardArticleToBoard = func(pUserID, pBoardID, pFilename, pToBoard string) error {
+		return errors.New("forward failed")
+	}
+	delivery.forwardArticle(rr, req, boardID, filename)
+	decoder := json.NewDecoder(rr.Body)
+	actual = make(map[string]interface{})
+	expected = map[string]interface{}{
+		"error":             "no_permission_for_create_board_articles",
+		"error_description": "user don't have permission to create an article in board " + toBoardID,
+	}
+	decoder.Decode(&actual)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("expected %s, but got %s", expected, actual)
+	}
+
+	// test forward to email failed
+	body = url.Values{}
+	body.Add("action", "forward_article")
+	body.Add("email", email)
+	req = httptest.NewRequest("POST",
+		fmt.Sprintf("/v1/boards/%s/articles/%s", boardID, filename),
+		strings.NewReader(body.Encode()))
+	rr = httptest.NewRecorder()
+	req.Header.Add("Authorization", "bearer "+token)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	usecase.forwardArticleToEmail = func(pUserID, pBoardID, pFilename, pToBoard string) error {
+		return errors.New("forward failed")
+	}
+	delivery.forwardArticle(rr, req, boardID, filename)
+	decoder = json.NewDecoder(rr.Body)
+	actual = make(map[string]interface{})
+	expected = map[string]interface{}{
+		"error":             "no_permission_for_forward_board_article_to_email",
+		"error_description": "user don't have permission to forward article random-filename to email " + email,
+	}
+	decoder.Decode(&actual)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("expected %s, but got %s", expected, actual)
+	}
+
+	// test forward to board permission denied
+	usecase.token = ""
+	body = url.Values{}
+	body.Add("action", "forward_article")
+	body.Add("board_id", toBoardID)
+	req = httptest.NewRequest("POST",
+		fmt.Sprintf("/v1/boards/%s/articles/%s", boardID, filename),
+		strings.NewReader(body.Encode()))
+	rr = httptest.NewRecorder()
+	req.Header.Add("Authorization", "bearer "+token)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	delivery.forwardArticle(rr, req, boardID, filename)
+	decoder = json.NewDecoder(rr.Body)
+	actual = make(map[string]interface{})
+	expected = map[string]interface{}{
+		"error":             "no_permission_for_create_board_articles",
+		"error_description": "user don't have permission to create an article in board " + toBoardID,
+	}
+	decoder.Decode(&actual)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("expected %s, but got %s", expected, actual)
+	}
+
+	// test forward to email permission denined
+	body = url.Values{}
+	body.Add("action", "forward_article")
+	body.Add("email", email)
+	req = httptest.NewRequest("POST",
+		fmt.Sprintf("/v1/boards/%s/articles/%s", boardID, filename),
+		strings.NewReader(body.Encode()))
+	rr = httptest.NewRecorder()
+	req.Header.Add("Authorization", "bearer "+token)
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	usecase.forwardArticleToEmail = func(pUserID, pBoardID, pFilename, pToBoard string) error {
+		return errors.New("forward failed")
+	}
+	delivery.forwardArticle(rr, req, boardID, filename)
+	decoder = json.NewDecoder(rr.Body)
+	actual = make(map[string]interface{})
+	expected = map[string]interface{}{
+		"error":             "no_permission_for_forward_board_article_to_email",
+		"error_description": "user don't have permission to forward article random-filename to email " + email,
+	}
+	decoder.Decode(&actual)
+	if !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("expected %s, but got %s", expected, actual)
+	}
+
 }

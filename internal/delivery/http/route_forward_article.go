@@ -65,11 +65,11 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 		)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			delivery.logger.Noticef("user %s forward file %s from board %s to board %s failed with error %s", userID, filename, boardID, toBoard, err.Error())
 			_, err := w.Write(NewNoPermissionForCreateBoardArticlesError(r, toBoard))
 			if err != nil {
 				delivery.logger.Errorf("write NoPermissionForCreateBoardArticlesError error: %w", err)
 			}
-			delivery.logger.Noticef("user %s forward file %s from board %s to board %s failed with error %s", userID, filename, boardID, toBoard, err.Error())
 			return
 		}
 	}
@@ -98,11 +98,11 @@ func (delivery *Delivery) forwardArticle(w http.ResponseWriter, r *http.Request,
 		)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
+			delivery.logger.Noticef("user %s forward file %s from board %s to email %s failed with error %s", userID, filename, toEmail, toBoard, err.Error())
 			_, err := w.Write(NewNoPermissionForForwardArticleToEmailError(r, filename, toEmail))
 			if err != nil {
 				delivery.logger.Errorf("write NoPermissionForForwardArticleToEmailError error: %w", err)
 			}
-			delivery.logger.Noticef("user %s forward file %s from board %s to email %s failed with error %s", userID, filename, toEmail, toBoard, err.Error())
 			return
 		}
 	}
