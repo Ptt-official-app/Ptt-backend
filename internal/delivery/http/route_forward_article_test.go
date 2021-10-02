@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
-	UseCase "github.com/Ptt-official-app/Ptt-backend/internal/usecase"
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 // TestForwardArticleBadRequest test request post `/v1/boards/{}/articles/{}` post
@@ -110,21 +110,21 @@ func TestForwardArticleResponse(t *testing.T) {
 type MockForwardArticleToBoardUseCase struct {
 	MockUsecase
 	token                     string
-	checkPermissionParameters func(permission UseCase.Permission, permissionParameters map[string]string)
+	checkPermissionParameters func(permission usecase.Permission, permissionParameters map[string]string)
 	forwardArticleToBoard     func(userID, boardID, filename, toBoard string) error
 	forwardArticleToEmail     func(userID, boardID, filename, email string) error
 }
 
-func (usecase *MockForwardArticleToBoardUseCase) CheckPermission(token string, permissionList []UseCase.Permission, params map[string]string) error {
+func (mockUsecase *MockForwardArticleToBoardUseCase) CheckPermission(token string, permissionList []usecase.Permission, params map[string]string) error {
 	for _, permission := range permissionList {
 		switch permission {
-		case UseCase.PermissionForwardArticleToBoard:
+		case usecase.PermissionForwardArticleToBoard:
 			fallthrough
-		case UseCase.PermissionForwardArticleToEmail:
-			if usecase.checkPermissionParameters != nil {
-				usecase.checkPermissionParameters(permission, params)
+		case usecase.PermissionForwardArticleToEmail:
+			if mockUsecase.checkPermissionParameters != nil {
+				mockUsecase.checkPermissionParameters(permission, params)
 			}
-			if usecase.token != token {
+			if mockUsecase.token != token {
 				return errors.New("token not match")
 			}
 		default:
@@ -134,16 +134,16 @@ func (usecase *MockForwardArticleToBoardUseCase) CheckPermission(token string, p
 	return nil
 }
 
-func (usecase *MockForwardArticleToBoardUseCase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (repository.ForwardArticleToBoardRecord, error) {
-	if usecase.forwardArticleToBoard != nil {
-		return nil, usecase.forwardArticleToBoard(userID, boardID, filename, boardName)
+func (mockUsecase *MockForwardArticleToBoardUseCase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (repository.ForwardArticleToBoardRecord, error) {
+	if mockUsecase.forwardArticleToBoard != nil {
+		return nil, mockUsecase.forwardArticleToBoard(userID, boardID, filename, boardName)
 	}
 	return nil, nil
 }
 
-func (usecase *MockForwardArticleToBoardUseCase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error {
-	if usecase.forwardArticleToEmail != nil {
-		return usecase.forwardArticleToEmail(userID, boardID, filename, email)
+func (mockUsecase *MockForwardArticleToBoardUseCase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error {
+	if mockUsecase.forwardArticleToEmail != nil {
+		return mockUsecase.forwardArticleToEmail(userID, boardID, filename, email)
 	}
 	return nil
 }
@@ -156,17 +156,17 @@ func (usecase *MockForwardArticleToBoardUseCase) GetUserIDFromToken(token string
 }
 
 func TestForwardArticleFunction(t *testing.T) {
-	usecase := &MockForwardArticleToBoardUseCase{}
-	delivery := NewHTTPDelivery(usecase)
+	mockUsecase := &MockForwardArticleToBoardUseCase{}
+	delivery := NewHTTPDelivery(mockUsecase)
 	boardID := "test"
 	toBoardID := "target"
 	email := "example@example.com"
 	filename := "random-filename"
-	userData, err := usecase.GetUserByID(context.Background(), "id")
+	userData, err := mockUsecase.GetUserByID(context.Background(), "id")
 	if err != nil {
 		t.Fatalf("get error \"%s\" when create mock user %s", err.Error(), "id")
 	}
-	token := usecase.CreateAccessTokenWithUsername(userData.UserID())
+	token := mockUsecase.CreateAccessTokenWithUsername(userData.UserID())
 
 	// check token error
 	body := url.Values{}
@@ -208,12 +208,12 @@ func TestForwardArticleFunction(t *testing.T) {
 	rr = httptest.NewRecorder()
 	req.Header.Add("Authorization", "bearer "+token)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	usecase.token = token
+	mockUsecase.token = token
 	permissionChecked := false
-	usecase.checkPermissionParameters = func(permission UseCase.Permission, permissionParameters map[string]string) {
+	mockUsecase.checkPermissionParameters = func(permission usecase.Permission, permissionParameters map[string]string) {
 		permissionChecked = true
-		if permission != UseCase.PermissionForwardArticleToBoard {
-			t.Fatalf("expect permission check %s, but got %s", UseCase.PermissionForwardArticleToBoard, permission)
+		if permission != usecase.PermissionForwardArticleToBoard {
+			t.Fatalf("expect permission check %s, but got %s", usecase.PermissionForwardArticleToBoard, permission)
 		}
 		if pBoardID, ok := permissionParameters["board_id"]; !ok || pBoardID != boardID {
 			t.Fatalf("expect board id %s, but got %s", boardID, pBoardID)
@@ -226,7 +226,7 @@ func TestForwardArticleFunction(t *testing.T) {
 		}
 	}
 	isForwardToBoard := false
-	usecase.forwardArticleToBoard = func(pUserID, pBoardID, pFilename, pToBoard string) error {
+	mockUsecase.forwardArticleToBoard = func(pUserID, pBoardID, pFilename, pToBoard string) error {
 		isForwardToBoard = true
 		if pUserID != userData.UserID() {
 			t.Fatalf("expect user id %s, but got %s", userData.UserID(), pUserID)
@@ -260,12 +260,12 @@ func TestForwardArticleFunction(t *testing.T) {
 	rr = httptest.NewRecorder()
 	req.Header.Add("Authorization", "bearer "+token)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	usecase.token = token
+	mockUsecase.token = token
 	permissionChecked = false
-	usecase.checkPermissionParameters = func(permission UseCase.Permission, permissionParameters map[string]string) {
+	mockUsecase.checkPermissionParameters = func(permission usecase.Permission, permissionParameters map[string]string) {
 		permissionChecked = true
-		if permission != UseCase.PermissionForwardArticleToEmail {
-			t.Fatalf("expect permission check %s, but got %s", UseCase.PermissionForwardArticleToEmail, permission)
+		if permission != usecase.PermissionForwardArticleToEmail {
+			t.Fatalf("expect permission check %s, but got %s", usecase.PermissionForwardArticleToEmail, permission)
 		}
 		if pBoardID, ok := permissionParameters["board_id"]; !ok || pBoardID != boardID {
 			t.Fatalf("expect board id %s, but got %s", boardID, pBoardID)
@@ -278,7 +278,7 @@ func TestForwardArticleFunction(t *testing.T) {
 		}
 	}
 	isForwardToEmail := false
-	usecase.forwardArticleToEmail = func(pUserID, pBoardID, pFilename, pToEmail string) error {
+	mockUsecase.forwardArticleToEmail = func(pUserID, pBoardID, pFilename, pToEmail string) error {
 		isForwardToEmail = true
 		if pUserID != userData.UserID() {
 			t.Fatalf("expect user id %s, but got %s", userData.UserID(), pUserID)
@@ -312,9 +312,9 @@ func TestForwardArticleFunction(t *testing.T) {
 	rr = httptest.NewRecorder()
 	req.Header.Add("Authorization", "bearer "+token)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	usecase.checkPermissionParameters = func(permission UseCase.Permission, permissionParameters map[string]string) {
+	mockUsecase.checkPermissionParameters = func(permission usecase.Permission, permissionParameters map[string]string) {
 	}
-	usecase.forwardArticleToBoard = func(pUserID, pBoardID, pFilename, pToBoard string) error {
+	mockUsecase.forwardArticleToBoard = func(pUserID, pBoardID, pFilename, pToBoard string) error {
 		return errors.New("forward failed")
 	}
 	delivery.forwardArticle(rr, req, boardID, filename)
@@ -342,7 +342,7 @@ func TestForwardArticleFunction(t *testing.T) {
 	rr = httptest.NewRecorder()
 	req.Header.Add("Authorization", "bearer "+token)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	usecase.forwardArticleToEmail = func(pUserID, pBoardID, pFilename, pToBoard string) error {
+	mockUsecase.forwardArticleToEmail = func(pUserID, pBoardID, pFilename, pToBoard string) error {
 		return errors.New("forward failed")
 	}
 	delivery.forwardArticle(rr, req, boardID, filename)
@@ -361,7 +361,7 @@ func TestForwardArticleFunction(t *testing.T) {
 	}
 
 	// test forward to board permission denied
-	usecase.token = ""
+	mockUsecase.token = ""
 	body = url.Values{}
 	body.Add("action", "forward_article")
 	body.Add("board_id", toBoardID)
@@ -396,7 +396,7 @@ func TestForwardArticleFunction(t *testing.T) {
 	rr = httptest.NewRecorder()
 	req.Header.Add("Authorization", "bearer "+token)
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	usecase.forwardArticleToEmail = func(pUserID, pBoardID, pFilename, pToBoard string) error {
+	mockUsecase.forwardArticleToEmail = func(pUserID, pBoardID, pFilename, pToBoard string) error {
 		return errors.New("forward failed")
 	}
 	delivery.forwardArticle(rr, req, boardID, filename)
