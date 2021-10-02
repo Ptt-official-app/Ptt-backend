@@ -94,16 +94,16 @@ func applyConfig(config *Config, rawConfig *toml.Tree) {
 
 // Ptt default article template
 type ArticleArguments struct {
-	UserData     bbs.UserRecord
-	Article      bbs.ArticleRecord
-	BoardID      string
-	Content      string
-	PostANSIDate string
+	UserData      bbs.UserRecord
+	Article       bbs.ArticleRecord
+	BoardID       string
+	Content       string
+	PostANSICDate string
 }
 
 const PttArticleTemplate = `作者: {{ .UserData.UserID }} ({{ .UserData.Nickname}}) 看板: {{ .BoardID }}
 標題: {{ .Article.Title }}
-時間: {{ .PostANSIDate }}
+時間: {{ .PostANSICDate }}
 
 
 {{ .Content }}

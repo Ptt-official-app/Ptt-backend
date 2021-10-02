@@ -123,11 +123,11 @@ func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, titl
 
 	buffer := bytes.NewBuffer(nil)
 	err = t.Execute(buffer, config.ArticleArguments{
-		UserData:     userData,
-		Article:      record,
-		BoardID:      boardID,
-		Content:      content,
-		PostANSIDate: currentTime.Format(time.ANSIC),
+		UserData:      userData,
+		Article:       record,
+		BoardID:       boardID,
+		Content:       content,
+		PostANSICDate: currentTime.Format(time.ANSIC),
 	})
 	if err != nil {
 		return nil, err
