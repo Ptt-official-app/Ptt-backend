@@ -5,10 +5,122 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
+	"net/url"
 	"strconv"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
+
+func NewURLValuesParser(val url.Values, gek, gtk, lek, ltk string) URLValuesParser {
+	return URLValuesParser{
+		Values:          val,
+		greaterEqualKey: gek,
+		greaterThanKey:  gtk,
+		lessEqualKey:    lek,
+		lessThanKey:     ltk,
+		errorCalled:     false,
+	}
+}
+
+type URLValuesParser struct {
+	url.Values
+	greaterEqualKey string
+	greaterThanKey  string
+	lessEqualKey    string
+	lessThanKey     string
+
+	greaterEqual *int
+	lessEqual    *int
+	errorCalled  bool
+}
+
+func (parser *URLValuesParser) getRecommendCount(name string) (*int, error) {
+	recommendCountParam := parser.Values.Get(name)
+	if recommendCountParam == "" {
+		return nil, nil
+	}
+	recommendCount, err := strconv.Atoi(recommendCountParam)
+	if err != nil {
+		return nil, err
+	}
+	return &recommendCount, nil
+}
+
+func (parser *URLValuesParser) Error() (string, error) {
+	parser.errorCalled = true
+	greaterEqual, err := parser.getRecommendCount(parser.greaterEqualKey)
+	if err != nil {
+		return parser.greaterEqualKey, err
+	}
+
+	greaterThan, err := parser.getRecommendCount(parser.greaterThanKey)
+	if err != nil {
+		return parser.greaterThanKey, err
+	}
+
+	// check the intersection of greater
+	if greaterEqual == nil && greaterThan == nil {
+	} else if greaterEqual != nil && greaterThan != nil {
+		// x > 10 === x >= 11
+		*greaterThan++
+		parser.greaterEqual = greaterThan
+		if *parser.greaterEqual < *greaterEqual {
+			parser.greaterEqual = greaterEqual
+		}
+	} else if greaterThan != nil {
+		*greaterThan++
+		parser.greaterEqual = greaterThan
+	} else {
+		parser.greaterEqual = greaterEqual
+	}
+
+	lessEqual, err := parser.getRecommendCount(parser.lessEqualKey)
+	if err != nil {
+		return parser.lessEqualKey, err
+	}
+
+	lessThan, err := parser.getRecommendCount(parser.lessThanKey)
+	if err != nil {
+		return parser.lessThanKey, err
+	}
+
+	// check the intersection of less
+	if lessEqual == nil && lessThan == nil {
+	} else if lessEqual != nil && lessThan != nil {
+		// x < 10 === x <= 9
+		*lessThan--
+		parser.lessEqual = lessThan
+		if *parser.lessEqual > *lessEqual {
+			parser.lessEqual = lessEqual
+		}
+	} else if lessThan != nil {
+		*lessThan--
+		parser.lessEqual = lessThan
+	} else {
+		parser.lessEqual = lessEqual
+	}
+	return "", nil
+}
+
+func (parser *URLValuesParser) GetGreaterEqual() (int, bool) {
+	if !parser.errorCalled {
+		panic("URLValuesParser.Error function must be called first")
+	}
+	if parser.greaterEqual == nil {
+		return 0, false
+	}
+	return *parser.greaterEqual, true
+}
+
+func (parser *URLValuesParser) GetLessEqual() (int, bool) {
+	if !parser.errorCalled {
+		panic("URLValuesParser.Error function must be called first")
+	}
+	if parser.lessEqual == nil {
+		return 0, false
+	}
+	return *parser.lessEqual, true
+}
 
 // getBoardArticles handles request with `/v1/boards/SYSOP/articles` and will return
 // article list to client
@@ -29,98 +141,26 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	var recommendCountGreater, recommendCountLess int
-	var recommendCountGreaterEqualIsSet, recommendCountLessEqualIsSet bool
 	queryParam := r.URL.Query()
-	getRecommendCount := func(name string) (*int, error) {
-		recommendCountParam := queryParam.Get(name)
-		if recommendCountParam == "" {
-			return nil, nil
-		}
-		recommendCount, err := strconv.Atoi(recommendCountParam)
-		if err != nil {
-			return nil, err
-		}
-		return &recommendCount, nil
-	}
-
-	recommendCountGreaterEqual, err := getRecommendCount("recommend_count_ge")
+	parser := NewURLValuesParser(queryParam, "recommend_count_ge", "recommend_count_gt", "recommend_count_le", "recommend_count_lt")
+	errorKey, err := parser.Error()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write(NewParameterShouldBeIntegerError(r, "recommend_count_ge"))
+		_, err := w.Write(NewParameterShouldBeIntegerError(r, errorKey))
 		if err != nil {
 			delivery.logger.Errorf("got error %w when write ParameterShouldBeIntegerError", err)
 		}
 		return
 	}
 
-	recommendCountGreaterThan, err := getRecommendCount("recommend_count_gt")
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write(NewParameterShouldBeIntegerError(r, "recommend_count_gt"))
-		if err != nil {
-			delivery.logger.Errorf("got error %w when write ParameterShouldBeIntegerError", err)
-		}
-		return
-	}
-
-	recommendCountLessEqual, err := getRecommendCount("recommend_count_le")
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write(NewParameterShouldBeIntegerError(r, "recommend_count_le"))
-		if err != nil {
-			delivery.logger.Errorf("got error %w when write ParameterShouldBeIntegerError", err)
-		}
-		return
-	}
-
-	recommendCountLessThan, err := getRecommendCount("recommend_count_lt")
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		_, err := w.Write(NewParameterShouldBeIntegerError(r, "recommend_count_lt"))
-		if err != nil {
-			delivery.logger.Errorf("got error %w when write ParameterShouldBeIntegerError", err)
-		}
-		return
-	}
-
-	if recommendCountLessThan == nil && recommendCountLessEqual == nil {
-		recommendCountLessEqualIsSet = false
-	} else if recommendCountLessThan != nil && recommendCountLessEqual != nil {
-		recommendCountLessEqualIsSet = true
-		recommendCountLess = *recommendCountLessThan - 1
-		if recommendCountLess > *recommendCountLessEqual {
-			recommendCountLess = *recommendCountLessEqual
-		}
-	} else if recommendCountLessThan != nil {
-		recommendCountLessEqualIsSet = true
-		recommendCountLess = *recommendCountLessThan - 1
-	} else {
-		recommendCountLessEqualIsSet = true
-		recommendCountLess = *recommendCountLessEqual
-	}
-
-	if recommendCountGreaterThan == nil && recommendCountGreaterEqual == nil {
-		recommendCountGreaterEqualIsSet = false
-	} else if recommendCountGreaterThan != nil && recommendCountGreaterEqual != nil {
-		recommendCountGreaterEqualIsSet = true
-		recommendCountGreater = *recommendCountGreaterThan + 1
-		if recommendCountGreater < *recommendCountGreaterEqual {
-			recommendCountGreater = *recommendCountGreaterEqual
-		}
-	} else if recommendCountGreaterThan != nil {
-		recommendCountGreaterEqualIsSet = true
-		recommendCountGreater = *recommendCountGreaterThan + 1
-	} else {
-		recommendCountGreaterEqualIsSet = true
-		recommendCountGreater = *recommendCountGreaterEqual
-	}
+	recommendCountGreaterEqual, recommendCountGreaterEqualIsSet := parser.GetGreaterEqual()
+	recommendCountLessEqual, recommendCountLessEqualIsSet := parser.GetLessEqual()
 
 	searchCond := &usecase.ArticleSearchCond{
 		Title:                           queryParam.Get("title_contain"),
 		Author:                          queryParam.Get("author"),
-		RecommendCountGreaterEqual:      recommendCountGreater,
-		RecommendCountLessEqual:         recommendCountLess,
+		RecommendCountGreaterEqual:      recommendCountGreaterEqual,
+		RecommendCountLessEqual:         recommendCountLessEqual,
 		RecommendCountGreaterEqualIsSet: recommendCountGreaterEqualIsSet,
 		RecommendCountLessEqualIsSet:    recommendCountLessEqualIsSet,
 	}
