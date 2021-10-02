@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	UseCase "github.com/Ptt-official-app/Ptt-backend/internal/usecase"
+	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -88,18 +88,18 @@ func TestGetBoardArticlesResponse(t *testing.T) {
 type MockArticleUsecase struct {
 	MockUsecase
 	token            string
-	getBoardArticles func(ctx context.Context, boardID string, cond *UseCase.ArticleSearchCond) []bbs.ArticleRecord
+	getBoardArticles func(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord
 }
 
-func (usecase *MockArticleUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *UseCase.ArticleSearchCond) []bbs.ArticleRecord {
-	if usecase.getBoardArticles != nil {
-		return usecase.getBoardArticles(ctx, boardID, cond)
+func (mockUsecase *MockArticleUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
+	if mockUsecase.getBoardArticles != nil {
+		return mockUsecase.getBoardArticles(ctx, boardID, cond)
 	}
 	return []bbs.ArticleRecord{}
 }
 
-func (usecase *MockArticleUsecase) CheckPermission(token string, permissionID []UseCase.Permission, userInfo map[string]string) error {
-	if token != usecase.token || token == "" {
+func (mockUsecase *MockArticleUsecase) CheckPermission(token string, permissionID []usecase.Permission, userInfo map[string]string) error {
+	if token != mockUsecase.token || token == "" {
 		return errors.New("invalid token")
 	}
 	return nil
@@ -107,8 +107,8 @@ func (usecase *MockArticleUsecase) CheckPermission(token string, permissionID []
 
 func TestGetBoardArticlesFunction(t *testing.T) {
 	userID := "id"
-	usecase := &MockArticleUsecase{}
-	delivery := NewHTTPDelivery(usecase)
+	mockUsecase := &MockArticleUsecase{}
+	delivery := NewHTTPDelivery(mockUsecase)
 	boardID := "test"
 
 	// permission denied test
@@ -142,7 +142,7 @@ func TestGetBoardArticlesFunction(t *testing.T) {
 		modified:       time.Now(),
 		recommendCount: 12,
 	}
-	usecase.getBoardArticles = func(ctx context.Context, boardID string, cond *UseCase.ArticleSearchCond) []bbs.ArticleRecord {
+	mockUsecase.getBoardArticles = func(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
 		if cond.Title != targetRecord.title || cond.Author != targetRecord.owner {
 			t.Fatalf("Title search failed, expected %s and %s, but got %s and %s", targetRecord.title, targetRecord.owner, cond.Title, cond.Author)
 		}
@@ -156,8 +156,8 @@ func TestGetBoardArticlesFunction(t *testing.T) {
 	uri := fmt.Sprintf("/v1/boards/test/articles?%s", v.Encode())
 	req = httptest.NewRequest("GET", uri, nil)
 	rr = httptest.NewRecorder()
-	token := usecase.CreateAccessTokenWithUsername(userID)
-	usecase.token = token
+	token := mockUsecase.CreateAccessTokenWithUsername(userID)
+	mockUsecase.token = token
 	req.Header.Add("Authorization", "bearer "+token)
 	delivery.getBoardArticles(rr, req, "test")
 	actual = make(map[string]interface{})
@@ -188,13 +188,13 @@ func TestGetBoardArticlesFunction(t *testing.T) {
 
 	// test recommend search
 	// search 20 < recommend < 40, aka 21 <= recommend <= 39.
-	searchOption := &UseCase.ArticleSearchCond{
+	searchOption := &usecase.ArticleSearchCond{
 		RecommendCountGreaterEqual:      21,
 		RecommendCountLessEqual:         39,
 		RecommendCountGreaterEqualIsSet: true,
 		RecommendCountLessEqualIsSet:    true,
 	}
-	usecase.getBoardArticles = func(ctx context.Context, boardID string, cond *UseCase.ArticleSearchCond) []bbs.ArticleRecord {
+	mockUsecase.getBoardArticles = func(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
 		if !reflect.DeepEqual(searchOption, cond) {
 			t.Fatalf("expect search option %v, but got %v", searchOption, cond)
 		}
@@ -268,7 +268,7 @@ func TestGetBoardArticlesFunction(t *testing.T) {
 	delivery.getBoardArticles(rr, req, "test")
 
 	// test recommend is not integer
-	usecase.getBoardArticles = func(ctx context.Context, boardID string, cond *UseCase.ArticleSearchCond) []bbs.ArticleRecord {
+	mockUsecase.getBoardArticles = func(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
 		return []bbs.ArticleRecord{}
 	}
 
