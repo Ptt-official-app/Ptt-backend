@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
+	"github.com/Ptt-official-app/go-bbs"
 	"github.com/pelletier/go-toml"
 )
 
@@ -90,3 +91,24 @@ func applyConfig(config *Config, rawConfig *toml.Tree) {
 		config.MailDriver = s
 	}
 }
+
+// Ptt default article template
+type ArticleArguments struct {
+	UserData     bbs.UserRecord
+	Article      bbs.ArticleRecord
+	BoardID      string
+	Content      string
+	PostANSIDate string
+}
+
+const PttArticleTemplate = `作者: {{ .UserData.UserID }} ({{ .UserData.Nickname}}) 看板: {{ .BoardID }}
+標題: {{ .Article.Title }}
+時間: {{ .PostANSIDate }}
+
+
+{{ .Content }}
+
+--
+※ 發信站: 新批踢踢(ptt2.cc), 來自: {{ .UserData.LastHost }}
+※ 文章網址: http://www.ptt.cc/bbs/{{ .BoardID }}/{{ .Article.Filename }}.html
+`

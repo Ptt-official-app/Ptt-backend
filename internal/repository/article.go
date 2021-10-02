@@ -1,11 +1,14 @@
 package repository
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
+	"text/template"
 	"time"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -85,7 +88,8 @@ func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, titl
 // TODO: return result from bbs response
 func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) (bbs.ArticleRecord, error) {
 	// get file name
-	now := time.Now().Format("01/02")
+	currentTime := time.Now()
+	now := currentTime.Format("01/02")
 	record, err := repo.db.CreateArticleRecord(boardID, userID, now, title)
 	if err != nil {
 		fmt.Println("CreateArticleRecord error:", err)
@@ -112,23 +116,24 @@ func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, titl
 		return nil, errors.New("user ID not found")
 	}
 
-	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(fmt.Sprintf(`作者: %s (%s) 看板: %s
-標題: %s
-時間: %s
+	t, err := template.New("Ptt-article-template").Parse(config.PttArticleTemplate)
+	if err != nil {
+		return nil, err
+	}
 
+	buffer := bytes.NewBuffer(nil)
+	err = t.Execute(buffer, config.ArticleArguments{
+		UserData:     userData,
+		Article:      record,
+		BoardID:      boardID,
+		Content:      content,
+		PostANSIDate: currentTime.Format(time.ANSIC),
+	})
+	if err != nil {
+		return nil, err
+	}
 
-%s
-
---
-※ 發信站: 新批踢踢(ptt2.cc), 來自: %s
-※ 文章網址: http://www.ptt.cc/bbs/%s/%s.html
-`, userID, userData.Nickname(), boardID,
-		title,
-		time.Now().Format(time.ANSIC),
-		content,
-		userData.LastHost(),
-		boardID, record.Filename(),
-	)))
+	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(buffer.String()))
 	if err != nil {
 		fmt.Println("WriteBoardArticleFile error: %w", err)
 		return nil, err
