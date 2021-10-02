@@ -1,10 +1,14 @@
 package repository
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
+	"text/template"
 	"time"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -84,7 +88,8 @@ func (repo *repository) AppendArticle(ctx context.Context, userID, boardID, titl
 // TODO: return result from bbs response
 func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, title, content string) (bbs.ArticleRecord, error) {
 	// get file name
-	now := time.Now().Format("01/02")
+	currentTime := time.Now()
+	now := currentTime.Format("01/02")
 	record, err := repo.db.CreateArticleRecord(boardID, userID, now, title)
 	if err != nil {
 		fmt.Println("CreateArticleRecord error:", err)
@@ -97,7 +102,38 @@ func (repo *repository) CreateArticle(ctx context.Context, userID, boardID, titl
 		return nil, err
 	}
 
-	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(content))
+	var userData bbs.UserRecord = nil
+	records, err := repo.GetUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	for _, record := range records {
+		if record.UserID() == userID {
+			userData = record
+		}
+	}
+	if userData == nil {
+		return nil, errors.New("user ID not found")
+	}
+
+	t, err := template.New("Ptt-article-template").Parse(config.PttArticleTemplate)
+	if err != nil {
+		return nil, err
+	}
+
+	buffer := bytes.NewBuffer(nil)
+	err = t.Execute(buffer, config.ArticleArguments{
+		UserData:      userData,
+		Article:       record,
+		BoardID:       boardID,
+		Content:       content,
+		PostANSICDate: currentTime.Format(time.ANSIC),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	err = repo.db.WriteBoardArticleFile(boardID, record.Filename(), bbs.Utf8ToBig5(buffer.String()))
 	if err != nil {
 		fmt.Println("WriteBoardArticleFile error: %w", err)
 		return nil, err

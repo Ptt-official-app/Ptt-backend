@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -71,7 +72,7 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"raw": raw,
+			"raw": base64.StdEncoding.EncodeToString([]byte(raw)),
 			"parsed": map[string]interface{}{
 				"is_header_modied": false,
 				"author_id":        userID,
