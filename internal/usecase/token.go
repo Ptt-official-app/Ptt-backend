@@ -156,6 +156,7 @@ func (usecase *usecase) checkCreateArticlePermission(ctx context.Context, token 
 	return nil
 }
 
+// This function checks the user has permission that can forward the target article to another board.
 func (usecase *usecase) checkForwardArticleToBoardPermission(token string, userInfo map[string]string) error {
 	// boardID := userInfo["board_id"]
 	// toBoard := userInfo["to_board"]
@@ -173,11 +174,14 @@ func (usecase *usecase) checkForwardArticleToBoardPermission(token string, userI
 	return nil
 }
 
+// This function checks the user has permission that can forward the target article to the target email address.
+// Implementation should note that the target email is not a private email or an unresolved address.
 func (usecase *usecase) checkForwardArticleToEmailPermission(token string, userInfo map[string]string) error {
 	// boardID := userInfo["board_id"]
 	// toEmail := userInfo["to_email"]
 	// userID := userInfo["user_id"]
 
+	// TODO: 確認Email是可以轉發的
 	// TODO: 判斷是否有轉錄的權限
 	// TODO: 判斷在該版是否允許發文
 	// TODO: 判斷轉錄的版是否允許發文
