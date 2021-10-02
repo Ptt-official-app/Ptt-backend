@@ -148,7 +148,7 @@ func (mockUsecase *MockForwardArticleToBoardUseCase) ForwardArticleToEmail(ctx c
 	return nil
 }
 
-func (usecase *MockForwardArticleToBoardUseCase) GetUserIDFromToken(token string) (string, error) {
+func (mockUsecase *MockForwardArticleToBoardUseCase) GetUserIDFromToken(token string) (string, error) {
 	if token == "" {
 		return "", errors.New("token not found")
 	}
