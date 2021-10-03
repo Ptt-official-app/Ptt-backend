@@ -18,8 +18,6 @@ type Config struct {
 	MailDriver            string
 }
 
-var logger = logging.NewLogger()
-
 func NewDefaultConfig() (*Config, error) {
 	return NewConfig("./conf/config_default.toml", "config.toml")
 }
@@ -29,6 +27,8 @@ func NewDefaultConfig() (*Config, error) {
 // return error. it userPath can not be read, it will ignore userPath.
 // user configuration will override default configuration.
 func NewConfig(defaultPath, userPath string) (*Config, error) {
+	var logger = logging.NewLogger()
+
 	config := &Config{}
 	logger.Debugf("load default config")
 
@@ -49,6 +49,7 @@ func NewConfig(defaultPath, userPath string) (*Config, error) {
 }
 
 func applyConfig(config *Config, rawConfig *toml.Tree) {
+	var logger = logging.NewLogger()
 	logger.Debugf("apply rawConfig")
 	var s string
 	var i int64

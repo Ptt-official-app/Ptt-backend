@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/go-bbs"
 )
 
@@ -40,6 +41,7 @@ func (repo *repository) GetBoardTreasureRecords(_ context.Context, boardID strin
 // }
 
 func loadBoardFile(db *bbs.DB) ([]bbs.BoardRecord, error) {
+	var logger = logging.NewLogger()
 	boardRecords, err := db.ReadBoardRecords()
 	if err != nil {
 		logger.Errorf("get board header error: %v", err)

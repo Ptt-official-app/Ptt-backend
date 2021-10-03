@@ -3,7 +3,6 @@ package http
 import (
 	"context"
 	"encoding/json"
-	"log"
 	"net/http"
 	"strings"
 
@@ -64,7 +63,7 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	log.Println("found user:", userec)
+	delivery.logger.Debugf("found user: %s", userec)
 	err = delivery.verifyPassword(userec, password)
 	if err != nil {
 		// TODO: add delay, warning, notify user
@@ -98,7 +97,7 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func (delivery *Delivery) verifyPassword(userec bbs.UserRecord, password string) error {
-	log.Println("password", userec.HashedPassword())
+	delivery.logger.Debugf("password: %s", userec.HashedPassword())
 	return userec.VerifyPassword(password)
 }
 

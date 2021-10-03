@@ -1,6 +1,10 @@
 package main
 
 import (
+	"flag"
+	"os"
+	"strconv"
+
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/delivery/http"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
@@ -12,6 +16,18 @@ import (
 )
 
 func main() {
+	var logLevel = flag.Uint("logLevel", 4, `log level: 0: Emergency; 1: Alert; 2: Critical; 3: Error; 4: Warning; 5: Notice; 6: Info; 7: Debug`)
+	flag.Usage = func() {
+		os.Stderr.WriteString("Usage: \n  Ptt-backend [ options ]\n\n")
+		os.Stderr.WriteString("Options:\n")
+		flag.PrintDefaults()
+	}
+	flag.Parse()
+
+	if _, ok := os.LookupEnv("LOG_LEVEL"); !ok {
+		os.Setenv("LOG_LEVEL", strconv.Itoa(int(*logLevel)))
+	}
+
 	logger := logging.NewLogger()
 
 	logger.Informationalf("server start")
