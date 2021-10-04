@@ -65,7 +65,9 @@ func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticl
 
 func (repo *repository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error) {
 	// Append comment into board article file
-	err := repo.db.AppendBoardArticleFile(filename, bbs.Utf8ToBig5(text))
+	now := time.Now()
+	result := appendType+" "+userID+": "+text+" "+now.Format("01/02 15:04")
+	err := repo.db.AppendBoardArticleFile(boardID, filename, bbs.Utf8ToBig5(result))
 	if err != nil {
 		return nil, err
 	}
@@ -74,8 +76,8 @@ func (repo *repository) AppendComment(ctx context.Context, userID, boardID, file
 		appendType: appendType,
 		id:         userID,
 		ipAddr:     "", // not sure how to get IPAddr
-		text:       text,
-		time:       time.Now(),
+		text:       result,
+		time:       now,
 	}
 	return p, nil
 }
