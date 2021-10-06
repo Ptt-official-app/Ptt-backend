@@ -15,11 +15,11 @@ func (usecase *MockUsecase) GetPopularArticles(ctx context.Context) ([]repositor
 
 func (usecase *MockUsecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {
 	return &MockPushRecord{
-		appendType : "推",
-		id : "test",
-		ipAddr : "127.0.0.1",
-		text : "test push",
-		time : time.Now(),
+		appendType: "推",
+		id:         "test",
+		ipAddr:     "127.0.0.1",
+		text:       "test push",
+		time:       time.Now(),
 	}, nil
 }
 
@@ -49,11 +49,11 @@ func (usecase *MockUsecase) GetRawArticle(boardID, filename string) (string, err
 
 func (usecase *MockUsecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
 	return &MockPushRecord{
-		appendType : "推",
-		id : "test",
-		ipAddr : "127.0.0.1",
-		text : "test push",
-		time : time.Now(),
+		appendType: "推",
+		id:         "test",
+		ipAddr:     "127.0.0.1",
+		text:       "test push",
+		time:       time.Now(),
 	}, nil
 }
 
