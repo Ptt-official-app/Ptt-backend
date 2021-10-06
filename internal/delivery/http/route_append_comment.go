@@ -30,7 +30,17 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 
 	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
+		delivery.logger.Warningf("GetUserIDFromToken for %s: %v", userID, err)
 		w.WriteHeader(http.StatusUnauthorized)
+		m := map[string]string{
+			"error":             "get_user_id_from_token_error",
+			"error_description": "get_user_id_from_token_error",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("appendComment error response err: %w", err)
+		}
 		return
 	}
 	ctx := context.Background()
@@ -42,8 +52,17 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 		"user_id":    userID,
 	})
 	if err != nil {
-		// TODO: record unauthorized access
+		delivery.logger.Warningf("unauthorized get user information for %s: %v", userID, err)
 		w.WriteHeader(http.StatusUnauthorized)
+		m := map[string]string{
+			"error":             "permission_error",
+			"error_description": "no permission",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("appendComment error response err: %w", err)
+		}
 		return
 	}
 
