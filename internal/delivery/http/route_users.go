@@ -298,10 +298,10 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 		r, _ := utf8.DecodeRuneInString(comment)
 		if r != 0 {
 			// 移除無法解析的 utf8字元
-			length := 0;
-			if(len(comment)-10 >= 0) {
-				length = len(comment)-10
-			} 
+			length := 0
+			if len(comment)-10 >= 0 {
+				length = len(comment) - 10
+			}
 			comment = comment[:length]
 			comment = strings.TrimSpace(comment)
 		}
