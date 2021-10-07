@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	"github.com/Ptt-official-app/go-bbs"
@@ -295,16 +294,6 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 	for _, board := range dataItems {
 		// TODO: comment need more information
 		comment := board.Comment()
-		r, _ := utf8.DecodeRuneInString(comment)
-		if r != 0 {
-			// 移除無法解析的 utf8字元
-			length := 0
-			if len(comment)-10 >= 0 {
-				length = len(comment) - 10
-			}
-			comment = comment[:length]
-			comment = strings.TrimSpace(comment)
-		}
 
 		searchCond := &usecase.ArticleSearchCond{}
 		ctx := context.Background()
