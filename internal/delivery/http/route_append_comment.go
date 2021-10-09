@@ -30,7 +30,17 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 
 	userID, err := delivery.usecase.GetUserIDFromToken(token)
 	if err != nil {
+		delivery.logger.Warningf("GetUserIDFromToken for %s: %v", userID, err)
 		w.WriteHeader(http.StatusUnauthorized)
+		m := map[string]string{
+			"error":             "get_user_id_from_token_error",
+			"error_description": "get_user_id_from_token_error",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("appendComment error response err: %w", err)
+		}
 		return
 	}
 	ctx := context.Background()
@@ -42,8 +52,17 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 		"user_id":    userID,
 	})
 	if err != nil {
-		// TODO: record unauthorized access
+		delivery.logger.Warningf("unauthorized get user information for %s: %v", userID, err)
 		w.WriteHeader(http.StatusUnauthorized)
+		m := map[string]string{
+			"error":             "permission_error",
+			"error_description": "no permission",
+		}
+		b, _ := json.MarshalIndent(m, "", "  ")
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("appendComment error response err: %w", err)
+		}
 		return
 	}
 
@@ -82,16 +101,16 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 
 	responseMap := map[string]interface{}{
 		"data": map[string]interface{}{
-			"raw": r.PostForm.Encode(),
+			"raw": res.Text(),
 			"parsed": map[string]interface{}{
 				"is_header_modied": false,
-				"author_id":        nil,
-				"author_name":      nil,
+				"author_id":        userID,
+				"author_name":      userID,
 				"title":            nil,
-				"post_time":        nil,
-				"board_name":       "", // todo: go-bbs articles 需實作新介面取得資訊
+				"post_time":        res.Time().Format("2006-01-02 15:04:05"),
+				"board_name":       boardID, // todo: go-bbs articles 需實作新介面取得資訊
 				"text": map[string]string{
-					"text": "", // todo: // todo: go-bbs articles 需實作新介面取得資訊
+					"text": text, // todo: // todo: go-bbs articles 需實作新介面取得資訊
 				},
 				"signature":    map[string]string{},
 				"sender_info":  map[string]string{}, // todo: go-bbs articles 需實作新介面取得資訊(user info)

@@ -14,7 +14,13 @@ func (usecase *MockUsecase) GetPopularArticles(ctx context.Context) ([]repositor
 }
 
 func (usecase *MockUsecase) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (repository.PushRecord, error) {
-	return nil, nil
+	return &MockPushRecord{
+		appendType: "推",
+		id:         "test",
+		ipAddr:     "127.0.0.1",
+		text:       "test push",
+		time:       time.Now(),
+	}, nil
 }
 
 func (usecase *MockUsecase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (repository.ForwardArticleToBoardRecord, error) {
@@ -42,7 +48,13 @@ func (usecase *MockUsecase) GetRawArticle(boardID, filename string) (string, err
 }
 
 func (usecase *MockUsecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
-	return nil, nil
+	return &MockPushRecord{
+		appendType: "推",
+		id:         "test",
+		ipAddr:     "127.0.0.1",
+		text:       "test push",
+		time:       time.Now(),
+	}, nil
 }
 
 type MockArticleRecord struct {
@@ -63,3 +75,31 @@ func (m *MockArticleRecord) Owner() string                  { return m.owner }
 func (m *MockArticleRecord) Date() string                   { return m.date }
 func (m *MockArticleRecord) Title() string                  { return m.title }
 func (m *MockArticleRecord) Money() int                     { return m.money }
+
+type MockPushRecord struct {
+	appendType string
+	id         string
+	ipAddr     string
+	text       string
+	time       time.Time
+}
+
+func (p *MockPushRecord) Type() string {
+	return p.appendType
+}
+
+func (p *MockPushRecord) ID() string {
+	return p.id
+}
+
+func (p *MockPushRecord) IPAddr() string {
+	return p.ipAddr
+}
+
+func (p *MockPushRecord) Text() string {
+	return p.text
+}
+
+func (p *MockPushRecord) Time() time.Time {
+	return p.time
+}
