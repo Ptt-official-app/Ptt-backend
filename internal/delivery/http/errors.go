@@ -116,7 +116,27 @@ func TokenPermissionError(r *http.Request, err error) []byte {
 func NewNoPermissionForCreateBoardArticlesError(r *http.Request, boardID string) []byte {
 	m := map[string]string{
 		"error":             "no_permission_for_create_board_articles",
-		"error_description": "user don't have permission for create board article" + boardID,
+		"error_description": "user don't have permission to create an article in board " + boardID,
+	}
+
+	b, _ := json.MarshalIndent(m, "", "  ")
+	return b
+}
+
+func NewNoPermissionForForwardArticleError(r *http.Request, filename string) []byte {
+	m := map[string]string{
+		"error":             "no_permission_for_forward_board_article",
+		"error_description": "user don't have permission to forward article " + filename,
+	}
+
+	b, _ := json.MarshalIndent(m, "", "  ")
+	return b
+}
+
+func NewNoPermissionForForwardArticleToEmailError(r *http.Request, filename, email string) []byte {
+	m := map[string]string{
+		"error":             "no_permission_for_forward_board_article_to_email",
+		"error_description": "user don't have permission to forward article " + filename + " to email " + email,
 	}
 
 	b, _ := json.MarshalIndent(m, "", "  ")

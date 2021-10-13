@@ -18,8 +18,8 @@ const (
 	PermissionReadFavorite            Permission = "READ_FAVORITE"
 	PermissionCreateArticle           Permission = "PUBLISH_POSTS"
 	PermissionAppendComment           Permission = "APPEND_COMMENT"
-	PermissionForwardArticle          Permission = "FORWARD_ARTICLE"
-	PermissionForwardAddArticle       Permission = "ADD_ARTICLE"
+	PermissionForwardArticleToBoard   Permission = "FORWARD_ARTICLE_TO_BOARD"
+	PermissionForwardArticleToEmail   Permission = "FORWARD_ARTICLE_TO_EMAIL"
 	PermissionUpdateDraft             Permission = "UPDATE_DRAFT"
 	PermissionDeleteDraft             Permission = "DELETE_DRAFT"
 )
@@ -102,8 +102,12 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 			}
 		case PermissionUpdateDraft:
 		case PermissionDeleteDraft:
-		case PermissionForwardArticle:
-			if err := usecase.checkForwardArticlePermission(token, userInfo); err != nil {
+		case PermissionForwardArticleToBoard:
+			if err := usecase.checkForwardArticleToBoardPermission(token, userInfo); err != nil {
+				return err
+			}
+		case PermissionForwardArticleToEmail:
+			if err := usecase.checkForwardArticleToEmailPermission(token, userInfo); err != nil {
 				return err
 			}
 		case PermissionCreateArticle:
@@ -111,7 +115,7 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 				return err
 			}
 		default:
-			return fmt.Errorf("undefined permission id:%s", permission)
+			return fmt.Errorf("undefined permission id: %s", permission)
 		}
 	}
 
@@ -152,10 +156,32 @@ func (usecase *usecase) checkCreateArticlePermission(ctx context.Context, token 
 	return nil
 }
 
-func (usecase *usecase) checkForwardArticlePermission(token string, userInfo map[string]string) error {
+// This function checks the user has permission that can forward the target article to another board.
+func (usecase *usecase) checkForwardArticleToBoardPermission(token string, userInfo map[string]string) error {
 	// boardID := userInfo["board_id"]
+	// toBoard := userInfo["to_board"]
 	// userID := userInfo["user_id"]
 
+	// TODO: 判斷是否有轉錄的權限
+	// TODO: 判斷在該版是否允許發文
+	// TODO: 判斷轉錄的版是否允許發文
+	// TODO: 判斷在該版是否被水桶
+	// TODO: 判斷轉錄的次數上限
+	// TODO: 判斷轉錄的版跟現在的版是不同的
+	// TODO: 判斷冷卻時間
+	// TODO: 判斷 CAPTCHA 驗證是否通過
+
+	return nil
+}
+
+// This function checks the user has permission that can forward the target article to the target email address.
+// Implementation should note that the target email is not a private email or an unresolved address.
+func (usecase *usecase) checkForwardArticleToEmailPermission(token string, userInfo map[string]string) error {
+	// boardID := userInfo["board_id"]
+	// toEmail := userInfo["to_email"]
+	// userID := userInfo["user_id"]
+
+	// TODO: 確認Email是可以轉發的
 	// TODO: 判斷是否有轉錄的權限
 	// TODO: 判斷在該版是否允許發文
 	// TODO: 判斷轉錄的版是否允許發文

@@ -86,17 +86,6 @@ func (usecase *usecase) AppendComment(ctx context.Context, userID, boardID, file
 
 // ForwardArticleToBoard returns forwarding to board results
 func (usecase *usecase) ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (repository.ForwardArticleToBoardRecord, error) {
-	token := usecase.CreateAccessTokenWithUsername(userID)
-
-	err := usecase.checkForwardArticlePermission(token,
-		map[string]string{
-			"board_id":   boardID,
-			"article_id": filename,
-		})
-	if err != nil {
-		return nil, fmt.Errorf("checkForwardArticlePermission error: %w", err)
-	}
-
 	forwardArticle, err := usecase.repo.ForwardArticleToBoard(ctx, userID, boardID, filename, boardName)
 	if err != nil {
 		return nil, fmt.Errorf("ForwardArticleToBoard error: %w", err)
