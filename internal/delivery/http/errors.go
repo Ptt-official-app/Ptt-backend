@@ -78,6 +78,15 @@ func NewNoRequiredParameterError(r *http.Request, requireParameter string) []byt
 	return b
 }
 
+func NewParameterShouldBeIntegerError(r *http.Request, parameter string) []byte {
+	m := map[string]string{
+		"error":             "parameter_should_be_integer",
+		"error_description": parameter + " should be integer",
+	}
+	b, _ := json.MarshalIndent(m, "", "  ")
+	return b
+}
+
 // NewBoardError generates a error payload when create board fail
 func NewNewBoardError(r *http.Request) []byte {
 	boardID := r.PostFormValue("title")
