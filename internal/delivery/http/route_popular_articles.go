@@ -42,9 +42,16 @@ func (delivery *Delivery) getPopularArticles(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-func marshalArticle(r repository.PopularArticleRecord)  map[string]interface{} {
+func marshalArticle(r repository.PopularArticleRecord) map[string]interface{} {
 	ret := map[string]interface{}{
-		"filename" : r.Filename(),
+		"filename":        r.Filename(),
+		"modified":        r.Modified(),
+		"recommend_count": r.Recommend(),
+		"owner":           r.Owner(),
+		"date":            r.Date(),
+		"title":           r.Title(),
+		"money":           r.Money(),
+		"board_id":        r.BoardID(),
 	}
 
 	return ret
