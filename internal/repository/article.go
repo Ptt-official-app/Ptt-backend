@@ -20,6 +20,27 @@ type PopularArticleRecord interface {
 	BoardID() string
 }
 
+type PopularArticle struct {
+	filename       string
+	modified       time.Time
+	recommendCount int
+	owner          string
+	date           string
+	title          string
+	money          int
+	boardID        string
+}
+
+func (p *PopularArticle) Filename() string               { return p.filename }
+func (p *PopularArticle) Modified() time.Time            { return p.modified }
+func (p *PopularArticle) SetModified(newValue time.Time) { p.modified = newValue }
+func (p *PopularArticle) Recommend() int                 { return p.recommendCount }
+func (p *PopularArticle) Date() string                   { return p.date }
+func (p *PopularArticle) Title() string                  { return p.title }
+func (p *PopularArticle) Money() int                     { return p.money }
+func (p *PopularArticle) Owner() string                  { return p.owner }
+func (p *PopularArticle) BoardID() string                { return p.boardID }
+
 type PushRecord interface {
 	// TODO: use bbs.PushRecord instead
 	Type() string
@@ -58,9 +79,27 @@ func (p *Push) Time() time.Time {
 }
 
 func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error) {
-	// Note: go-bbs has not implemented this yet
-	// TODO: delegate to repo.db when it is ready
-	return []PopularArticleRecord{}, nil
+	var result []PopularArticleRecord
+	boards := repo.GetBoards(ctx)
+	for _, board := range boards {
+		articles, err := repo.GetBoardArticleRecords(ctx, board.BoardID())
+		if err != nil {
+			return nil, err
+		}
+		for _, article := range articles {
+			result = append(result, &PopularArticle{
+				article.Filename(),
+				article.Modified(),
+				article.Recommend(),
+				article.Owner(),
+				article.Date(),
+				article.Title(),
+				article.Money(),
+				board.BoardID(),
+			})
+		}
+	}
+	return result, nil
 }
 
 func (repo *repository) AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error) {
