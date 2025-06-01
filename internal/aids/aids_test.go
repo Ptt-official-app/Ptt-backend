@@ -164,12 +164,12 @@ func TestAidu2Fn(t *testing.T) {
 		{
 			name:     "M type, random nonzero",
 			input:    (0 << 44) | (123456789 << 12) | 0x0DC,
-			expected: "M.123456789.A.dc",
+			expected: "M.123456789.A.DC",
 		},
 		{
 			name:     "G type, random nonzero",
 			input:    (1 << 44) | (987654321 << 12) | 0x1AB,
-			expected: "G.987654321.A.1ab",
+			expected: "G.987654321.A.1AB",
 		},
 		{
 			name:     "G type, random zero",
@@ -179,7 +179,7 @@ func TestAidu2Fn(t *testing.T) {
 		{
 			name:     "max values",
 			input:    (1 << 44) | (0xFFFFFFFF << 12) | 0xFFF,
-			expected: "G.4294967295.A.fff",
+			expected: "G.4294967295.A.FFF",
 		},
 	}
 

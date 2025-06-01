@@ -103,7 +103,7 @@ func Aidu2Fn(aidu Aidu) string {
 		return ""
 	}
 
-	return prefix + "." + strconv.FormatUint(uint64(timestamp), 10) + ".A." + strconv.FormatUint(uint64(random), 16)
+	return prefix + "." + strconv.FormatUint(uint64(timestamp), 10) + ".A." + strings.ToUpper(strconv.FormatUint(uint64(random), 16))
 }
 
 // Aidc2Aidu 參考 pttbbs 裡面的 aids.c 將不同基數的編碼轉換為 Aidu 格式
