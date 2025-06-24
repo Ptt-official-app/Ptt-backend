@@ -74,12 +74,12 @@ func (delivery *Delivery) publishPost(w http.ResponseWriter, r *http.Request, bo
 		"data": map[string]interface{}{
 			"raw": base64.StdEncoding.EncodeToString([]byte(raw)),
 			"parsed": map[string]interface{}{
-				"is_header_modied": false,
-				"author_id":        userID,
-				"board_name":       boardID, // todo: go-bbs articles 需實作新介面取得資訊
-				"author_name":      record.Owner(),
-				"title":            record.Title(),
-				"post_time":        record.Date(),
+				"is_header_modified": false,
+				"author_id":          userID,
+				"board_name":         boardID, // todo: go-bbs articles 需實作新介面取得資訊
+				"author_name":        record.Owner(),
+				"title":              record.Title(),
+				"post_time":          record.Date(),
 				"text": map[string]string{
 					"text": article, // todo: go-bbs articles 需實作新介面取得資訊
 				},

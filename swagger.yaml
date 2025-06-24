@@ -704,7 +704,7 @@ paths:
                       parsed:
                         type: object
                         properties:
-                          is_header_modied:
+                          is_header_modified:
                             type: string
                           author_id:
                             type: string
@@ -844,7 +844,7 @@ paths:
                       parsed:
                         type: object
                         properties:
-                          is_header_modify:
+                          is_header_modified:
                             type: string
                           author_id:
                             type: string
