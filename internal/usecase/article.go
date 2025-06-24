@@ -21,7 +21,7 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 }
 
 func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
-	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
+	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID, 0, ^uint(0))
 
 	if err != nil {
 		return nil, fmt.Errorf("UpdateUsefulness error: %w", err)
@@ -96,7 +96,7 @@ func (usecase *usecase) ForwardArticleToBoard(ctx context.Context, userID, board
 
 // ForwardArticleToEmail returns forwarding to email results
 func (usecase *usecase) ForwardArticleToEmail(ctx context.Context, userID, boardID, filename, email string) error {
-	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
+	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID, 0, ^uint(0))
 	if err != nil {
 		return fmt.Errorf("GetBoardArticleRecords error: %w", err)
 	}

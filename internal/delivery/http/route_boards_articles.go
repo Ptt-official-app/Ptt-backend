@@ -166,7 +166,7 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 	}
 
 	items := []interface{}{}
-	articles := delivery.usecase.GetBoardArticles(context.Background(), boardID, searchCond)
+	articles := delivery.usecase.GetBoardArticles(context.Background(), boardID, 0, ^uint(0), searchCond)
 
 	// Articles to output format, please refer: https://docs.google.com/document/d/18DsZOyrlr5BIl2kKxZH7P2QxFLG02xL2SO0PzVHVY3k/edit#heading=h.bnhpxsiwnbey
 	for _, a := range articles {

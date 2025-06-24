@@ -16,7 +16,7 @@ type Repository interface {
 	// GetBoardArticle returns an article file in a specified board and filename
 	GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error)
 	// GetBoardArticleRecords returns article records of a board
-	GetBoardArticleRecords(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error)
+	GetBoardArticleRecords(ctx context.Context, boardID string, offset, length uint) ([]bbs.ArticleRecord, error)
 	// GetBoardTreasureRecords returns treasure article records of a board
 	GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error)
 	// GetBoardPostsLimit returns posts limited record of a board

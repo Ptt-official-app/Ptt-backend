@@ -60,7 +60,7 @@ func (repo *repository) GetUserFavoriteRecords(ctx context.Context, userID strin
 }
 
 func (repo *repository) GetUserArticles(_ context.Context, boardID string) ([]bbs.ArticleRecord, error) {
-	return repo.db.ReadBoardArticleRecordsFile(boardID)
+	return repo.db.ReadBoardArticleRecordsFile(boardID, 0, ^uint(0))
 }
 
 // TODO: no required method in go-bbs and we use a mock, replace it when available

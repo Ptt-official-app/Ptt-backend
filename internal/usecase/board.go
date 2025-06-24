@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/Ptt-official-app/go-bbs"
@@ -28,7 +29,7 @@ type BoardPostLimitation struct {
 
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
-		if boardID == it.BoardID() {
+		if strings.ToLower(boardID) == strings.ToLower(it.BoardID()) {
 			return it, nil
 		}
 	}
@@ -37,6 +38,7 @@ func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.B
 
 func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.BoardRecord {
 	boards := make([]bbs.BoardRecord, 0)
+	slog.Info("GetBoards", "boardRecords a", len(boards))
 	for _, board := range usecase.repo.GetBoards(ctx) {
 		// TODO: Show Board by user level
 		if board.IsClass() {
@@ -47,6 +49,7 @@ func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.Boar
 		}
 		boards = append(boards, board)
 	}
+	slog.Info("GetBoards", "boardRecords b", len(boards))
 	return boards
 }
 
@@ -80,10 +83,10 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 func shouldBeDisplayOnPouplarList(board bbs.BoardRecord) bool {
 	// Initially filter boards by board status or other values
 	// TODO:Need to add filter conditions,here is an example
-	if classID := board.ClassID(); classID != "" && !board.IsClass() {
-		return true
-	}
-	return false
+	// if classID := board.ClassID(); classID != "" && !board.IsClass() {
+	return true
+	// }
+	// return false
 }
 
 func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error) {
@@ -121,15 +124,16 @@ func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) 
 	return boards, nil
 }
 
-func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, cond *ArticleSearchCond) []bbs.ArticleRecord {
+func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, offset, length uint, cond *ArticleSearchCond) []bbs.ArticleRecord {
 	var articles []bbs.ArticleRecord
-	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID)
+	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID, offset, length)
 	if err != nil {
 		usecase.logger.Warningf("open directory file error: %v", err)
 		// The board may not contain any article
 	}
 
-	if len(strings.TrimSpace(cond.Title)) > 0 ||
+	if cond != nil &&
+		len(strings.TrimSpace(cond.Title)) > 0 ||
 		len(strings.TrimSpace(cond.Author)) > 0 ||
 		cond.RecommendCountGreaterEqualIsSet ||
 		cond.RecommendCountLessEqualIsSet {

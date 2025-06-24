@@ -82,7 +82,7 @@ func (repo *repository) GetPopularArticles(ctx context.Context) ([]PopularArticl
 	var result []PopularArticleRecord
 	boards := repo.GetBoards(ctx)
 	for _, board := range boards {
-		articles, err := repo.GetBoardArticleRecords(ctx, board.BoardID())
+		articles, err := repo.GetBoardArticleRecords(ctx, board.BoardID(), 0, ^uint(0))
 		if err != nil {
 			return nil, err
 		}

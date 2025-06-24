@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
 	"github.com/Ptt-official-app/go-bbs"
@@ -20,6 +21,7 @@ import (
 // }
 
 func (repo *repository) GetBoards(_ context.Context) []bbs.BoardRecord {
+	slog.Info("GetBoards", "boardRecords", len(repo.boardRecords))
 	return repo.boardRecords
 }
 
@@ -27,8 +29,8 @@ func (repo *repository) GetBoardArticle(_ context.Context, boardID, filename str
 	return repo.db.ReadBoardArticleFile(boardID, filename)
 }
 
-func (repo *repository) GetBoardArticleRecords(_ context.Context, boardID string) ([]bbs.ArticleRecord, error) {
-	return repo.db.ReadBoardArticleRecordsFile(boardID)
+func (repo *repository) GetBoardArticleRecords(_ context.Context, boardID string, offset, length uint) ([]bbs.ArticleRecord, error) {
+	return repo.db.ReadBoardArticleRecordsFile(boardID, offset, length)
 }
 
 func (repo *repository) GetBoardTreasureRecords(_ context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {

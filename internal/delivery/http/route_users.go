@@ -297,7 +297,7 @@ func (delivery *Delivery) getUserComments(w http.ResponseWriter, r *http.Request
 
 		searchCond := &usecase.ArticleSearchCond{}
 		ctx := context.Background()
-		articles := delivery.usecase.GetBoardArticles(ctx, board.BoardID(), searchCond)
+		articles := delivery.usecase.GetBoardArticles(ctx, board.BoardID(), 0, ^uint(0), searchCond)
 
 		for _, article := range articles {
 			if article.Filename() == board.Filename() {
