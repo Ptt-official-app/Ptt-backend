@@ -8,7 +8,6 @@ import (
 	"net"
 	"strings"
 
-	"github.com/Ptt-official-app/Ptt-backend/internal/aids"
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	apipb "github.com/Ptt-official-app/Ptt-backend/internal/proto/api"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
@@ -97,43 +96,74 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListReply, error) {
 	slog.Info("boardd::List", "ref", req.Ref, "bid", req.Ref.GetBid(), "req", req)
 	initCacheBoards(s.usecase)
-	var boardID string
+	var boardName string
 	if len(req.Ref.GetName()) > 0 {
-		boardID = req.Ref.GetName()
+		boardName = req.Ref.GetName()
 	} else if req.Ref.GetBid() > 0 {
 		if int(req.Ref.GetBid()) > len(cachedBoard) {
 			slog.Error("boardd::List", "invalid bid", req.Ref.GetBid(), "len(cachedBoard)", len(cachedBoard))
 			return nil, fmt.Errorf("invalid bid: %d", req.Ref.GetBid())
 		}
-		boardID = cachedBoard[req.Ref.GetBid()].BoardID()
+		boardName = cachedBoard[req.Ref.GetBid()].BoardID()
 	} else {
 		slog.Error("boardd::List", "invalid ref", req.Ref)
 		return nil, fmt.Errorf("invalid ref: %v", req.Ref)
 	}
-	slog.Info("boardd::List", "boardID", boardID)
-	var offset = uint(req.GetOffset())
+	slog.Info("boardd::List", "boardName", boardName)
+	// var offset = uint(req.GetOffset())
 	var length = uint(req.GetLength())
 	if length <= 0 {
 		length = 20 // default length
 	}
 
-	articles := s.usecase.GetBoardArticles(context.Background(), boardID, offset, length, &usecase.ArticleSearchCond{})
-	if length > uint(len(articles)) {
-		length = uint(len(articles)) // limit to the number of articles
+	l := fmt.Sprintf("/%s/index.html", boardName)
+	b, err := webpttparser.GetPttPage(l)
+	if err != nil {
+		return nil, err
 	}
-	if length > 20 {
-		length = 20 // max length
+	slog.Info("boardd::List fetched page from webpttparser", "boardName", boardName, "length", len(b))
+
+	var page *webpttparser.BoardIndexPage
+	page, err = webpttparser.ParseBoardIndexPage(b)
+	if err != nil {
+		slog.Error("boardd::List ParseBoardIndexPage error", "error", err)
+		return nil, err
 	}
-	posts := make([]*apipb.Post, length)
-	for i, article := range articles[:length] {
+	slog.Info("boardd::List parsed page", "boardName", boardName, "len(page.Articles)", len(page.Articles), "len(page.Bottoms)", len(page.Bottoms), "LastPage", page.LastPage)
+
+	// articles := s.usecase.GetBoardArticles(context.Background(), boardID, offset, length, &usecase.ArticleSearchCond{})
+	// if length > uint(len(articles)) {
+	// 	length = uint(len(articles)) // limit to the number of articles
+	// }
+	// if length > 20 {
+	// 	length = 20 // max length
+	// }
+	posts := make([]*apipb.Post, len(page.Articles))
+	for i, article := range page.Articles {
 		// slog.Info("boardd::List", "article", article)
 		posts[i] = &apipb.Post{
 			Index:         uint32(i + 1),
-			Filename:      aids.Aidu2Fn(aids.Aidc2Aidu(article.Filename())),
-			RawDate:       article.Date(),
-			NumRecommends: int32(article.Recommend()),
-			Owner:         article.Owner(),
-			Title:         article.Title(),
+			Filename:      article.FileName,
+			RawDate:       article.Date,
+			NumRecommends: int32(article.Recommend),
+			Filemode:      markToMode(article.Mark),
+			Owner:         article.Owner,
+			Title:         article.Title,
+			ModifiedNsec:  0,
+		}
+	}
+	bottoms := make([]*apipb.Post, len(page.Bottoms))
+	for i, article := range page.Bottoms {
+		// slog.Info("boardd::List", "bottom article", article)
+		bottoms[i] = &apipb.Post{
+			Index:         uint32(i + 1 + len(page.Articles)),
+			Filename:      article.FileName,
+			RawDate:       article.Date,
+			NumRecommends: int32(article.Recommend),
+			Filemode:      markToMode(article.Mark),
+			Owner:         article.Owner,
+			Title:         article.Title,
+			ModifiedNsec:  0,
 		}
 	}
 
@@ -141,9 +171,30 @@ func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListR
 
 	return &apipb.ListReply{
 		Posts:   posts,
-		Bottoms: []*apipb.Post{},
+		Bottoms: bottoms,
 	}, nil
 
+}
+
+// Non-mail file modes
+const (
+	FileLocal = 1 << iota
+	FileMarked
+	FileDigest
+	FileBottom
+	FileSolved
+)
+
+func markToMode(mark string) int32 {
+	switch mark {
+	case "!":
+		return FileMarked | FileSolved
+	case "M":
+		return FileMarked
+	case "S":
+		return FileSolved
+	}
+	return 0
 }
 
 func (s *server) Content(ctx context.Context, req *apipb.ContentRequest) (*apipb.ContentReply, error) {

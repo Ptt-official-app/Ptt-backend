@@ -6,6 +6,8 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"path"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -477,4 +479,264 @@ func handleDivPushTag(buf []byte, n *html.Node) []byte {
 		}
 	}
 	return buf
+}
+
+// ==========================
+// Board article list parsing
+// ==========================
+
+// BoardEntry represents one row in a board index list (r-ent)
+type BoardEntry struct {
+	// Raw/derived values
+	RecommendStr string // original string in nrec (e.g., "爆", "X1", "10", "")
+	Recommend    int    // parsed number (爆=100, Xn=-n, empty=0)
+
+	Title     string // article title or "(本文已被刪除) [user]"
+	Owner     string // author id; may be "-" for deleted; try best-effort from title if deleted
+	Date      string // e.g. " 4/02"
+	Mark      string // sticky/mark column text; empty if none
+	FileName  string // article file name, e.g., "M.1742152964.A.660"; for deleted set to "M.0.A.0"
+	URL       string // href to the article if present; empty if deleted
+	IsDeleted bool   // true if article is deleted (no link)
+}
+
+// BoardIndexPage captures a parsed board index page including pagination links
+type BoardIndexPage struct {
+	FirstPage string
+	PrevPage  string
+	NextPage  string
+	LastPage  string
+
+	Articles []BoardEntry
+	Bottoms  []BoardEntry
+}
+
+// ParseBoardIndexPage parses PTT board index HTML and returns entries and pagination info.
+func ParseBoardIndexPage(input []byte) (*BoardIndexPage, error) {
+	doc, err := html.Parse(bytes.NewReader(input))
+	if err != nil {
+		return nil, fmt.Errorf("parse error: %w", err)
+	}
+
+	out := &BoardIndexPage{}
+
+	// Find pagination first (btn-group btn-group-paging)
+	if node := findFirst(doc, func(n *html.Node) bool { return hasClass(n, "btn-group") && hasClass(n, "btn-group-paging") }); node != nil {
+		for child := range node.ChildNodes() {
+			if child.Type == html.ElementNode && child.Data == "a" {
+				txt := strings.TrimSpace(textContent(child))
+				href, _ := getAttr(child, "href")
+				isDisabled := hasClass(child, "disabled") || href == ""
+				switch {
+				case strings.Contains(txt, "最舊"):
+					if !isDisabled {
+						out.FirstPage = href
+					}
+				case strings.Contains(txt, "上頁"):
+					if !isDisabled {
+						out.PrevPage = href
+					}
+				case strings.Contains(txt, "下頁"):
+					if !isDisabled {
+						out.NextPage = href
+					}
+				case strings.Contains(txt, "最新"):
+					if !isDisabled {
+						out.LastPage = href
+					}
+				}
+			}
+		}
+	}
+
+	// Find container of entries
+	container := findFirst(doc, func(n *html.Node) bool {
+		return n.Type == html.ElementNode && n.Data == "div" && hasClass(n, "r-list-container")
+	})
+	if container == nil {
+		// Some pages may still be parsable by scanning all r-ent
+		slog.Warn("r-list-container not found; scanning entire document for r-ent")
+	}
+
+	var entries []BoardEntry
+	var bottoms []BoardEntry
+	walker := container
+	if walker == nil {
+		walker = doc
+	}
+
+	if container != nil {
+		afterSep := false
+		for c := range container.ChildNodes() {
+			if c.Type != html.ElementNode || c.Data != "div" {
+				continue
+			}
+			if hasClass(c, "r-list-sep") {
+				afterSep = true
+				continue
+			}
+			if hasClass(c, "r-ent") {
+				e := parseREnt(c)
+				if afterSep {
+					bottoms = append(bottoms, e)
+				} else {
+					entries = append(entries, e)
+				}
+			}
+		}
+	} else {
+		// Fallback: just collect all r-ent as Articles
+		for n := range walker.Descendants() {
+			if n.Type == html.ElementNode && n.Data == "div" && hasClass(n, "r-ent") {
+				entry := parseREnt(n)
+				entries = append(entries, entry)
+			}
+		}
+	}
+
+	out.Articles = entries
+	out.Bottoms = bottoms
+	return out, nil
+}
+
+func parseREnt(n *html.Node) BoardEntry {
+	var e BoardEntry
+
+	// nrec
+	if nn := findFirstChild(n, func(c *html.Node) bool { return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "nrec") }); nn != nil {
+		e.RecommendStr = strings.TrimSpace(textContent(nn))
+		e.Recommend = parseRecommend(e.RecommendStr)
+	}
+
+	// title (a?)
+	if tn := findFirstChild(n, func(c *html.Node) bool { return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "title") }); tn != nil {
+		link := findFirstChild(tn, func(c *html.Node) bool { return c.Type == html.ElementNode && c.Data == "a" })
+		if link != nil {
+			e.Title = strings.TrimSpace(textContent(link))
+			href, _ := getAttr(link, "href")
+			e.URL = href
+			e.FileName = extractFilenameFromHref(href)
+			e.IsDeleted = false
+		} else {
+			// Deleted post, take raw text
+			titleText := strings.TrimSpace(textContent(tn))
+			e.Title = titleText
+			e.IsDeleted = true
+			e.FileName = "M.0.A.0"
+			// Try to extract owner from [owner]
+			if m := regexp.MustCompile(`\[(.*?)\]`).FindStringSubmatch(titleText); len(m) == 2 {
+				e.Owner = m[1]
+			}
+		}
+	}
+
+	// meta
+	if mn := findFirstChild(n, func(c *html.Node) bool { return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "meta") }); mn != nil {
+		if an := findFirstChild(mn, func(c *html.Node) bool { return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "author") }); an != nil {
+			author := strings.TrimSpace(textContent(an))
+			if author != "" && author != "-" { // '-' is placeholder for deleted
+				e.Owner = author
+			}
+		}
+		if dn := findFirstChild(mn, func(c *html.Node) bool { return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "date") }); dn != nil {
+			e.Date = strings.TrimSpace(textContent(dn))
+		}
+		if mk := findFirstChild(mn, func(c *html.Node) bool { return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "mark") }); mk != nil {
+			e.Mark = strings.TrimSpace(textContent(mk))
+		}
+	}
+
+	return e
+}
+
+func parseRecommend(s string) int {
+	if s == "" {
+		return 0
+	}
+	if s == "爆" {
+		return 100
+	}
+	if strings.HasPrefix(s, "X") || strings.HasPrefix(s, "x") {
+		if v, err := strconv.Atoi(strings.TrimPrefix(strings.ToUpper(s), "X")); err == nil {
+			return -v
+		}
+		return 0
+	}
+	if v, err := strconv.Atoi(s); err == nil {
+		return v
+	}
+	return 0
+}
+
+func extractFilenameFromHref(href string) string {
+	// Expecting /bbs/<Board>/<Filename>.html
+	base := path.Base(href)
+	if strings.HasSuffix(base, ".html") {
+		return strings.TrimSuffix(base, ".html")
+	}
+	return base
+}
+
+// Helpers
+func getAttr(n *html.Node, key string) (string, bool) {
+	for _, a := range n.Attr {
+		if a.Key == key {
+			return a.Val, true
+		}
+	}
+	return "", false
+}
+
+func hasClass(n *html.Node, class string) bool {
+	if n == nil {
+		return false
+	}
+	for _, a := range n.Attr {
+		if a.Key == "class" {
+			for _, c := range strings.Fields(a.Val) {
+				if c == class {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func findFirst(root *html.Node, pred func(*html.Node) bool) *html.Node {
+	if root == nil {
+		return nil
+	}
+	for n := range root.Descendants() {
+		if pred(n) {
+			return n
+		}
+	}
+	return nil
+}
+
+func findFirstChild(n *html.Node, pred func(*html.Node) bool) *html.Node {
+	for c := range n.ChildNodes() {
+		if pred(c) {
+			return c
+		}
+	}
+	return nil
+}
+
+func textContent(n *html.Node) string {
+	var b strings.Builder
+	var rec func(*html.Node)
+	rec = func(x *html.Node) {
+		switch x.Type {
+		case html.TextNode:
+			b.WriteString(x.Data)
+		case html.ElementNode:
+			for c := range x.ChildNodes() {
+				rec(c)
+			}
+		}
+	}
+	rec(n)
+	return b.String()
 }
