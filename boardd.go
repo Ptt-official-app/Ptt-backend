@@ -6,6 +6,7 @@ import (
 	"log"
 	"log/slog"
 	"net"
+	"regexp"
 	"strings"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
@@ -69,16 +70,42 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 			return nil, fmt.Errorf("invalid ref: %v", ref)
 		}
 		slog.Info("boardd::Board", "board", board)
-		articles := s.usecase.GetBoardArticles(context.Background(), board.BoardID(), 0, ^uint(0), &usecase.ArticleSearchCond{})
+		// articles := s.usecase.GetBoardArticles(context.Background(), board.BoardID(), 0, ^uint(0), &usecase.ArticleSearchCond{})
+
+		l := fmt.Sprintf("/%s/index.html", board.BoardID())
+		b, err := webpttparser.GetPttPage(l)
+		if err != nil {
+			return nil, err
+		}
+		var page *webpttparser.BoardIndexPage
+		page, err = webpttparser.ParseBoardIndexPage(b)
+		if err != nil {
+			slog.Error("boardd::List ParseBoardIndexPage error", "error", err)
+			return nil, err
+		}
+		prevPageHref := page.PrevPage // 上頁
+		reg := regexp.MustCompile(`/index(\d+).html`)
+		matches := reg.FindStringSubmatch(prevPageHref)
+		pageNum := 0
+		if len(matches) == 2 {
+			fmt.Sscanf(matches[1], "%d", &pageNum)
+		} else {
+			slog.Warn("boardd::Board unable to parse last page number", "lastPageHref", prevPageHref)
+		}
+
+		numPosts := pageNum*20 + len(page.Articles)
+
+		slog.Info("boardd::Board", "boardName", board.BoardID(), "numPosts", numPosts)
 
 		boards[i] = &apipb.Board{
-			Bid:        boardIndex,
+			Bid:        boardToBoardIndex[strings.ToLower(board.BoardID())],
 			Name:       board.BoardID(),
 			Title:      board.Title(),
 			NumUsers:   0,
 			Bclass:     "",
 			Attributes: 0,
-			NumPosts:   uint32(len(articles)),
+			// NumPosts:   uint32(len(articles)),
+			NumPosts: uint32(numPosts),
 		}
 
 		// boards[i] = &apipb.Board{
@@ -90,6 +117,8 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 		// 	Attributes: 0,
 		// }
 	}
+
+	slog.Info("boardd::Board reply", "boards", boards)
 	return &apipb.BoardReply{Boards: boards}, nil
 }
 
@@ -110,27 +139,47 @@ func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListR
 		return nil, fmt.Errorf("invalid ref: %v", req.Ref)
 	}
 	slog.Info("boardd::List", "boardName", boardName)
-	// var offset = uint(req.GetOffset())
+	var offset = uint(req.GetOffset())
 	var length = uint(req.GetLength())
 	if length <= 0 {
 		length = 20 // default length
 	}
 
-	l := fmt.Sprintf("/%s/index.html", boardName)
-	b, err := webpttparser.GetPttPage(l)
-	if err != nil {
-		return nil, err
-	}
-	slog.Info("boardd::List fetched page from webpttparser", "boardName", boardName, "length", len(b))
-
 	var page *webpttparser.BoardIndexPage
-	page, err = webpttparser.ParseBoardIndexPage(b)
-	if err != nil {
-		slog.Error("boardd::List ParseBoardIndexPage error", "error", err)
-		return nil, err
-	}
-	slog.Info("boardd::List parsed page", "boardName", boardName, "len(page.Articles)", len(page.Articles), "len(page.Bottoms)", len(page.Bottoms), "LastPage", page.LastPage)
 
+	if offset == 0 && req.IncludeBottoms {
+		// fetch bottoms only
+		l := fmt.Sprintf("/%s/index.html", boardName)
+		b, err := webpttparser.GetPttPage(l)
+		if err != nil {
+			return nil, err
+		}
+		slog.Info("boardd::List fetched page from webpttparser for bottoms", "boardName", boardName, "length", len(b))
+
+		page, err = webpttparser.ParseBoardIndexPage(b)
+		if err != nil {
+			slog.Error("boardd::List ParseBoardIndexPage error", "error", err)
+			return nil, err
+		}
+		slog.Info("boardd::List parsed page for bottoms", "boardName", boardName, "len(page.Bottoms)", len(page.Bottoms))
+	} else {
+
+		pageNum := offset/20 + 1
+		slog.Info("boardd::List fetching page", "boardName", boardName, "pageNum", pageNum)
+		l := fmt.Sprintf("/%s/index%d.html", boardName, pageNum)
+		b, err := webpttparser.GetPttPage(l)
+		if err != nil {
+			return nil, err
+		}
+		slog.Info("boardd::List fetched page from webpttparser", "boardName", boardName, "length", len(b))
+
+		page, err = webpttparser.ParseBoardIndexPage(b)
+		if err != nil {
+			slog.Error("boardd::List ParseBoardIndexPage error", "error", err)
+			return nil, err
+		}
+		slog.Info("boardd::List parsed page", "boardName", boardName, "len(page.Articles)", len(page.Articles), "len(page.Bottoms)", len(page.Bottoms), "LastPage", page.LastPage)
+	}
 	// articles := s.usecase.GetBoardArticles(context.Background(), boardID, offset, length, &usecase.ArticleSearchCond{})
 	// if length > uint(len(articles)) {
 	// 	length = uint(len(articles)) // limit to the number of articles
@@ -152,6 +201,7 @@ func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListR
 			ModifiedNsec:  0,
 		}
 	}
+
 	bottoms := make([]*apipb.Post, len(page.Bottoms))
 	for i, article := range page.Bottoms {
 		// slog.Info("boardd::List", "bottom article", article)
