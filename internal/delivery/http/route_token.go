@@ -33,6 +33,23 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	if username == "guest" {
+		// Generate Access Token
+		token := delivery.usecase.CreateAccessTokenWithUsername(username)
+		m := map[string]string{
+			"access_token": token,
+			"token_type":   "bearer",
+		}
+
+		b, _ := json.MarshalIndent(m, "", "  ")
+
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("postToken success response err: %w", err)
+		}
+		return
+	}
+
 	password := r.FormValue("password")
 	if len(password) == 0 {
 		m := map[string]string{

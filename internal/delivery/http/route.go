@@ -14,6 +14,8 @@ func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
 	mux.HandleFunc("/v1/classes/", delivery.routeClasses)
 	mux.HandleFunc("/v1/users/", delivery.routeUsers)
 
+	mux.HandleFunc("/sse", delivery.routeSSE)
+
 	mux.HandleFunc("/", delivery.notFoundHandler)
 }
 
