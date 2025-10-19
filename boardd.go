@@ -320,23 +320,33 @@ func (s *server) Content(ctx context.Context, req *apipb.ContentRequest) (*apipb
 
 }
 
-func (s *server) Hotboard(context.Context, *apipb.HotboardRequest) (*apipb.HotboardReply, error) {
-	slog.Info("GetPopularBoards")
-	records, err := s.usecase.GetPopularBoards(context.Background())
+func (s *server) Hotboard(c context.Context, req *apipb.HotboardRequest) (*apipb.HotboardReply, error) {
+	slog.Info("GetPopularBoards", "req", req)
+	initCacheBoards(s.usecase)
+
+	l := "/hotboards.html"
+	b, err := webpttparser.GetPttPage(l)
 	if err != nil {
-		slog.Error("GetPopularBoards error", "err", err)
 		return nil, err
 	}
-	slog.Info("GetPopularBoards", "records", records)
-	boards := make([]*apipb.Board, len(records))
-	for i, record := range records {
+	slog.Info("GetPopularBoards", "fetched hotboards page", "length", len(b))
+
+	records, err := webpttparser.ParseHotboardsPage(b)
+	if err != nil {
+		slog.Error("GetPopularBoards ParseHotboardsPage error", "error", err)
+		return nil, err
+	}
+
+	slog.Info("GetPopularBoards", "records", records.Boards[0:3])
+	boards := make([]*apipb.Board, len(records.Boards))
+	for i, record := range records.Boards {
 		slog.Info("GetPopularBoards", "record", record)
 		boards[i] = &apipb.Board{
-			Bid:        0,
-			Name:       record.BoardID(),
-			Title:      record.Title(),
-			NumUsers:   0,
-			Bclass:     "",
+			Bid:        boardToBoardIndex[strings.ToLower(record.BrdName)],
+			Name:       record.BrdName,
+			Title:      record.Title,
+			NumUsers:   uint32(record.Nuser),
+			Bclass:     record.Class,
 			Attributes: 0,
 		}
 	}
@@ -344,47 +354,6 @@ func (s *server) Hotboard(context.Context, *apipb.HotboardRequest) (*apipb.Hotbo
 	return &apipb.HotboardReply{
 		Boards: boards,
 	}, nil
-
-	// return &apipb.HotboardReply{
-	// 	Boards: []*apipb.Board{
-	// 		{
-	// 			Bid:        1,
-	// 			Name:       "Gossiping",
-	// 			Title:      "◎[老八] 共匪共諜就在本能寺",
-	// 			NumUsers:   8714,
-	// 			Bclass:     "綜合",
-	// 			Attributes: 0,
-	// 		},
-	// 		{
-	// 			Name:       "Stock",
-	// 			Title:      "◎[股票] 漲停板",
-	// 			NumUsers:   6031,
-	// 			Bclass:     "學術",
-	// 			Attributes: 0,
-	// 		},
-	// 		{
-	// 			Name:       "C_Chat",
-	// 			Title:      "◎[希洽] 發文時標題請防雷",
-	// 			NumUsers:   3792,
-	// 			Bclass:     "閒談",
-	// 			Attributes: 0,
-	// 		},
-	// 		{
-	// 			Name:       "Tech_Job",
-	// 			Title:      "◎[科技] 這裡是科技板",
-	// 			NumUsers:   378,
-	// 			Bclass:     "工作",
-	// 			Attributes: 0,
-	// 		},
-	// 		{
-	// 			Name:       "TY_Research",
-	// 			Title:      "◎強極渦劇場上映中",
-	// 			NumUsers:   27,
-	// 			Bclass:     "大氣",
-	// 			Attributes: 0,
-	// 		},
-	// 	},
-	// }, nil
 }
 
 // mock a bid table for BoardID (text) to Bid (int64) mapping

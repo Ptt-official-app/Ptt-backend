@@ -599,6 +599,108 @@ func ParseBoardIndexPage(input []byte) (*BoardIndexPage, error) {
 	return out, nil
 }
 
+// =====================
+// Hotboards page parser
+// =====================
+
+// HotboardEntry represents one board item in hotboards/classlist
+type HotboardEntry struct {
+	BrdName string // board-name
+	Title   string // board-title (without Σ/◎ prefixes)
+	Class   string // board-class
+	Nuser   int    // board-nuser (online users)
+	IsBoard bool   // true if it's a board (◎), false if group (Σ)
+	URL     string // href of the entry
+}
+
+// HotboardsPage holds a list of hotboard entries
+type HotboardsPage struct {
+	Boards []HotboardEntry
+}
+
+// ParseHotboardsPage parses a PTT hotboards/classlist HTML page
+// Expected structure similar to classlist.html with .b-list-container and .b-ent nodes.
+func ParseHotboardsPage(input []byte) (*HotboardsPage, error) {
+	doc, err := html.Parse(bytes.NewReader(input))
+	if err != nil {
+		return nil, fmt.Errorf("parse error: %w", err)
+	}
+	out := &HotboardsPage{}
+
+	container := findFirst(doc, func(n *html.Node) bool {
+		return n.Type == html.ElementNode && n.Data == "div" && hasClass(n, "b-list-container")
+	})
+	if container == nil {
+		// fallback: scan entire doc
+		container = doc
+	}
+
+	for n := range container.Descendants() {
+		if n.Type == html.ElementNode && n.Data == "div" && hasClass(n, "b-ent") {
+			// inside it there should be a link .board
+			link := findFirstChild(n, func(c *html.Node) bool { return c.Type == html.ElementNode && c.Data == "a" && hasClass(c, "board") })
+			if link == nil {
+				continue
+			}
+			entry := HotboardEntry{}
+			if href, ok := getAttr(link, "href"); ok {
+				entry.URL = href
+			}
+			// children divs: board-name, board-nuser, board-class, board-title
+			if name := findFirstChild(link, func(c *html.Node) bool {
+				return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "board-name")
+			}); name != nil {
+				entry.BrdName = strings.TrimSpace(textContent(name))
+			}
+			if nuser := findFirstChild(link, func(c *html.Node) bool {
+				return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "board-nuser")
+			}); nuser != nil {
+				s := strings.TrimSpace(textContent(nuser))
+				if v, err := strconv.Atoi(strings.TrimSpace(s)); err == nil {
+					entry.Nuser = v
+				} else {
+					// Some skins use formatted nuser like "1,234"; strip non-digits
+					digits := regexp.MustCompile(`[^0-9]`).ReplaceAllString(s, "")
+					if v, err := strconv.Atoi(digits); err == nil {
+						entry.Nuser = v
+					}
+				}
+			}
+			if class := findFirstChild(link, func(c *html.Node) bool {
+				return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "board-class")
+			}); class != nil {
+				entry.Class = strings.TrimSpace(textContent(class))
+			}
+			if title := findFirstChild(link, func(c *html.Node) bool {
+				return c.Type == html.ElementNode && c.Data == "div" && hasClass(c, "board-title")
+			}); title != nil {
+				t := strings.TrimSpace(textContent(title))
+				// Determine IsBoard based on prefix in template (◎ board, Σ group)
+				// However, the visible symbol may not be present in raw text depending on renderer.
+				// Fallback: detect from href pattern: /bbs/<name>/index.html => board; /cls/<bid> => group
+				if strings.HasPrefix(t, "◎") {
+					entry.IsBoard = true
+					t = strings.TrimPrefix(t, "◎")
+				} else if strings.HasPrefix(t, "Σ") || strings.HasPrefix(t, "&#931;") {
+					entry.IsBoard = false
+					t = strings.TrimPrefix(t, "Σ")
+				}
+				entry.Title = strings.TrimSpace(t)
+			}
+			if entry.URL != "" {
+				if strings.HasPrefix(entry.URL, "/bbs/") {
+					entry.IsBoard = true
+				} else if strings.HasPrefix(entry.URL, "/cls/") {
+					entry.IsBoard = false
+				}
+			}
+			out.Boards = append(out.Boards, entry)
+		}
+	}
+
+	return out, nil
+}
+
 func parseREnt(n *html.Node) BoardEntry {
 	var e BoardEntry
 
