@@ -113,7 +113,7 @@ func (delivery *Delivery) getBoardInformation(w http.ResponseWriter, r *http.Req
 		return
 	}
 
-	brd, err := delivery.usecase.GetBoardByID(ctx, boardID)
+	brd, err := delivery.usecase.GetBoardByName(ctx, boardID)
 	if err != nil {
 		// TODO: record error
 		delivery.logger.Warningf("find board %s failed: %v", boardID, err)
@@ -174,7 +174,7 @@ func (delivery *Delivery) getBoardSettings(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	brd, err := delivery.usecase.GetBoardByID(ctx, boardID)
+	brd, err := delivery.usecase.GetBoardByName(ctx, boardID)
 	if err != nil {
 		// TODO: record error
 		delivery.logger.Warningf("find board %s failed: %v", boardID, err)

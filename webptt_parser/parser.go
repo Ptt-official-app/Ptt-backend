@@ -12,6 +12,7 @@ import (
 	"golang.org/x/net/html"
 )
 
+// GetPttPage fetches the HTML content of a PTT page given its URL path.
 func GetPttPage(url string) ([]byte, error) {
 	requestURL := fmt.Sprintf("https://www.ptt.cc/bbs/%v", url)
 	resp, err := http.Get(requestURL)
@@ -30,6 +31,7 @@ func GetPttPage(url string) ([]byte, error) {
 	return b, nil
 }
 
+// HandlePage processes the HTML content of a PTT article page and extracts the main content.
 func HandlePage(input []byte) []byte {
 	buf := []byte{}
 

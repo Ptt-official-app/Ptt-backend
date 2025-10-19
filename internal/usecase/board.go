@@ -27,9 +27,9 @@ type BoardPostLimitation struct {
 	BadPostLimit uint8
 }
 
-func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
+func (usecase *usecase) GetBoardByName(ctx context.Context, boardName string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
-		if strings.ToLower(boardID) == strings.ToLower(it.BoardID()) {
+		if strings.ToLower(boardName) == strings.ToLower(it.Title()) {
 			return it, nil
 		}
 	}

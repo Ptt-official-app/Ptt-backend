@@ -31,8 +31,8 @@ type Usecase interface {
 	DeleteUserDraft(ctx context.Context, userID, draftID string) error
 
 	// board.go
-	// GetBoardByID returns board record of board id
-	GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error)
+	// GetBoardByName returns board record of board name
+	GetBoardByName(ctx context.Context, boardName string) (bbs.BoardRecord, error)
 	// GetBoards returns all board records
 	GetBoards(ctx context.Context, userID string) []bbs.BoardRecord
 	// GetPopularBoards returns top 100 popular board records

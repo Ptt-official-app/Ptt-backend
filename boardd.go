@@ -6,13 +6,19 @@ import (
 	"log"
 	"log/slog"
 	"net"
+	"strings"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/aids"
+	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	apipb "github.com/Ptt-official-app/Ptt-backend/internal/proto/api"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	webpttparser "github.com/Ptt-official-app/Ptt-backend/webptt_parser"
 	"github.com/Ptt-official-app/go-bbs"
 	"google.golang.org/grpc"
+
+	"database/sql"
+
+	_ "github.com/lib/pq"
 )
 
 type server struct {
@@ -39,23 +45,31 @@ func boardd(usecase usecase.Usecase) {
 
 func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.BoardReply, error) {
 	slog.Info("boardd::Board", "len(req.Ref)", len(req.Ref))
+	initCacheBoards(s.usecase)
 	boards := make([]*apipb.Board, len(req.Ref))
 	for i, ref := range req.Ref {
 		slog.Info("boardd::Board", "ref", ref.GetRef(), "bid", ref.GetBid(), "name", ref.GetName())
-		board, err := s.usecase.GetBoardByID(context.Background(), ref.GetName())
-		if err != nil {
-			slog.Error("GetBoardByID error", "err", err)
-			return nil, err
+		var board bbs.BoardRecord
+		var boardIndex uint32
+		if ref.GetBid() > 0 {
+			if int(ref.GetBid()) >= len(cachedBoard) {
+				slog.Error("boardd::Board", "invalid bid", ref.GetBid(), "len(cachedBoard)", len(cachedBoard))
+				return nil, fmt.Errorf("invalid bid: %d", ref.GetBid())
+			}
+			board = cachedBoard[ref.GetBid()]
+		} else if ref.GetName() != "" {
+			var ok bool
+			boardIndex, ok = boardToBoardIndex[ref.GetName()]
+			if !ok {
+				slog.Error("boardd::Board", "invalid name", ref.GetName())
+				return nil, fmt.Errorf("invalid name: %s", ref.GetName())
+			}
+			board = cachedBoard[boardIndex]
+		} else {
+			slog.Error("boardd::Board", "invalid ref", ref)
+			return nil, fmt.Errorf("invalid ref: %v", ref)
 		}
-
-		boardIndex, ok := boardToBoardIndex[board.BoardID()]
-		if !ok {
-			// if not found, assign a new index
-			boardIndex = uint32(len(boardToBoardIndex))
-			cachedBoard = append(cachedBoard, board)
-			boardToBoardIndex[board.BoardID()] = boardIndex
-			slog.Info("boardd::Board", "new boardIndex", boardIndex, "boardID", board.BoardID())
-		}
+		slog.Info("boardd::Board", "board", board)
 		articles := s.usecase.GetBoardArticles(context.Background(), board.BoardID(), 0, ^uint(0), &usecase.ArticleSearchCond{})
 
 		boards[i] = &apipb.Board{
@@ -82,7 +96,8 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 
 func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListReply, error) {
 	slog.Info("boardd::List", "ref", req.Ref, "bid", req.Ref.GetBid(), "req", req)
-	var boardID = ""
+	initCacheBoards(s.usecase)
+	var boardID string
 	if len(req.Ref.GetName()) > 0 {
 		boardID = req.Ref.GetName()
 	} else if req.Ref.GetBid() > 0 {
@@ -133,26 +148,69 @@ func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListR
 
 func (s *server) Content(ctx context.Context, req *apipb.ContentRequest) (*apipb.ContentReply, error) {
 	slog.Info("boardd::Content", "boardref", req.BoardRef, "filename", req.Filename, "token", req.ConsistencyToken, "options", req.PartialOptions)
-	var boardID = ""
+	initCacheBoards(s.usecase)
+	var boardName = "" // eg. "Gossiping"
 	if req.BoardRef.GetName() != "" {
-		boardID = req.BoardRef.GetName()
+		boardName = req.BoardRef.GetName()
 	} else if req.BoardRef.GetBid() > 0 {
 		if int(req.BoardRef.GetBid()) > len(cachedBoard) {
 			slog.Error("boardd::Content", "invalid bid", req.BoardRef.GetBid(), "len(cachedBoard)", len(cachedBoard))
 			return nil, fmt.Errorf("invalid bid: %d", req.BoardRef.GetBid())
 		}
-		boardID = cachedBoard[req.BoardRef.GetBid()].BoardID()
+		boardName = cachedBoard[req.BoardRef.GetBid()].BoardID()
 	} else {
 		slog.Error("boardd::Content", "invalid boardref", req.BoardRef)
 		return nil, fmt.Errorf("invalid boardref: %v", req.BoardRef)
 	}
-	slog.Info("boardd::Content", "boardID", boardID, "filename", req.Filename)
+	slog.Info("boardd::Content", "boardName", boardName, "filename", req.Filename)
 
-	l := fmt.Sprintf("/%s/%s.html", boardID, req.Filename)
-	b, err := getPttPage(l)
+	// TODO: use connection pool
+	globalConfig, err := config.NewDefaultConfig()
+	if err != nil {
+		slog.Error("failed to get config", "error", err)
+	}
+	db, err := sql.Open("postgres", globalConfig.BBSHome)
+	if err != nil {
+		slog.Error("Failed to connect to database", "error", err)
+		return nil, fmt.Errorf("failed to connect to database: %w", err)
+	}
+	// Check if the connection is alive
+	if err := db.Ping(); err != nil {
+		slog.Error("Failed to ping database", "error", err)
+		return nil, fmt.Errorf("failed to ping database: %w", err)
+	}
+	defer db.Close()
+	CreateArticleContentTable(db)
+
+	content, err := ReadArticleContentFromDB(db, boardName, req.Filename)
+	if err != nil && err != sql.ErrNoRows {
+		slog.Error("GetBoardArticleContent error", "error", err)
+		return nil, err
+	}
+	if content != nil {
+		slog.Info("boardd::Content", "found content in DB", "length", len(content))
+		return &apipb.ContentReply{
+			Content: &apipb.Content{
+				Content: content,
+			},
+		}, nil
+	}
+
+	slog.Info("boardd::Content fetching content from webpttparser", "boardName", boardName, "filename", req.Filename)
+
+	l := fmt.Sprintf("/%s/%s.html", boardName, req.Filename)
+	b, err := webpttparser.GetPttPage(l)
 	if err != nil {
 		return nil, err
 	}
+	// store content to DB
+	err = WriteArticleContentToDB(db, boardName, req.Filename, webpttparser.HandlePage(b))
+	if err != nil {
+		slog.Error("StoreBoardArticleContent error", "error", err)
+		return nil, err
+	}
+	slog.Info("boardd::Content stored content to DB", "boardName", boardName, "filename", req.Filename)
+
 	return &apipb.ContentReply{
 		Content: &apipb.Content{
 			Content: webpttparser.HandlePage(b),
@@ -230,14 +288,29 @@ func (s *server) Hotboard(context.Context, *apipb.HotboardRequest) (*apipb.Hotbo
 
 // mock a bid table for BoardID (text) to Bid (int64) mapping
 
-var boardToBoardIndex = map[string]uint32{
-	"": 0,
-}
+var isCacheBoardsInitialized = false
 var cachedBoard = []bbs.BoardRecord{
 	// mock data
 	&bbs.UnimplementedBoardRecord{},
 }
 
-func getPttPage(url string) ([]byte, error) {
-	return webpttparser.GetPttPage(url)
+var boardToBoardIndex = map[string]uint32{
+	"": 0,
+}
+
+func initCacheBoards(usecase usecase.Usecase) {
+	if isCacheBoardsInitialized {
+		return
+	}
+	boards := usecase.GetBoards(context.Background(), "")
+	for _, board := range boards {
+		boardIndex, ok := boardToBoardIndex[board.BoardID()]
+		if !ok {
+			boardIndex = uint32(len(boardToBoardIndex))
+			cachedBoard = append(cachedBoard, board)
+			boardToBoardIndex[strings.ToLower(board.BoardID())] = boardIndex
+			slog.Info("initCacheBoards", "new boardIndex", boardIndex, "boardID", board.BoardID())
+		}
+	}
+	isCacheBoardsInitialized = true
 }
