@@ -59,9 +59,9 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 			board = cachedBoard[ref.GetBid()]
 		} else if ref.GetName() != "" {
 			var ok bool
-			boardIndex, ok = boardToBoardIndex[ref.GetName()]
+			boardIndex, ok = boardToBoardIndex[strings.ToLower(ref.GetName())]
 			if !ok {
-				slog.Error("boardd::Board", "invalid name", ref.GetName())
+				slog.Error("boardd::Board board name not found", "invalid name", ref.GetName())
 				return nil, fmt.Errorf("invalid name: %s", ref.GetName())
 			}
 			board = cachedBoard[boardIndex]
@@ -304,7 +304,7 @@ func initCacheBoards(usecase usecase.Usecase) {
 	}
 	boards := usecase.GetBoards(context.Background(), "")
 	for _, board := range boards {
-		boardIndex, ok := boardToBoardIndex[board.BoardID()]
+		boardIndex, ok := boardToBoardIndex[strings.ToLower(board.BoardID())]
 		if !ok {
 			boardIndex = uint32(len(boardToBoardIndex))
 			cachedBoard = append(cachedBoard, board)
