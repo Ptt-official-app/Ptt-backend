@@ -19,8 +19,8 @@ import (
 func main() {
 	var logLevel = flag.Uint("logLevel", 4, `log level: 0: Emergency; 1: Alert; 2: Critical; 3: Error; 4: Warning; 5: Notice; 6: Info; 7: Debug`)
 	flag.Usage = func() {
-		os.Stderr.WriteString("Usage: \n  Ptt-backend [ options ]\n\n")
-		os.Stderr.WriteString("Options:\n")
+		_, _ = os.Stderr.WriteString("Usage: \n  Ptt-backend [ options ]\n\n")
+		_, _ = os.Stderr.WriteString("Options:\n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
@@ -29,7 +29,7 @@ func main() {
 		if *logLevel > 7 {
 			*logLevel = 7
 		}
-		os.Setenv("LOG_LEVEL", strconv.Itoa(int(*logLevel)))
+	_ = os.Setenv("LOG_LEVEL", strconv.Itoa(int(*logLevel)))
 	}
 
 	logger := logging.NewLogger()

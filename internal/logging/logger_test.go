@@ -38,8 +38,8 @@ func testLoggerLevel(t *testing.T, targetLevel uint) {
 		level:  targetLevel,
 	}
 	defer func() {
-		tempFile.Close()
-		os.Remove(tempFile.Name())
+		_ = tempFile.Close()
+		_ = os.Remove(tempFile.Name())
 	}()
 	testLogger.Emergencyf("")
 	testLogger.Alertf("")
@@ -88,12 +88,12 @@ func TestLogger(t *testing.T) {
 	testLoggerLevel(t, 2)
 	testLoggerLevel(t, 1)
 	testLoggerLevel(t, 0)
-	os.Setenv("LOG_LEVEL", "4")
+	_ = os.Setenv("LOG_LEVEL", "4")
 	testLogger := NewLogger()
 	if testLogger.(*logger).level != 4 {
 		t.Fatalf("Expect logger level is 4, get %d", testLogger.(*logger).level)
 	}
-	os.Setenv("LOG_LEVEL", "")
+	_ = os.Setenv("LOG_LEVEL", "")
 	testLogger = NewLogger()
 	if testLogger.(*logger).level != 7 {
 		t.Fatalf("Expect logger level is 7, get %d", testLogger.(*logger).level)

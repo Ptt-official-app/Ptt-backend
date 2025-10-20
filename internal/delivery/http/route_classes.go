@@ -25,7 +25,7 @@ func (delivery *Delivery) getClasses(w http.ResponseWriter, r *http.Request) {
 // eg: `/v1/classes`, it will redirect Client to `/v1/classes/1` which is
 // root class by default.
 func getClassesWithoutClassID(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/v1/classes/1", 301)
+	http.Redirect(w, r, "/v1/classes/1", http.StatusMovedPermanently)
 }
 
 // getClassesList handle path with class id and will return boards and classes

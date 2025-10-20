@@ -35,7 +35,7 @@ type URLValuesParser struct {
 }
 
 func (parser *URLValuesParser) getRecommendCount(name string) (*int, error) {
-	recommendCountParam := parser.Values.Get(name)
+	recommendCountParam := parser.Get(name)
 	if recommendCountParam == "" {
 		return nil, nil
 	}

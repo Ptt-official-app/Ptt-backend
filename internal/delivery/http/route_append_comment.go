@@ -17,10 +17,7 @@ func (delivery *Delivery) appendComment(w http.ResponseWriter, r *http.Request, 
 	appendType := r.PostFormValue("type")
 	text := r.PostFormValue("text")
 
-	updateUsefulness := false
-	if appendType == "↑" || appendType == "↓" {
-		updateUsefulness = true
-	}
+	updateUsefulness := appendType == "↑" || appendType == "↓"
 	if appendType == "" || (!updateUsefulness && text == "") {
 		w.WriteHeader(500)
 		return

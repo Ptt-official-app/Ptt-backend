@@ -95,11 +95,12 @@ func Aidu2Fn(aidu Aidu) string {
 	random := aidu & 0xFFF
 
 	var prefix string
-	if type_ == 0 {
+	switch type_ {
+	case 0:
 		prefix = "M"
-	} else if type_ == 1 {
+	case 1:
 		prefix = "G"
-	} else {
+	default:
 		return ""
 	}
 

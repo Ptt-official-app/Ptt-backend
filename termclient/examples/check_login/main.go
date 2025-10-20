@@ -15,7 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create log file: %v", err)
 	}
-	defer logFile.Close()
+	defer func() { _ = logFile.Close() }()
 	fileLogger := slog.New(slog.NewTextHandler(logFile, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	slog.SetDefault(fileLogger)
 
@@ -24,8 +24,8 @@ func main() {
 
 	// termclient.SetTermLogger(os.Stdout)
 	client := termclient.NewClient()
-	client.Connect()
-	defer client.Disconnect()
+	_ = client.Connect()
+	defer func() { _ = client.Disconnect() }()
 	_, _ = client.CheckLogin(username, password)
 	time.Sleep(3 * time.Second)
 }

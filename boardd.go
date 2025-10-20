@@ -310,7 +310,11 @@ func (s *server) Content(ctx context.Context, req *apipb.ContentRequest) (*apipb
 		slog.Error("Failed to ping database", "error", err)
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
-	defer db.Close()
+	defer func() {
+		if cerr := db.Close(); cerr != nil {
+			slog.Warn("boardd::Content close db error", "error", cerr)
+		}
+	}()
 	err = CreateArticleContentTable(db)
 	if err != nil {
 		slog.Error("CreateArticleContentTable error", "error", err)

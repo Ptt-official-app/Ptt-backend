@@ -16,9 +16,9 @@ func isValidUsername(username string) bool {
 		return false
 	}
 	for _, char := range username {
-		if !(char >= 'a' && char <= 'z') &&
-			!(char >= 'A' && char <= 'Z') &&
-			!(char >= '0' && char <= '9') &&
+		if (char < 'a' || char > 'z') &&
+			(char < 'A' || char > 'Z') &&
+			(char < '0' || char > '9') &&
 			char != '_' {
 			return false
 		}

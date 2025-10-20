@@ -12,7 +12,7 @@ func TestSmtpMail(t *testing.T) {
 	}
 
 	providerType := reflect.TypeOf(provider).String()
-	if "*mail.smtpProvider" != providerType {
+	if providerType != "*mail.smtpProvider" {
 		t.Errorf("provider is not smtp struct type : %v", providerType)
 	}
 

@@ -25,7 +25,7 @@ func GetPttPage(url string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("failed to get page: %s", resp.Status)
 	}
@@ -108,7 +108,8 @@ func HandlePage(input []byte) []byte {
 			if attr.Key == "class" && attr.Val == "article-metaline" {
 				// slog.Info("found", "cn", cn)
 				// buf = append(buf, []byte("state:" + state + "\n")...)
-				if state == "find-作者-line" {
+				switch state {
+				case "find-作者-line":
 
 					// buf = append(buf, []byte("\n\n\n\n")...)
 					state2 := "find-作者-tag"
@@ -148,7 +149,7 @@ func HandlePage(input []byte) []byte {
 					}
 
 					state = "find-看板-line"
-				} else if state == "find-Meta-line" {
+				case "find-Meta-line":
 					// 標題
 					state2 := "find-tag"
 					for cn2 := range n.ChildNodes() {

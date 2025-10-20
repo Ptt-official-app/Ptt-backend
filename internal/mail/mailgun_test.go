@@ -34,7 +34,7 @@ func TestMailgunSend_ReturnNoError(t *testing.T) {
 		}
 
 		if err := r.ParseForm(); err != nil {
-			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			_, _ = fmt.Fprintf(w, "ParseForm() err: %v", err)
 			return
 		}
 
