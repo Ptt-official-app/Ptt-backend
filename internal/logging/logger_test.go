@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -13,7 +12,7 @@ import (
 
 // newFile returns a temporally file
 func newFile(testName string, t *testing.T) (f *os.File) {
-	f, err := ioutil.TempFile(t.TempDir(), "_Ptt-backend_"+testName)
+	f, err := os.CreateTemp(t.TempDir(), "_Ptt-backend_"+testName)
 	if err != nil {
 		t.Fatalf("TempFile %s: %s", testName, err)
 	}

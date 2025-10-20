@@ -58,8 +58,16 @@ func (client *Client) CheckLogin(username, password string) (bool, error) {
 	go func() {
 		// Script
 		time.Sleep(time.Millisecond * 200)
-		client.sendTextBySequence(username+"\r", time.Millisecond*10)
-		client.sendTextBySequence(password+"\r", time.Millisecond*10)
+		err := client.sendTextBySequence(username+"\r", time.Millisecond*10)
+		if err != nil {
+			slog.Error("Failed to send username", "error", err)
+			return
+		}
+		err = client.sendTextBySequence(password+"\r", time.Millisecond*10)
+		if err != nil {
+			slog.Error("Failed to send password", "error", err)
+			return
+		}
 		slog.Info("Password sent")
 		<-time.After(time.Millisecond * 1200)
 		if 有重複登入 || 您有一篇文章尚未完成 || 請勿頻繁登入以免造成系統過度負荷 {
@@ -110,7 +118,9 @@ func (client *Client) CheckLogin(username, password string) (bool, error) {
 		}
 	}()
 	r := <-result
-	client.Disconnect()
-
+	err := client.Disconnect()
+	if err != nil {
+		slog.Error("Failed to disconnect", "error", err)
+	}
 	return r, nil
 }

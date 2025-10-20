@@ -2,7 +2,6 @@ package termclient
 
 import (
 	"bytes"
-	"crypto/tls"
 	"fmt"
 	"log"
 	"log/slog"
@@ -34,9 +33,6 @@ func (p *Client) Connect() error {
 	// Configure WebSocket dialer
 	dialer := websocket.Dialer{
 		HandshakeTimeout: 15 * time.Second,
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true, // Allow self-signed certificates
-		},
 	}
 
 	// Set headers that PTT expects

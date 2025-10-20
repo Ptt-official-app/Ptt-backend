@@ -2,7 +2,7 @@ package mail
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"path"
@@ -64,7 +64,7 @@ func (m *mailgunProvider) Send(from, to, title string, body []byte) error {
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		bodyData, err := ioutil.ReadAll(resp.Body)
+		bodyData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return err
 		}

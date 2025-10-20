@@ -29,7 +29,7 @@ type BoardPostLimitation struct {
 
 func (usecase *usecase) GetBoardByName(ctx context.Context, boardName string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
-		if strings.ToLower(boardName) == strings.ToLower(it.Title()) {
+		if strings.EqualFold(boardName, it.Title()) {
 			return it, nil
 		}
 	}
