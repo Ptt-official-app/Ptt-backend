@@ -87,6 +87,7 @@ test-unit)
 # test-integration: Run all integration and unit tests
 test-integration)
     echo 'mode: atomic' >coverage.out
+    go env -w GOTOOLCHAIN=go1.25.0+auto
     CGO_ENABLED=1 && go test ./...  -coverprofile=coverage.out -cover -race -tags=integration -covermode=atomic
     ;;
 # clean: Remove object files, ./bin, .out .exe files
