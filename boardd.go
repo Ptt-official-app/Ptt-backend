@@ -88,7 +88,10 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 		matches := reg.FindStringSubmatch(prevPageHref)
 		pageNum := 0
 		if len(matches) == 2 {
-			fmt.Sscanf(matches[1], "%d", &pageNum)
+			_, err := fmt.Sscanf(matches[1], "%d", &pageNum)
+			if err != nil {
+				slog.Warn("boardd::Board unable to parse last page number", "lastPageHref", prevPageHref, "error", err)
+			}
 		} else {
 			slog.Warn("boardd::Board unable to parse last page number", "lastPageHref", prevPageHref)
 		}
@@ -140,10 +143,10 @@ func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListR
 	}
 	slog.Info("boardd::List", "boardName", boardName)
 	var offset = uint(req.GetOffset())
-	var length = uint(req.GetLength())
-	if length <= 0 {
-		length = 20 // default length
-	}
+	// var length = uint(req.GetLength())
+	// if length == 0 {
+	// 	length = 20 // default length
+	// }
 
 	var page *webpttparser.BoardIndexPage
 
@@ -250,7 +253,7 @@ func markToMode(mark string) int32 {
 func (s *server) Content(ctx context.Context, req *apipb.ContentRequest) (*apipb.ContentReply, error) {
 	slog.Info("boardd::Content", "boardref", req.BoardRef, "filename", req.Filename, "token", req.ConsistencyToken, "options", req.PartialOptions)
 	initCacheBoards(s.usecase)
-	var boardName = "" // eg. "Gossiping"
+	var boardName string // eg. "Gossiping"
 	if req.BoardRef.GetName() != "" {
 		boardName = req.BoardRef.GetName()
 	} else if req.BoardRef.GetBid() > 0 {
@@ -281,7 +284,11 @@ func (s *server) Content(ctx context.Context, req *apipb.ContentRequest) (*apipb
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 	defer db.Close()
-	CreateArticleContentTable(db)
+	err = CreateArticleContentTable(db)
+	if err != nil {
+		slog.Error("CreateArticleContentTable error", "error", err)
+		return nil, err
+	}
 
 	content, err := ReadArticleContentFromDB(db, boardName, req.Filename)
 	if err != nil && err != sql.ErrNoRows {
@@ -289,7 +296,7 @@ func (s *server) Content(ctx context.Context, req *apipb.ContentRequest) (*apipb
 		return nil, err
 	}
 	if content != nil {
-		slog.Info("boardd::Content", "found content in DB", "length", len(content))
+		slog.Info("boardd::Content found content in DB", "length", len(content))
 		return &apipb.ContentReply{
 			Content: &apipb.Content{
 				Content: content,
@@ -329,7 +336,7 @@ func (s *server) Hotboard(c context.Context, req *apipb.HotboardRequest) (*apipb
 	if err != nil {
 		return nil, err
 	}
-	slog.Info("GetPopularBoards", "fetched hotboards page", "length", len(b))
+	slog.Info("GetPopularBoards fetched hotboards page", "length", len(b))
 
 	records, err := webpttparser.ParseHotboardsPage(b)
 	if err != nil {
@@ -374,9 +381,9 @@ func initCacheBoards(usecase usecase.Usecase) {
 	}
 	boards := usecase.GetBoards(context.Background(), "")
 	for _, board := range boards {
-		boardIndex, ok := boardToBoardIndex[strings.ToLower(board.BoardID())]
+		_, ok := boardToBoardIndex[strings.ToLower(board.BoardID())]
 		if !ok {
-			boardIndex = uint32(len(boardToBoardIndex))
+			boardIndex := uint32(len(boardToBoardIndex))
 			cachedBoard = append(cachedBoard, board)
 			boardToBoardIndex[strings.ToLower(board.BoardID())] = boardIndex
 			slog.Info("initCacheBoards", "new boardIndex", boardIndex, "boardID", board.BoardID())
