@@ -55,6 +55,7 @@ jobs:
 
       - name: Run tests
         run: ./make.bash test-integration
+        shell: bash
       - name: test
         run: go test -v ./...
 
