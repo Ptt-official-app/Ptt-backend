@@ -1,6 +1,6 @@
 module github.com/Ptt-official-app/Ptt-backend
 
-go 1.24.2
+go 1.25
 
 require (
 	github.com/PichuChen/postgresql-gobbs v0.0.0-20231009120523-1f2a4b3c5d7e
