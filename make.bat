@@ -90,7 +90,7 @@ setlocal
     if not exist "%GOBIN%\golangci-lint.exe" (
         go get github.com/golangci/golangci-lint/cmd/golangci-lint%GOLANGCI_LINT_VERSION%
     )
-    %GOBIN%\golangci-lint run ./...
+    %GOBIN%\golangci-lint run --timeout=30m --enable=misspell --enable=gosec ./...
 endlocal
 goto end
 
