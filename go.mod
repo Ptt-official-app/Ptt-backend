@@ -3,8 +3,6 @@ module github.com/Ptt-official-app/Ptt-backend
 go 1.25
 
 require (
-	github.com/PichuChen/postgresql-gobbs v0.0.0-20231009120523-1f2a4b3c5d7e
-	github.com/Ptt-official-app/go-bbs v0.12.0
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/pelletier/go-toml v1.9.5
 )
@@ -16,6 +14,8 @@ require (
 )
 
 require (
+	github.com/PichuChen/postgresql-gobbs v0.0.0-20251019143819-aba6e40a12ae // indirect
+	github.com/Ptt-official-app/go-bbs v0.12.1-0.20251019065628-76580d57f8e5 // indirect
 	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b // indirect
 	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
@@ -28,8 +28,8 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250218202821-56aae31c358a // indirect
 )
 
-replace github.com/Ptt-official-app/go-bbs => ../go-bbs
+// replace github.com/Ptt-official-app/go-bbs => ../go-bbs
 
-replace github.com/PichuChen/postgresql-gobbs => ../postgresql-gobbs
+// replace github.com/PichuChen/postgresql-gobbs => ../postgresql-gobbs
 
 // replace github.com/ptt/pttweb => ../pttweb
