@@ -36,7 +36,7 @@ func Fn2Aidu(fn string) Aidu {
 	if err != nil {
 		return 0
 	}
-	timestampPart = Aidu(v)
+	timestampPart = Aidu(v) // #nosec G115
 	if timestampPart == 0 {
 		return 0
 	}
@@ -51,7 +51,7 @@ func Fn2Aidu(fn string) Aidu {
 		if err != nil {
 			return 0
 		}
-		randomPart = Aidu(v)
+		randomPart = Aidu(v) // #nosec G115
 	}
 	if randomPart > 0xFFF {
 		return 0

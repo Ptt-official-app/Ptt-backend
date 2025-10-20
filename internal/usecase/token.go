@@ -25,8 +25,8 @@ const (
 )
 
 func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {
-	claims := &jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(usecase.globalConfig.AccessTokenExpiresAt).Unix(),
+	claims := &jwt.RegisteredClaims{
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(usecase.globalConfig.AccessTokenExpiresAt)),
 		// Issuer:    "test",
 		Subject: username,
 	}
@@ -59,7 +59,7 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 		return "", err
 	}
 
-	jwtToken, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{},
+	jwtToken, err := jwt.ParseWithClaims(token, &jwt.RegisteredClaims{},
 		func(token *jwt.Token) (i interface{}, e error) {
 			return key, nil
 		})
@@ -74,7 +74,7 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 	}
 
 	// logger.Debugf("GetUserIDFromToken jwtToken: %v %v", jwtToken, err)
-	if claim, ok := jwtToken.Claims.(*jwt.StandardClaims); ok && jwtToken.Valid {
+	if claim, ok := jwtToken.Claims.(*jwt.RegisteredClaims); ok && jwtToken.Valid {
 		usecase.logger.Debugf("subject: %v %v", claim, jwtToken.Valid)
 		return claim.Subject, nil
 		// return "", nil

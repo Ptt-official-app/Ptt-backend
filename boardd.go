@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"log/slog"
+	"math"
 	"net"
 	"regexp"
 	"strings"
@@ -99,6 +100,10 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 		numPosts := pageNum*20 + len(page.Articles)
 
 		slog.Info("boardd::Board", "boardName", board.BoardID(), "numPosts", numPosts)
+		if numPosts < 0 {
+			slog.Error("boardd::Board", "invalid numPosts", numPosts)
+			return nil, fmt.Errorf("invalid numPosts: %d", numPosts)
+		}
 
 		boards[i] = &apipb.Board{
 			Bid:        boardToBoardIndex[strings.ToLower(board.BoardID())],
@@ -107,8 +112,7 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 			NumUsers:   0,
 			Bclass:     "",
 			Attributes: 0,
-			// NumPosts:   uint32(len(articles)),
-			NumPosts: uint32(numPosts),
+			NumPosts:   uint32(numPosts), // #nosec G115
 		}
 
 		// boards[i] = &apipb.Board{
@@ -142,7 +146,7 @@ func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListR
 		return nil, fmt.Errorf("invalid ref: %v", req.Ref)
 	}
 	slog.Info("boardd::List", "boardName", boardName)
-	var offset = uint(req.GetOffset())
+	var offset = uint(req.GetOffset()) // #nosec G115
 	// var length = uint(req.GetLength())
 	// if length == 0 {
 	// 	length = 20 // default length
@@ -193,11 +197,19 @@ func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListR
 	posts := make([]*apipb.Post, len(page.Articles))
 	for i, article := range page.Articles {
 		// slog.Info("boardd::List", "article", article)
+
+		if article.Recommend >= math.MaxInt32 {
+			slog.Warn("boardd::List article recommend overflow", "article", article)
+			article.Recommend = math.MaxInt32 - 1
+		} else if article.Recommend <= math.MinInt32 {
+			slog.Warn("boardd::List article recommend underflow", "article", article)
+			article.Recommend = math.MinInt32 + 1
+		}
 		posts[i] = &apipb.Post{
-			Index:         uint32(i + 1),
+			Index:         uint32(i + 1), // #nosec G115
 			Filename:      article.FileName,
 			RawDate:       article.Date,
-			NumRecommends: int32(article.Recommend),
+			NumRecommends: int32(article.Recommend), // #nosec G115
 			Filemode:      markToMode(article.Mark),
 			Owner:         article.Owner,
 			Title:         article.Title,
@@ -208,11 +220,26 @@ func (s *server) List(ctx context.Context, req *apipb.ListRequest) (*apipb.ListR
 	bottoms := make([]*apipb.Post, len(page.Bottoms))
 	for i, article := range page.Bottoms {
 		// slog.Info("boardd::List", "bottom article", article)
+
+		if article.Recommend >= math.MaxInt32 {
+			slog.Warn("boardd::List bottom article recommend overflow", "article", article)
+			article.Recommend = math.MaxInt32 - 1
+		} else if article.Recommend <= math.MinInt32 {
+			slog.Warn("boardd::List bottom article recommend underflow", "article", article)
+			article.Recommend = math.MinInt32 + 1
+		}
+		if i >= math.MaxUint32 {
+			slog.Warn("boardd::List bottom article index overflow", "index", i)
+			break
+		} else if i < 0 {
+			slog.Warn("boardd::List bottom article index underflow", "index", i)
+			continue
+		}
 		bottoms[i] = &apipb.Post{
-			Index:         uint32(i + 1 + len(page.Articles)),
+			Index:         uint32(i), // #nosec G115
 			Filename:      article.FileName,
 			RawDate:       article.Date,
-			NumRecommends: int32(article.Recommend),
+			NumRecommends: int32(article.Recommend), // #nosec G115
 			Filemode:      markToMode(article.Mark),
 			Owner:         article.Owner,
 			Title:         article.Title,
@@ -345,6 +372,7 @@ func (s *server) Hotboard(c context.Context, req *apipb.HotboardRequest) (*apipb
 	}
 
 	slog.Info("GetPopularBoards", "records", records.Boards[0:3])
+
 	boards := make([]*apipb.Board, len(records.Boards))
 	for i, record := range records.Boards {
 		slog.Info("GetPopularBoards", "record", record)
@@ -352,7 +380,7 @@ func (s *server) Hotboard(c context.Context, req *apipb.HotboardRequest) (*apipb
 			Bid:        boardToBoardIndex[strings.ToLower(record.BrdName)],
 			Name:       record.BrdName,
 			Title:      record.Title,
-			NumUsers:   uint32(record.Nuser),
+			NumUsers:   uint32(record.Nuser), // #nosec G115
 			Bclass:     record.Class,
 			Attributes: 0,
 		}
@@ -383,7 +411,7 @@ func initCacheBoards(usecase usecase.Usecase) {
 	for _, board := range boards {
 		_, ok := boardToBoardIndex[strings.ToLower(board.BoardID())]
 		if !ok {
-			boardIndex := uint32(len(boardToBoardIndex))
+			boardIndex := uint32(len(boardToBoardIndex)) // #nosec G115
 			cachedBoard = append(cachedBoard, board)
 			boardToBoardIndex[strings.ToLower(board.BoardID())] = boardIndex
 			slog.Info("initCacheBoards", "new boardIndex", boardIndex, "boardID", board.BoardID())

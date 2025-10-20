@@ -129,8 +129,18 @@ func (client *Client) PushComment(username, password, board, index, contentType,
 	go func() {
 		// Login
 		time.Sleep(200 * time.Millisecond)
-		client.sendTextBySequence(username+"\r", 10*time.Millisecond)
-		client.sendTextBySequence(password+"\r", 10*time.Millisecond)
+		err := client.sendTextBySequence(username+"\r", 10*time.Millisecond)
+		if err != nil {
+			slog.Error("Failed to send username", "error", err)
+			done <- false
+			return
+		}
+		err = client.sendTextBySequence(password+"\r", 10*time.Millisecond)
+		if err != nil {
+			slog.Error("Failed to send password", "error", err)
+			done <- false
+			return
+		}
 		slog.Info("Credentials sent")
 
 		// Allow server screens to settle
@@ -142,60 +152,135 @@ func (client *Client) PushComment(username, password, board, index, contentType,
 
 		// Handle duplicate login prompt (best-effort)
 		if 有重複登入 {
-			client.sendText("n")
+			err := client.sendText("n")
+			if err != nil {
+				slog.Error("Failed to send duplicate login response", "error", err)
+				done <- false
+				return
+			}
 			time.Sleep(200 * time.Millisecond)
-			client.sendText("\r\n")
+			err = client.sendText("\r\n")
+			if err != nil {
+				slog.Error("Failed to send newline", "error", err)
+				done <- false
+				return
+			}
 			time.Sleep(800 * time.Millisecond)
 		}
 
 		// Handle frequent login warning
 		if 請勿頻繁登入以免造成系統過度負荷 {
-			client.sendText("\r\n")
+			err := client.sendText("\r\n")
+			if err != nil {
+				slog.Error("Failed to send newline", "error", err)
+				done <- false
+				return
+			}
 			time.Sleep(1500 * time.Millisecond)
 		}
 
 		// Continue screens
-		client.sendText("\r\n")
+		err = client.sendText("\r\n")
+		if err != nil {
+			slog.Error("Failed to send newline", "error", err)
+			done <- false
+			return
+		}
 		time.Sleep(1500 * time.Millisecond)
 
 		if 您有一篇文章尚未完成 {
 			// Quit unfinished draft
-			client.sendText("Q\r\n")
+			err := client.sendText("Q\r\n")
+			if err != nil {
+				slog.Error("Failed to send quit command", "error", err)
+				done <- false
+				return
+			}
 			time.Sleep(1200 * time.Millisecond)
 		}
 
 		// Navigate to board
 		slog.Info("Navigating to board", "board", board)
-		client.sendText("s")
+		err = client.sendText("s")
+		if err != nil {
+			slog.Error("Failed to send board navigation command", "error", err)
+			done <- false
+			return
+		}
 		time.Sleep(800 * time.Millisecond)
-		client.sendTextBySequence(board+"\r", 10*time.Millisecond)
+		err = client.sendTextBySequence(board+"\r", 10*time.Millisecond)
+		if err != nil {
+			slog.Error("Failed to send board", "error", err)
+			done <- false
+			return
+		}
 		time.Sleep(1200 * time.Millisecond)
 
 		// Try to enter article by index
-		client.sendTextBySequence(index+"\r", 10*time.Millisecond)
+		err = client.sendTextBySequence(index+"\r", 10*time.Millisecond)
+		if err != nil {
+			slog.Error("Failed to send index", "error", err)
+			done <- false
+			return
+		}
 		time.Sleep(1000 * time.Millisecond)
 
 		// Start comment
-		client.sendText("X")
+		err = client.sendText("X")
+		if err != nil {
+			slog.Error("Failed to send comment command", "error", err)
+			done <- false
+			return
+		}
 		time.Sleep(800 * time.Millisecond)
 
 		// Choose comment type if asked
 		if !作者本人 {
-			client.sendTextBySequence(opt, 10*time.Millisecond)
-			client.sendText("\r")
+			err = client.sendTextBySequence(opt, 10*time.Millisecond)
+			if err != nil {
+				slog.Error("Failed to send comment type", "error", err)
+				done <- false
+				return
+			}
+			err = client.sendText("\r")
+			if err != nil {
+				slog.Error("Failed to send newline", "error", err)
+				done <- false
+				return
+			}
 			time.Sleep(400 * time.Millisecond)
 		}
 
 		// Input content
 		if strings.TrimSpace(content) != "" {
-			client.sendTextBySequence(content, 10*time.Millisecond)
+			err = client.sendTextBySequence(content, 10*time.Millisecond)
+			if err != nil {
+				slog.Error("Failed to send content", "error", err)
+				done <- false
+				return
+			}
 		}
-		client.sendText("\r")
+		err = client.sendText("\r")
+		if err != nil {
+			slog.Error("Failed to send newline", "error", err)
+			done <- false
+			return
+		}
 		time.Sleep(400 * time.Millisecond)
 
 		// Confirm send
-		client.sendText("y")
-		client.sendText("\r")
+		err = client.sendText("y")
+		if err != nil {
+			slog.Error("Failed to send confirm command", "error", err)
+			done <- false
+			return
+		}
+		err = client.sendText("\r")
+		if err != nil {
+			slog.Error("Failed to send newline", "error", err)
+			done <- false
+			return
+		}
 		time.Sleep(1200 * time.Millisecond)
 
 		// If no error flags raised by now, assume success
@@ -206,15 +291,24 @@ func (client *Client) PushComment(username, password, board, index, contentType,
 	select {
 	case ok := <-done:
 		if !ok {
-			client.Disconnect()
+			err2 := client.Disconnect()
+			if err2 != nil {
+				slog.Error("Failed to disconnect", "error", err2)
+			}
 			return false, fmt.Errorf("login failed")
 		}
 		return true, nil
 	case err := <-failed:
-		client.Disconnect()
+		err2 := client.Disconnect()
+		if err2 != nil {
+			slog.Error("Failed to disconnect", "error", err2)
+		}
 		return false, err
 	case <-time.After(20 * time.Second):
-		client.Disconnect()
+		err2 := client.Disconnect()
+		if err2 != nil {
+			slog.Error("Failed to disconnect", "error", err2)
+		}
 		return false, fmt.Errorf("push comment timeout")
 	}
 }
