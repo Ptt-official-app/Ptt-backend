@@ -19,6 +19,7 @@ require (
 	github.com/bradfitz/gomemcache v0.0.0-20190913173617-a41fca850d0b // indirect
 	github.com/go-redis/redis v6.15.9+incompatible // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/lib/pq v1.10.9 // indirect
 	github.com/rvelhote/go-recaptcha v0.0.0-20170215232712-e143c6ea64e5 // indirect
 	golang.org/x/sys v0.31.0 // indirect
