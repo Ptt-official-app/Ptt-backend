@@ -16,8 +16,12 @@ import (
 
 // GetPttPage fetches the HTML content of a PTT page given its URL path.
 func GetPttPage(url string) ([]byte, error) {
+	if strings.Contains(url, " ") {
+		return nil, fmt.Errorf("invalid url: contains space")
+	}
+
 	requestURL := fmt.Sprintf("https://www.ptt.cc/bbs/%v", url)
-	resp, err := http.Get(requestURL)
+	resp, err := http.Get(requestURL) // #nosec G107
 	if err != nil {
 		return nil, err
 	}
@@ -201,11 +205,11 @@ func HandlePage(input []byte) []byte {
 				}
 			} else {
 				slog.Info("unknown node", "node", n.Data)
-				if state == "find-Meta-line" {
-					// dont parse header any more
-					// buf = append(buf, []byte(n.Data)...)
-					// acceptMetaLines = false
-				}
+				// if state == "find-Meta-line" {
+				// 	// dont parse header any more
+				// 	// buf = append(buf, []byte(n.Data)...)
+				// 	// acceptMetaLines = false
+				// }
 			}
 		} // scan node attr
 	}
