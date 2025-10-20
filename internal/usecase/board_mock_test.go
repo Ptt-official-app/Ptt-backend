@@ -18,7 +18,7 @@ func (repo *MockRepository) GetBoardArticle(ctx context.Context, boardID, filena
 	return []byte{}, nil
 }
 
-func (repo *MockRepository) GetBoardArticleRecords(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error) {
+func (repo *MockRepository) GetBoardArticleRecords(ctx context.Context, boardID string, offset uint, limit uint) ([]bbs.ArticleRecord, error) {
 	articleRecords := []*MockArticleRecord{
 		{
 			filename:       "filename1",

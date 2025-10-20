@@ -7,8 +7,8 @@ import (
 	"github.com/Ptt-official-app/go-bbs"
 )
 
-// GetBoardByID returns the mock board record corresponding to boardID
-func (usecase *MockUsecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
+// GetBoardByName returns the mock board record corresponding to boardID
+func (usecase *MockUsecase) GetBoardByName(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	boardRecord := NewMockBoardRecord("SYSOP", boardID, "嘰哩 ◎站長好!", false)
 	return boardRecord, nil
 }
@@ -29,7 +29,7 @@ func (usecase *MockUsecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRe
 }
 
 // GetBoardArticles returns the mock board articles.
-func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
+func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string, offset, limit uint, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
 	return []bbs.ArticleRecord{}
 }
 
