@@ -1,8 +1,13 @@
 package http
 
 import (
+	"context"
+	"encoding/json"
+	"log/slog"
 	"net/http"
 	"strings"
+
+	"github.com/Ptt-official-app/go-bbs"
 )
 
 func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
@@ -15,6 +20,8 @@ func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
 	mux.HandleFunc("/v1/users/", delivery.routeUsers)
 
 	// mux.HandleFunc("/sse", delivery.routeSSE)
+
+	mux.HandleFunc("/.well-known/webfinger", delivery.routeWebfinger)
 
 	mux.HandleFunc("/", delivery.notFoundHandler)
 }
@@ -126,6 +133,118 @@ func (delivery *Delivery) routeUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (delivery *Delivery) routeWebfinger(w http.ResponseWriter, r *http.Request) {
+	resource := r.URL.Query().Get("resource")
+	if resource == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write([]byte("missing resource parameter"))
+		if err != nil {
+			delivery.logger.Errorf("write missing resource parameter error: %w", err)
+		}
+		return
+	}
+	// resource format: acct:board.test@pttapp.cc
+	// resource format: acct:user.pichubaby@pttapp.cc
+
+	if !strings.HasPrefix(resource, "acct:") {
+		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write([]byte("invalid resource parameter"))
+		if err != nil {
+			delivery.logger.Errorf("write invalid resource parameter error: %w", err)
+		}
+		return
+	}
+	isBoard := false
+	isUser := false
+	resourceBody := strings.TrimPrefix(resource, "acct:")
+	parts := strings.Split(resourceBody, "@")
+	if len(parts) != 2 {
+		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write([]byte("invalid resource parameter"))
+		if err != nil {
+			delivery.logger.Errorf("write invalid resource parameter error: %w", err)
+		}
+		return
+	}
+	var name string
+	if strings.HasPrefix(parts[0], "board.") {
+		isBoard = true
+		name = strings.TrimPrefix(parts[0], "board.")
+	} else if strings.HasPrefix(parts[0], "user.") {
+		isUser = true
+		name = strings.TrimPrefix(parts[0], "user.")
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		_, err := w.Write([]byte("invalid resource parameter"))
+		if err != nil {
+			delivery.logger.Errorf("write invalid resource parameter error: %w", err)
+		}
+		return
+	}
+
+	if isUser {
+		// user not supported yet
+		w.WriteHeader(http.StatusNotFound)
+		_, err := w.Write([]byte("user not found"))
+		if err != nil {
+			delivery.logger.Errorf("write user not found error: %w", err)
+		}
+		return
+	}
+	if isBoard {
+		slog.Info("Webfinger board request", "board_name", name)
+		// Check is board exist
+		boards := delivery.usecase.GetBoards(context.Background(), "")
+		var board bbs.BoardRecord
+		for _, b := range boards {
+			if strings.EqualFold(b.BoardID(), name) {
+				board = b
+				break
+			}
+		}
+
+		w.Header().Set("Content-Type", "application/jrd+json")
+		w.WriteHeader(http.StatusOK)
+
+		response := map[string]any{
+			"subject": resource,
+			"aliases": []string{
+				"https://www.pttapp.cc/bbs/" + board.BoardID(),
+				"https://pttapp.cc/bbs/" + board.BoardID(),
+			},
+			"links": []map[string]string{
+				{
+					"rel":  "self",
+					"type": "application/activity+json",
+					"href": "https://www.pttapp.cc/bbs/" + board.BoardID(),
+				},
+			},
+		}
+		b, err := json.MarshalIndent(response, "", "  ")
+		if err != nil {
+			delivery.logger.Errorf("marshal webfinger response error: %w", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			_, err := w.Write([]byte("internal server error"))
+			if err != nil {
+				delivery.logger.Errorf("write internal server error error: %w", err)
+			}
+			return
+		}
+		_, err = w.Write(b)
+		if err != nil {
+			delivery.logger.Errorf("write webfinger response error: %w", err)
+		}
+		return
+
+	}
+	// 404
+	w.WriteHeader(http.StatusNotFound)
+	_, err := w.Write([]byte("not found"))
+	if err != nil {
+		delivery.logger.Errorf("write not found error: %w", err)
+	}
+}
+
 // getBoards is the handler for `/v1/boards` with GET method
 func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("getBoards: %v", r)
@@ -135,20 +254,21 @@ func (delivery *Delivery) getBoards(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// get single board
-	if item == "information" {
+	switch item {
+	case "information":
 		delivery.getBoardInformation(w, r, boardID)
 		return
-	} else if item == "settings" {
+	case "settings":
 		delivery.getBoardSettings(w, r, boardID)
 		return
-	} else if item == "articles" {
+	case "articles":
 		if filename == "" {
 			delivery.getBoardArticles(w, r, boardID)
 		} else {
 			delivery.getBoardArticlesFile(w, r, boardID, filename)
 		}
 		return
-	} else if item == "treasures" {
+	case "treasures":
 		delivery.getBoardTreasures(w, r, boardID)
 		return
 	}
