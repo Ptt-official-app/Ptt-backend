@@ -45,6 +45,7 @@ func boardd(usecase usecase.Usecase) {
 }
 
 func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.BoardReply, error) {
+	const boardOver18 = 0x01000000
 	slog.Info("boardd::Board", "len(req.Ref)", len(req.Ref))
 	initCacheBoards(s.usecase)
 	boards := make([]*apipb.Board, len(req.Ref))
