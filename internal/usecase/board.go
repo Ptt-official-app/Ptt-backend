@@ -11,6 +11,7 @@ import (
 
 type ArticleSearchCond struct {
 	Title                           string
+	ExactTitle                      string
 	Author                          string
 	RecommendCountValue             int
 	RecommendCountLessEqual         int
@@ -132,11 +133,11 @@ func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, of
 		// The board may not contain any article
 	}
 
-	if cond != nil &&
-		len(strings.TrimSpace(cond.Title)) > 0 ||
+	if cond != nil && (len(strings.TrimSpace(cond.Title)) > 0 ||
+		len(strings.TrimSpace(cond.ExactTitle)) > 0 ||
 		len(strings.TrimSpace(cond.Author)) > 0 ||
 		cond.RecommendCountGreaterEqualIsSet ||
-		cond.RecommendCountLessEqualIsSet {
+		cond.RecommendCountLessEqualIsSet) {
 		articles = searchArticles(articleRecords, cond)
 	} else {
 		articles = articleRecords
@@ -195,6 +196,10 @@ func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []
 
 	for _, f := range fileHeaders {
 		if !strings.Contains(strings.ToLower(f.Title()), strings.ToLower(cond.Title)) {
+			continue
+		}
+
+		if cond.ExactTitle != "" && f.Title() != cond.ExactTitle {
 			continue
 		}
 
