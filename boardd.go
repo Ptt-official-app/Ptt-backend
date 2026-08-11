@@ -115,6 +115,10 @@ func (s *server) Board(ctx context.Context, req *apipb.BoardRequest) (*apipb.Boa
 			Attributes: 0,
 			NumPosts:   uint32(numPosts), // #nosec G115
 		}
+		settings, ok := board.(bbs.BoardRecordSettings)
+		if ok && settings.IsOver18() {
+			boards[i].Attributes |= boardOver18
+		}
 
 		// boards[i] = &apipb.Board{
 		// 	Bid:        ref.GetBid(),
