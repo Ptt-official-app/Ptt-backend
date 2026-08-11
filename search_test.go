@@ -93,11 +93,11 @@ func TestSearchFilters(t *testing.T) {
 		filter *api.SearchFilter
 		want   []string
 	}{
-		{"title", &api.SearchFilter{Type: api.SearchFilter_TYPE_TITLE, StringData: "hello"}, []string{"1", "2"}},
-		{"exact title", &api.SearchFilter{Type: api.SearchFilter_TYPE_EXACT_TITLE, StringData: "Hello Go"}, []string{"2"}},
-		{"author", &api.SearchFilter{Type: api.SearchFilter_TYPE_AUTHOR, StringData: "ali"}, []string{"1", "3"}},
-		{"recommend >=", &api.SearchFilter{Type: api.SearchFilter_TYPE_RECOMMEND, NumberData: 5}, []string{"1"}},
-		{"recommend <=", &api.SearchFilter{Type: api.SearchFilter_TYPE_RECOMMEND, NumberData: -2}, []string{"2"}},
+		{"title", &api.SearchFilter{Type: api.SearchFilter_TYPE_TITLE, StringData: "hello"}, []string{"M.0.A.1", "M.0.A.2"}},
+		{"exact title", &api.SearchFilter{Type: api.SearchFilter_TYPE_EXACT_TITLE, StringData: "Hello Go"}, []string{"M.0.A.2"}},
+		{"author", &api.SearchFilter{Type: api.SearchFilter_TYPE_AUTHOR, StringData: "ali"}, []string{"M.0.A.1", "M.0.A.3"}},
+		{"recommend >=", &api.SearchFilter{Type: api.SearchFilter_TYPE_RECOMMEND, NumberData: 5}, []string{"M.0.A.1"}},
+		{"recommend <=", &api.SearchFilter{Type: api.SearchFilter_TYPE_RECOMMEND, NumberData: -2}, []string{"M.0.A.2"}},
 	}
 
 	for _, tc := range cases {
@@ -132,7 +132,7 @@ func TestSearchEmptyAndPagination(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := postFilenames(reply.Posts); !equalStrings(got, []string{"2", "3"}) || reply.TotalPosts != 3 {
+	if got := postFilenames(reply.Posts); !equalStrings(got, []string{"M.0.A.2", "M.0.A.3"}) || reply.TotalPosts != 3 {
 		t.Fatalf("negative page = %v total %d", postFilenames(reply.Posts), reply.TotalPosts)
 	}
 

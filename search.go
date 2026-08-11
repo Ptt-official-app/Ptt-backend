@@ -5,6 +5,7 @@ import (
 	"math"
 	"strings"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/aids"
 	apipb "github.com/Ptt-official-app/Ptt-backend/internal/proto/api"
 	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 	"github.com/Ptt-official-app/go-bbs"
@@ -134,7 +135,7 @@ func articleToSearchPost(article bbs.ArticleRecord, index int) *apipb.Post {
 	}
 	return &apipb.Post{
 		Index:         uint32(index + 1),
-		Filename:      article.Filename(),
+		Filename:      aids.Aidu2Fn(aids.Aidc2Aidu(article.Filename())),
 		RawDate:       article.Date(),
 		NumRecommends: int32(recommend),
 		Owner:         article.Owner(),
