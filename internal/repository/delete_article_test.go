@@ -14,7 +14,7 @@ func TestDeleteBoardArticlePersistsTombstone(t *testing.T) {
 	home := t.TempDir()
 	boardID := "test"
 	boardDir := filepath.Join(home, "boards", "t", boardID)
-	if err := os.MkdirAll(boardDir, 0755); err != nil {
+	if err := os.MkdirAll(boardDir, 0750); err != nil {
 		t.Fatal(err)
 	}
 
@@ -29,7 +29,7 @@ func TestDeleteBoardArticlePersistsTombstone(t *testing.T) {
 		t.Fatal(err)
 	}
 	articlePath := filepath.Join(boardDir, filename)
-	if err := os.WriteFile(articlePath, []byte("body"), 0644); err != nil {
+	if err := os.WriteFile(articlePath, []byte("body"), 0600); err != nil {
 		t.Fatal(err)
 	}
 
