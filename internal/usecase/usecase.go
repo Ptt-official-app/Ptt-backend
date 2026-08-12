@@ -2,6 +2,8 @@ package usecase
 
 import (
 	"context"
+	"sync"
+	"time"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/config"
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
@@ -57,6 +59,8 @@ type Usecase interface {
 	CreateAccessTokenWithUsername(username string) string
 	// GetUserIDFromToken retrieves user id by token
 	GetUserIDFromToken(token string) (string, error)
+	// RecordLogin stores the most recent successful login metadata in this process.
+	RecordLogin(userID, ip string)
 	// CheckPermission checks permissions
 	CheckPermission(token string, permissionID []Permission, userInfo map[string]string) error // FIXME: use concrete type rather than map[string]string
 
@@ -79,11 +83,19 @@ type SupportWebUsecase interface {
 	GetArticleURL(boardID string, filename string) string
 }
 
+type loginRecord struct {
+	at time.Time
+	ip string
+}
+
 type usecase struct {
 	logger       logging.Logger
 	globalConfig *config.Config
 	repo         repository.Repository
 	mailProvider mail.Mail
+
+	loginMu      sync.RWMutex
+	loginRecords map[string]loginRecord
 }
 
 func NewUsecase(globalConfig *config.Config, repo repository.Repository) Usecase {
@@ -93,5 +105,23 @@ func NewUsecase(globalConfig *config.Config, repo repository.Repository) Usecase
 		globalConfig: globalConfig,
 		repo:         repo,
 		mailProvider: mailProvider,
+		loginRecords: make(map[string]loginRecord),
 	}
+}
+
+func (usecase *usecase) RecordLogin(userID, ip string) {
+	usecase.recordLoginAt(userID, ip, time.Now())
+}
+
+func (usecase *usecase) recordLoginAt(userID, ip string, at time.Time) {
+	usecase.loginMu.Lock()
+	defer usecase.loginMu.Unlock()
+	usecase.loginRecords[userID] = loginRecord{at: at, ip: ip}
+}
+
+func (usecase *usecase) getLoginRecord(userID string) (loginRecord, bool) {
+	usecase.loginMu.RLock()
+	defer usecase.loginMu.RUnlock()
+	record, ok := usecase.loginRecords[userID]
+	return record, ok
 }

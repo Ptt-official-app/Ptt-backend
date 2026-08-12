@@ -6,10 +6,18 @@ import (
 )
 
 // implements usecase.Usecase
-type MockUsecase struct{}
+type MockUsecase struct {
+	loginUserID string
+	loginIP     string
+}
 
 func NewMockUsecase() usecase.Usecase {
 	return &MockUsecase{}
+}
+
+func (usecase *MockUsecase) RecordLogin(userID, ip string) {
+	usecase.loginUserID = userID
+	usecase.loginIP = ip
 }
 
 func (usecase *MockUsecase) UpdateMail(mail mail.Mail) error {

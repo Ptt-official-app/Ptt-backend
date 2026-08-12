@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"net"
 	"net/http"
 	"strings"
 
@@ -83,6 +84,7 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 
 	// Generate Access Token
 	token := delivery.usecase.CreateAccessTokenWithUsername(username)
+	delivery.usecase.RecordLogin(username, requestRemoteIP(r))
 	m := map[string]string{
 		"access_token": token,
 		"token_type":   "bearer",
@@ -94,6 +96,14 @@ func (delivery *Delivery) postToken(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		delivery.logger.Errorf("postToken success response err: %w", err)
 	}
+}
+
+func requestRemoteIP(r *http.Request) string {
+	remoteAddr := strings.TrimSpace(r.RemoteAddr)
+	if host, _, err := net.SplitHostPort(remoteAddr); err == nil {
+		return host
+	}
+	return remoteAddr
 }
 
 func (delivery *Delivery) verifyPassword(userec bbs.UserRecord, password string) error {
