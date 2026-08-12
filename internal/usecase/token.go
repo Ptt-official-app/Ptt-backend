@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Ptt-official-app/Ptt-backend/internal/repository"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -209,10 +210,43 @@ func (usecase *usecase) checkPermissionReadUserInformation(token string, userInf
 }
 
 func (usecase *usecase) checkPermissionReadBoardSettings(token string, userInfo map[string]string) error {
-	// TODO: 判斷管理群的權限
-	_, err := usecase.GetUserIDFromToken(token)
+	tokenUserID, err := usecase.GetUserIDFromToken(token)
 	if err != nil {
 		return fmt.Errorf("get user id from token failed: %w", err)
+	}
+
+	boardID, ok := userInfo["board_id"]
+	if !ok || boardID == "" {
+		return fmt.Errorf("board_id is required to check board read permission")
+	}
+
+	return usecase.checkBoardReadPermission(context.Background(), tokenUserID, boardID)
+}
+
+func (usecase *usecase) checkBoardReadPermission(ctx context.Context, userID, boardID string) error {
+	board, err := usecase.GetBoardByID(ctx, boardID)
+	if err != nil {
+		return fmt.Errorf("get board %s failed: %w", boardID, err)
+	}
+
+	requiredLevel, ok := repository.BoardReadPermissionLevel(board)
+	if !ok || requiredLevel == 0 {
+		return nil
+	}
+
+	user, err := usecase.GetUserByID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("get user %s failed: %w", userID, err)
+	}
+
+	userLevel, ok := repository.UserPermissionLevel(user)
+	if !ok {
+		return fmt.Errorf("user permission level is unavailable")
+	}
+
+	// PTT's HasUserPerm(x) accepts the permission when any bit in x matches.
+	if userLevel&requiredLevel == 0 {
+		return fmt.Errorf("user %s has no permission to read board %s", userID, boardID)
 	}
 
 	return nil
