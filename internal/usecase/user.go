@@ -98,6 +98,7 @@ func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]i
 				})
 			}
 		}
+	}
 
 	return dataItems, nil
 }
