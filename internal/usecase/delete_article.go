@@ -11,14 +11,15 @@ import (
 )
 
 var (
-	ErrArticleNotFound        = errors.New("article not found")
-	ErrDeleteArticleForbidden = errors.New("article deletion forbidden")
+	ErrArticleNotFound            = errors.New("article not found")
+	ErrDeleteArticleUnauthorized = errors.New("article deletion unauthorized")
+	ErrDeleteArticleForbidden    = errors.New("article deletion forbidden")
 )
 
 func (usecase *usecase) DeleteArticle(ctx context.Context, token, boardID, filename string) error {
 	userID, err := usecase.GetUserIDFromToken(token)
 	if err != nil {
-		return fmt.Errorf("authenticate article deletion: %w", err)
+		return fmt.Errorf("%w: %v", ErrDeleteArticleUnauthorized, err)
 	}
 
 	board, err := usecase.GetBoardByID(ctx, boardID)
