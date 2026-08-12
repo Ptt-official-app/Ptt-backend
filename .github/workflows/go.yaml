@@ -21,6 +21,11 @@ jobs:
           go-version-file: go.mod
           cache-dependency-path: go.sum
 
+      - name: Resolve go-bbs checksum
+        run: |
+          go mod download github.com/Ptt-official-app/go-bbs
+          grep 'github.com/Ptt-official-app/go-bbs' go.sum
+
       - name: Go vet
         run: go vet ./...
 
