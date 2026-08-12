@@ -29,7 +29,7 @@ func (usecase *MockUsecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRe
 }
 
 // GetBoardArticles returns the mock board articles.
-func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
+func (usecase *MockUsecase) GetBoardArticles(ctx context.Context, boardID string, offset, length uint, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
 	return []bbs.ArticleRecord{}
 }
 
