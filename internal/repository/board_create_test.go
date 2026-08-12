@@ -37,6 +37,7 @@ func TestCreateBoardPersistsAndUpdatesCache(t *testing.T) {
 		t.Fatalf("cached boards = %v", cached)
 	}
 
+	// #nosec G304 -- boardFile is t.TempDir() joined with the fixed filename .BRD.
 	raw, err := os.ReadFile(boardFile)
 	if err != nil {
 		t.Fatalf("read persisted .BRD: %v", err)
