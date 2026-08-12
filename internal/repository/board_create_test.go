@@ -9,7 +9,6 @@ import (
 
 	"github.com/Ptt-official-app/go-bbs"
 	"github.com/Ptt-official-app/go-bbs/pttbbs"
-	_ "github.com/Ptt-official-app/go-bbs/pttbbs"
 )
 
 func TestCreateBoardPersistsAndUpdatesCache(t *testing.T) {
