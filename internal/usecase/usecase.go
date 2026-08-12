@@ -19,6 +19,8 @@ type Usecase interface {
 	GetUserByID(ctx context.Context, userID string) (bbs.UserRecord, error)
 	// GetUserFavorites returns favorite records of a user
 	GetUserFavorites(ctx context.Context, userID string) ([]interface{}, error) // FIXME: use concrete type rather than []interface{}
+	// AddUserFavorite appends a favorite item for the authenticated user.
+	AddUserFavorite(ctx context.Context, token, userID, favoriteType, boardID, title string) ([]interface{}, error)
 	// GetUserInformation returns user info of a user
 	GetUserInformation(ctx context.Context, userID string) (map[string]interface{}, error) // FIXME: use concrete type rather than map[string]interface{}
 	// GetUserArticles returns user's articles
