@@ -8,12 +8,14 @@ import (
 	"testing"
 
 	"github.com/Ptt-official-app/go-bbs"
+	"github.com/Ptt-official-app/go-bbs/pttbbs"
 	_ "github.com/Ptt-official-app/go-bbs/pttbbs"
 )
 
 func TestCreateBoardPersistsAndUpdatesCache(t *testing.T) {
 	home := t.TempDir()
-	if err := os.WriteFile(filepath.Join(home, ".BRD"), nil, 0o600); err != nil {
+	boardFile := filepath.Join(home, ".BRD")
+	if err := os.WriteFile(boardFile, nil, 0o600); err != nil {
 		t.Fatalf("create empty .BRD: %v", err)
 	}
 
@@ -36,12 +38,19 @@ func TestCreateBoardPersistsAndUpdatesCache(t *testing.T) {
 		t.Fatalf("cached boards = %v", cached)
 	}
 
-	persisted, err := db.ReadBoardRecords()
+	raw, err := os.ReadFile(boardFile)
 	if err != nil {
-		t.Fatalf("ReadBoardRecords() error = %v", err)
+		t.Fatalf("read persisted .BRD: %v", err)
 	}
-	if len(persisted) != 1 || persisted[0].BoardID() != "testboard01" || persisted[0].Title() != "測試看板" {
-		t.Fatalf("persisted boards = %v", persisted)
+	if len(raw) != pttbbs.BoardHeaderRecordLength {
+		t.Fatalf("persisted .BRD size = %d, want %d", len(raw), pttbbs.BoardHeaderRecordLength)
+	}
+	persisted, err := pttbbs.UnmarshalBoardHeader(raw)
+	if err != nil {
+		t.Fatalf("UnmarshalBoardHeader() error = %v", err)
+	}
+	if persisted.BoardID() != "testboard01" || persisted.Title() != "測試看板" {
+		t.Fatalf("persisted board = %q/%q", persisted.BoardID(), persisted.Title())
 	}
 
 	if _, err := repo.CreateBoard(context.Background(), "TESTBOARD01", "重複"); !errors.Is(err, ErrBoardExists) {
