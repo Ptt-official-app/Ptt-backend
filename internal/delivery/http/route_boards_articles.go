@@ -181,7 +181,7 @@ func (delivery *Delivery) getBoardArticles(w http.ResponseWriter, r *http.Reques
 			// TODO: generate aid and url
 			// "aid": a.Aid(),
 		}
-		u, ok := delivery.usecase.(usecase.SupportWebUsecase)
+		u, ok := delivery.usecase.(articleURLProvider)
 		if ok {
 			item["url"] = u.GetArticleURL(boardID, a.Filename())
 		}
