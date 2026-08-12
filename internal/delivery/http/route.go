@@ -189,6 +189,9 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 		} else if action == "forward_article" && filename != "" {
 			delivery.forwardArticle(w, r, boardID, filename)
 			return
+		} else if action == "delete" && filename != "" {
+			delivery.deleteArticle(w, r, boardID, filename)
+			return
 		} else if action == "add_article" {
 			delivery.publishPost(w, r, boardID)
 			return

@@ -18,6 +18,8 @@ type Repository interface {
 	CreateBoard(ctx context.Context, boardID, title string) (bbs.BoardRecord, error)
 	// GetBoardArticle returns an article file in a specified board and filename
 	GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error)
+	// DeleteBoardArticle deletes an article while preserving native BBS deletion semantics.
+	DeleteBoardArticle(ctx context.Context, boardID, filename, deletedBy string) error
 	// GetBoardArticleRecords returns article records of a board
 	GetBoardArticleRecords(ctx context.Context, boardID string, offset, length uint) ([]bbs.ArticleRecord, error)
 	// GetBoardTreasureRecords returns treasure article records of a board

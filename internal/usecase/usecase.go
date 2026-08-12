@@ -53,6 +53,8 @@ type Usecase interface {
 	GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} // FIXME: use concrete type rather than []interface{}
 	// CreatePost create a new post
 	CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error)
+	// DeleteArticle authenticates the caller and safely deletes an article.
+	DeleteArticle(ctx context.Context, token, boardID, filename string) error
 	// GetRawArticle
 	GetRawArticle(boardID, filename string) (string, error)
 
