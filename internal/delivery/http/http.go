@@ -6,17 +6,16 @@ import (
 	"time"
 
 	"github.com/Ptt-official-app/Ptt-backend/internal/logging"
-	"github.com/Ptt-official-app/Ptt-backend/internal/usecase"
 )
 
 // TODO: explain what Devlivery do
 type Delivery struct {
 	logger  logging.Logger
-	usecase usecase.Usecase
+	usecase Usecase
 }
 
 // TODO: explain what this method to
-func NewHTTPDelivery(usecase usecase.Usecase) *Delivery {
+func NewHTTPDelivery(usecase Usecase) *Delivery {
 	delivery := &Delivery{
 		logger:  logging.NewLogger(),
 		usecase: usecase,
