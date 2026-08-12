@@ -10,7 +10,7 @@ import (
 
 func TestLoginMetadataOverridesPersistentUserInformation(t *testing.T) {
 	repo := &MockRepository{}
-	uc := NewUsecase(&config.Config{}, repo).(*usecase)
+	uc := NewUsecase(&config.Config{}, repo)
 	loginAt := time.Date(2026, time.August, 12, 3, 45, 0, 0, time.UTC)
 
 	uc.recordLoginAt("pichu", "203.0.113.7", loginAt)
@@ -32,7 +32,7 @@ func TestLoginMetadataOverridesPersistentUserInformation(t *testing.T) {
 
 func TestLoginMetadataUsesMostRecentRecord(t *testing.T) {
 	repo := &MockRepository{}
-	uc := NewUsecase(&config.Config{}, repo).(*usecase)
+	uc := NewUsecase(&config.Config{}, repo)
 
 	uc.recordLoginAt("pichu", "192.0.2.1", time.Unix(10, 0))
 	uc.recordLoginAt("pichu", "2001:db8::1", time.Unix(20, 0))

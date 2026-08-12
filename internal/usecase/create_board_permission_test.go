@@ -30,7 +30,7 @@ func TestCreateBoardPermissionRequiresSYSOP(t *testing.T) {
 					&permissionTestUser{MockUser: &MockUser{userID: "operator"}, level: testCase.userLevel},
 				},
 			}
-			uc := NewUsecase(cfg, repo).(*usecase)
+			uc := NewUsecase(cfg, repo)
 			token := uc.CreateAccessTokenWithUsername("operator")
 			err := uc.CheckPermission(token, []Permission{PermissionCreateBoard}, nil)
 			if testCase.wantErr && err == nil {

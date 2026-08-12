@@ -1,68 +1,11 @@
 package repository
 
 import (
-	"context"
 	"fmt"
 	"sync"
 
 	"github.com/Ptt-official-app/go-bbs"
 )
-
-// Repository directly interacts with database via db handler.
-type Repository interface {
-
-	// board.go
-	// GetBoards return all board record
-	GetBoards(ctx context.Context) []bbs.BoardRecord
-	// CreateBoard creates a new board and updates the in-process board cache.
-	CreateBoard(ctx context.Context, boardID, title string) (bbs.BoardRecord, error)
-	// GetBoardArticle returns an article file in a specified board and filename
-	GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error)
-	// DeleteBoardArticle deletes an article while preserving native BBS deletion semantics.
-	DeleteBoardArticle(ctx context.Context, boardID, filename, deletedBy string) error
-	// GetBoardArticleRecords returns article records of a board
-	GetBoardArticleRecords(ctx context.Context, boardID string, offset, length uint) ([]bbs.ArticleRecord, error)
-	// GetBoardTreasureRecords returns treasure article records of a board
-	GetBoardTreasureRecords(ctx context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error)
-	// GetBoardPostsLimit returns posts limited record of a board
-	// TODO: replace PostsLimitedBoardRecord with real bbs record
-	// GetBoardPostsLimit(ctx context.Context, boardID string) (PostsLimitedBoardRecord, error)
-
-	// user.go
-	// GetUsers returns all user records
-	GetUsers(ctx context.Context) ([]bbs.UserRecord, error)
-	// GetUserFavoriteRecords returns favorite records of a user
-	GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error)
-	// AddUserFavorite persists a new favorite item for a user.
-	AddUserFavorite(ctx context.Context, userID string, options bbs.FavoriteCreateOptions) (bbs.FavoriteRecord, error)
-	// GetUserArticles returns user's articles
-	GetUserArticles(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error)
-	// GetUserPreferences returns user's preferences
-	// TODO: replace UserPreferencesRecord with real bbs record
-	GetUserPreferences(ctx context.Context, userID string) (map[string]string, error)
-	// GetUserComments return user's history comments
-	// TODO: return a slice of concrete type not interface
-	GetUserComments(ctx context.Context, userID string) ([]bbs.UserCommentRecord, error)
-	// GetUserDrafts returns user's draft according to draftID
-	GetUserDrafts(ctx context.Context, userID, draftID string) (bbs.UserDraft, error)
-	// UpdateUserDraft updates user's draft according to draftID
-	UpdateUserDraft(ctx context.Context, userID, draftID string, text []byte) (bbs.UserDraft, error)
-	// DeleteUserDraft deletes user's draft according to draftID
-	DeleteUserDraft(ctx context.Context, userID, draftID string) error
-
-	// article.go
-	// GetPopularArticles returns up to 100 popular articles from public boards
-	GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error)
-	// AppendComment returns comment details
-	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error)
-	// CreateArticle
-	// TODO: return result from bbs response
-	CreateArticle(ctx context.Context, userID, boardID, title, article string) (bbs.ArticleRecord, error)
-	// GetRawArticle
-	GetRawArticle(boardID, filename string) (string, error)
-	// ForwardArticleToBoard returns forwarding to board results
-	ForwardArticleToBoard(ctx context.Context, userID, boardID, filename, boardName string) (ForwardArticleToBoardRecord, error)
-}
 
 type repository struct {
 	db              *bbs.DB
@@ -72,7 +15,7 @@ type repository struct {
 	popularArticles popularArticlesCache
 }
 
-func NewRepository(db *bbs.DB) (Repository, error) {
+func NewRepository(db *bbs.DB) (*repository, error) {
 	userRecords, err := loadUserRecords(db)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load user records: %w", err)
