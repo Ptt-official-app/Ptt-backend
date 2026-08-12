@@ -10,7 +10,7 @@ import (
 )
 
 func TestPostToken(t *testing.T) {
-	usecase := NewMockUsecase()
+	usecase := &MockUsecase{}
 	delivery := NewHTTPDelivery(usecase)
 
 	data := url.Values{
@@ -19,6 +19,7 @@ func TestPostToken(t *testing.T) {
 	}
 	req, err := http.NewRequest("POST", "/v1/token", bytes.NewBufferString(data.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.RemoteAddr = "203.0.113.9:4567"
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -44,6 +45,31 @@ func TestPostToken(t *testing.T) {
 	if responsedMap["token_type"] != expected {
 		t.Errorf("handler returned unexpected body, error is not match: got %v want userId %v",
 			rr.Body.String(), expected)
+	}
+	if usecase.loginUserID != "test" {
+		t.Errorf("recorded login user = %q, want test", usecase.loginUserID)
+	}
+	if usecase.loginIP != "203.0.113.9" {
+		t.Errorf("recorded login IP = %q, want 203.0.113.9", usecase.loginIP)
+	}
+}
+
+func TestRequestRemoteIP(t *testing.T) {
+	testCases := []struct {
+		remoteAddr string
+		want       string
+	}{
+		{remoteAddr: "127.0.0.1:8080", want: "127.0.0.1"},
+		{remoteAddr: "[2001:db8::1]:8080", want: "2001:db8::1"},
+		{remoteAddr: "2001:db8::1", want: "2001:db8::1"},
+	}
+
+	for _, testCase := range testCases {
+		req := httptest.NewRequest(http.MethodPost, "/v1/token", nil)
+		req.RemoteAddr = testCase.remoteAddr
+		if got := requestRemoteIP(req); got != testCase.want {
+			t.Errorf("requestRemoteIP(%q) = %q, want %q", testCase.remoteAddr, got, testCase.want)
+		}
 	}
 }
 
