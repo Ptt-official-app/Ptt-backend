@@ -1,5 +1,5 @@
-github.com/Ptt-official-app/go-bbs v0.12.1-0.20260812061751-f31cb0e106d5 h1:tLuLIkh1mv8OxwMvEhVoatz3pCktI9lZckoFAdhwoW4=
-github.com/Ptt-official-app/go-bbs v0.12.1-0.20260812061751-f31cb0e106d5/go.mod h1:CEXTXOTO0jPZTlF1sdiav7mvMFm7gNc0umLL/2wfcz8=
+github.com/Ptt-official-app/go-bbs v0.12.1-0.20260812070954-f9d854b6f29a h1:C3d2gzhRut7mUA88COwaBo+X9wpKpb0XHl5/RVx4OPs=
+github.com/Ptt-official-app/go-bbs v0.12.1-0.20260812070954-f9d854b6f29a/go.mod h1:CEXTXOTO0jPZTlF1sdiav7mvMFm7gNc0umLL/2wfcz8=
 github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
 github.com/golang-jwt/jwt/v4 v4.5.2/go.mod h1:m21LjoU+eqJr34lmDMbreY2eSTRJ1cv77w39/MY0Ch0=
 github.com/pelletier/go-toml v1.9.5 h1:4yBQzkHv+7BHq2PQUZF3Mx0IYxG7LsP222s7Agd3ve8=
