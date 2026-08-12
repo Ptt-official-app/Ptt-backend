@@ -44,7 +44,7 @@ type Repository interface {
 	DeleteUserDraft(ctx context.Context, userID, draftID string) error
 
 	// article.go
-	// GetPopularArticles returns all popular articles
+	// GetPopularArticles returns up to 100 popular articles from public boards
 	GetPopularArticles(ctx context.Context) ([]PopularArticleRecord, error)
 	// AppendComment returns comment details
 	AppendComment(ctx context.Context, userID, boardID, filename, appendType, text string) (PushRecord, error)
@@ -58,9 +58,10 @@ type Repository interface {
 }
 
 type repository struct {
-	db           *bbs.DB
-	userRecords  []bbs.UserRecord
-	boardRecords []bbs.BoardRecord
+	db              *bbs.DB
+	userRecords     []bbs.UserRecord
+	boardRecords    []bbs.BoardRecord
+	popularArticles popularArticlesCache
 }
 
 func NewRepository(db *bbs.DB) (Repository, error) {

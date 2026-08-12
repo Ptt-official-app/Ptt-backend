@@ -27,6 +27,65 @@ func TestBoardReadPermissionLevel(t *testing.T) {
 	}
 }
 
+func TestBoardIsPublic(t *testing.T) {
+	testCases := []struct {
+		name  string
+		board *pttbbs.BoardHeader
+		want  bool
+	}{
+		{
+			name:  "normal board is public",
+			board: &pttbbs.BoardHeader{BrdName: "Public"},
+			want:  true,
+		},
+		{
+			name:  "basic permission board is public",
+			board: &pttbbs.BoardHeader{BrdName: "Basic", Level: 0o20},
+			want:  true,
+		},
+		{
+			name:  "hidden board is not public",
+			board: &pttbbs.BoardHeader{BrdName: "Hidden", Brdattr: pttbbs.BoardHide},
+			want:  false,
+		},
+		{
+			name:  "top board is not public",
+			board: &pttbbs.BoardHeader{BrdName: "Top", Brdattr: 0x00000800},
+			want:  false,
+		},
+		{
+			name:  "BM-only board is not public",
+			board: &pttbbs.BoardHeader{BrdName: "BMOnly", Level: pttbbs.PermBM},
+			want:  false,
+		},
+		{
+			name: "post-mask level does not hide board",
+			board: &pttbbs.BoardHeader{
+				BrdName: "PostMask",
+				Brdattr: pttbbs.BoardPostMask,
+				Level:   pttbbs.PermBM,
+			},
+			want: true,
+		},
+		{
+			name: "group board is not an article source",
+			board: &pttbbs.BoardHeader{
+				BrdName: "Group",
+				Brdattr: pttbbs.BoardGroupBoard,
+			},
+			want: false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		t.Run(testCase.name, func(t *testing.T) {
+			if got := BoardIsPublic(testCase.board); got != testCase.want {
+				t.Fatalf("BoardIsPublic() = %v, want %v", got, testCase.want)
+			}
+		})
+	}
+}
+
 func TestUserPermissionLevel(t *testing.T) {
 	rawUser := &pttbbs.Userec{UserLevel: pttbbs.PermBM}
 
