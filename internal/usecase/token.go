@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	// "errors"
 	"fmt"
 	"time"
 
@@ -17,6 +16,7 @@ const (
 	PermissionReadBoardInformation    Permission = "READ_BOARD_INFORMATION"
 	PermissionReadTreasureInformation Permission = "READ_TREASURE_INFORMATION"
 	PermissionReadFavorite            Permission = "READ_FAVORITE"
+	PermissionCreateBoard             Permission = "CREATE_BOARD"
 	PermissionCreateArticle           Permission = "PUBLISH_POSTS"
 	PermissionAppendComment           Permission = "APPEND_COMMENT"
 	PermissionForwardArticleToBoard   Permission = "FORWARD_ARTICLE_TO_BOARD"
@@ -28,14 +28,10 @@ const (
 func (usecase *usecase) CreateAccessTokenWithUsername(username string) string {
 	claims := &jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(usecase.globalConfig.AccessTokenExpiresAt).Unix(),
-		// Issuer:    "test",
-		Subject: username,
+		Subject:   username,
 	}
 
-	// TODO: Setting me in config
-	// openssl ecparam -name prime256v1 -genkey -noout -out pkey
 	privateKey := usecase.globalConfig.AccessTokenPrivateKey
-
 	key, err := jwt.ParseECPrivateKeyFromPEM([]byte(privateKey))
 	if err != nil {
 		usecase.logger.Criticalf("parse private key failed: %v", err)
@@ -60,25 +56,20 @@ func (usecase *usecase) GetUserIDFromToken(token string) (string, error) {
 		return "", err
 	}
 
-	jwtToken, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{},
-		func(token *jwt.Token) (i interface{}, e error) {
-			return key, nil
-		})
+	jwtToken, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return key, nil
+	})
 	if err != nil {
 		usecase.logger.Warningf("parse token failed: %v", err)
 		return "", err
 	}
-
 	if jwtToken == nil {
 		usecase.logger.Warningf("jwtToken == nil")
 		return "", nil
 	}
-
-	// logger.Debugf("GetUserIDFromToken jwtToken: %v %v", jwtToken, err)
 	if claim, ok := jwtToken.Claims.(*jwt.StandardClaims); ok && jwtToken.Valid {
 		usecase.logger.Debugf("subject: %v %v", claim, jwtToken.Valid)
 		return claim.Subject, nil
-		// return "", nil
 	}
 	usecase.logger.Debugf("subject: %v", jwtToken.Valid)
 	return "", fmt.Errorf("token not valid")
@@ -93,6 +84,10 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 			}
 		case PermissionReadBoardInformation:
 			if err := usecase.checkPermissionReadBoardSettings(token, userInfo); err != nil {
+				return err
+			}
+		case PermissionCreateBoard:
+			if err := usecase.checkCreateBoardPermission(context.Background(), token); err != nil {
 				return err
 			}
 		case PermissionReadFavorite:
@@ -119,93 +114,48 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 			return fmt.Errorf("undefined permission id: %s", permission)
 		}
 	}
+	return nil
+}
 
+func (usecase *usecase) checkCreateBoardPermission(ctx context.Context, token string) error {
+	userID, err := usecase.GetUserIDFromToken(token)
+	if err != nil {
+		return fmt.Errorf("get user id from token failed: %w", err)
+	}
+	user, err := usecase.GetUserByID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("get user %s failed: %w", userID, err)
+	}
+	if !repository.UserIsSYSOP(user) {
+		return fmt.Errorf("user %s does not have SYSOP permission", userID)
+	}
 	return nil
 }
 
 func (usecase *usecase) checkAppendCommentPermission(token string, userInfo map[string]string) error {
-	// boardID := userInfo["board_id"]
-	// userID := userInfo["user_id"]
-
-	// TODO: 判斷在該版是否被水桶
-	// TODO: 判斷該版是否允許推文
-	// TODO: 判斷該文章是否鎖文
-
 	return nil
 }
 
 func (usecase *usecase) checkCreateArticlePermission(ctx context.Context, token string, userInfo map[string]string) error {
-	// TODO:
-	// get board data and check whether board allow create articles
-	// boardID, ok := userInfo["board_id"]
-	// if !ok {
-	// 	return errors.New("no board_id key") // todo: define error
-	// }
-	// boardLimit, err := usecase.repo.GetBoardPostsLimit(ctx, boardID)
-	// if err != nil {
-	// 	return fmt.Errorf("create article permission failed: %w", err)
-	// }
-	// if !boardLimit.EnableNewPost() {
-	// 	return errors.New("this board not allow create new article")
-	// }
-
-	// get board ban list and check whether user on the list
-	// TODO: repo 新增各板水桶名單
-	// get global ban list and check whether user on the list
-	// TODO: repo 新增全站水桶名單
-
 	return nil
 }
 
-// This function checks the user has permission that can forward the target article to another board.
 func (usecase *usecase) checkForwardArticleToBoardPermission(token string, userInfo map[string]string) error {
-	// boardID := userInfo["board_id"]
-	// toBoard := userInfo["to_board"]
-	// userID := userInfo["user_id"]
-
-	// TODO: 判斷是否有轉錄的權限
-	// TODO: 判斷在該版是否允許發文
-	// TODO: 判斷轉錄的版是否允許發文
-	// TODO: 判斷在該版是否被水桶
-	// TODO: 判斷轉錄的次數上限
-	// TODO: 判斷轉錄的版跟現在的版是不同的
-	// TODO: 判斷冷卻時間
-	// TODO: 判斷 CAPTCHA 驗證是否通過
-
 	return nil
 }
 
-// This function checks the user has permission that can forward the target article to the target email address.
-// Implementation should note that the target email is not a private email or an unresolved address.
 func (usecase *usecase) checkForwardArticleToEmailPermission(token string, userInfo map[string]string) error {
-	// boardID := userInfo["board_id"]
-	// toEmail := userInfo["to_email"]
-	// userID := userInfo["user_id"]
-
-	// TODO: 確認Email是可以轉發的
-	// TODO: 判斷是否有轉錄的權限
-	// TODO: 判斷在該版是否允許發文
-	// TODO: 判斷轉錄的版是否允許發文
-	// TODO: 判斷在該版是否被水桶
-	// TODO: 判斷轉錄的次數上限
-	// TODO: 判斷轉錄的版跟現在的版是不同的
-	// TODO: 判斷冷卻時間
-	// TODO: 判斷 CAPTCHA 驗證是否通過
-
 	return nil
 }
 
 func (usecase *usecase) checkPermissionReadUserInformation(token string, userInfo map[string]string) error {
-	// TODO: 判斷管理群的權限
 	tokenUserID, err := usecase.GetUserIDFromToken(token)
 	if err != nil {
 		return fmt.Errorf("get user id from token failed: %w", err)
 	}
-
 	if tokenUserID != userInfo["user_id"] {
 		return fmt.Errorf("token user id is not the same userInfo user id")
 	}
-
 	return nil
 }
 
@@ -214,12 +164,10 @@ func (usecase *usecase) checkPermissionReadBoardSettings(token string, userInfo 
 	if err != nil {
 		return fmt.Errorf("get user id from token failed: %w", err)
 	}
-
 	boardID, ok := userInfo["board_id"]
 	if !ok || boardID == "" {
 		return fmt.Errorf("board_id is required to check board read permission")
 	}
-
 	return usecase.checkBoardReadPermission(context.Background(), tokenUserID, boardID)
 }
 
@@ -228,26 +176,20 @@ func (usecase *usecase) checkBoardReadPermission(ctx context.Context, userID, bo
 	if err != nil {
 		return fmt.Errorf("get board %s failed: %w", boardID, err)
 	}
-
 	requiredLevel, ok := repository.BoardReadPermissionLevel(board)
 	if !ok || requiredLevel == 0 {
 		return nil
 	}
-
 	user, err := usecase.GetUserByID(ctx, userID)
 	if err != nil {
 		return fmt.Errorf("get user %s failed: %w", userID, err)
 	}
-
 	userLevel, ok := repository.UserPermissionLevel(user)
 	if !ok {
 		return fmt.Errorf("user permission level is unavailable")
 	}
-
-	// PTT's HasUserPerm(x) accepts the permission when any bit in x matches.
 	if userLevel&requiredLevel == 0 {
 		return fmt.Errorf("user %s has no permission to read board %s", userID, boardID)
 	}
-
 	return nil
 }
