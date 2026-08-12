@@ -80,3 +80,9 @@ func UserPermissionLevel(record bbs.UserRecord) (uint32, bool) {
 
 	return rawRecord.UserLevel, true
 }
+
+// UserIsSYSOP reports whether the user has PTT's SYSOP permission bit.
+func UserIsSYSOP(record bbs.UserRecord) bool {
+	level, ok := UserPermissionLevel(record)
+	return ok && level&pttbbs.PermSYSOP != 0
+}

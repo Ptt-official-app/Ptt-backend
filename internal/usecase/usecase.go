@@ -37,6 +37,8 @@ type Usecase interface {
 	GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error)
 	// GetBoards returns all board records
 	GetBoards(ctx context.Context, userID string) []bbs.BoardRecord
+	// CreateBoard creates a new board.
+	CreateBoard(ctx context.Context, boardID, title string) (bbs.BoardRecord, error)
 	// GetPopularBoards returns top 100 popular board records
 	GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error)
 	// GetBoardPostsLimition returns all posts limit of a board

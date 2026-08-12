@@ -53,6 +53,10 @@ func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.Boar
 	return boards
 }
 
+func (usecase *usecase) CreateBoard(ctx context.Context, boardID, title string) (bbs.BoardRecord, error) {
+	return usecase.repo.CreateBoard(ctx, strings.TrimSpace(boardID), strings.TrimSpace(title))
+}
+
 func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error) {
 	// Use GetBoards to obtain data and use conditions to filter
 	// TODO:GetBoards need add return error

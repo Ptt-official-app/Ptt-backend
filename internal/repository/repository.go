@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"sync"
 
 	"github.com/Ptt-official-app/go-bbs"
 )
@@ -13,6 +14,8 @@ type Repository interface {
 	// board.go
 	// GetBoards return all board record
 	GetBoards(ctx context.Context) []bbs.BoardRecord
+	// CreateBoard creates a new board and updates the in-process board cache.
+	CreateBoard(ctx context.Context, boardID, title string) (bbs.BoardRecord, error)
 	// GetBoardArticle returns an article file in a specified board and filename
 	GetBoardArticle(ctx context.Context, boardID, filename string) ([]byte, error)
 	// GetBoardArticleRecords returns article records of a board
@@ -60,6 +63,7 @@ type Repository interface {
 type repository struct {
 	db              *bbs.DB
 	userRecords     []bbs.UserRecord
+	boardMu         sync.RWMutex
 	boardRecords    []bbs.BoardRecord
 	popularArticles popularArticlesCache
 }

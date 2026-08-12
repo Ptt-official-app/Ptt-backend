@@ -17,6 +17,7 @@ const (
 	PermissionReadBoardInformation    Permission = "READ_BOARD_INFORMATION"
 	PermissionReadTreasureInformation Permission = "READ_TREASURE_INFORMATION"
 	PermissionReadFavorite            Permission = "READ_FAVORITE"
+	PermissionCreateBoard             Permission = "CREATE_BOARD"
 	PermissionCreateArticle           Permission = "PUBLISH_POSTS"
 	PermissionAppendComment           Permission = "APPEND_COMMENT"
 	PermissionForwardArticleToBoard   Permission = "FORWARD_ARTICLE_TO_BOARD"
@@ -95,6 +96,10 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 			if err := usecase.checkPermissionReadBoardSettings(token, userInfo); err != nil {
 				return err
 			}
+		case PermissionCreateBoard:
+			if err := usecase.checkCreateBoardPermission(context.Background(), token); err != nil {
+				return err
+			}
 		case PermissionReadFavorite:
 		case PermissionReadTreasureInformation:
 		case PermissionReadUserInformation:
@@ -120,6 +125,21 @@ func (usecase *usecase) CheckPermission(token string, permissionID []Permission,
 		}
 	}
 
+	return nil
+}
+
+func (usecase *usecase) checkCreateBoardPermission(ctx context.Context, token string) error {
+	userID, err := usecase.GetUserIDFromToken(token)
+	if err != nil {
+		return fmt.Errorf("get user id from token failed: %w", err)
+	}
+	user, err := usecase.GetUserByID(ctx, userID)
+	if err != nil {
+		return fmt.Errorf("get user %s failed: %w", userID, err)
+	}
+	if !repository.UserIsSYSOP(user) {
+		return fmt.Errorf("user %s does not have SYSOP permission", userID)
+	}
 	return nil
 }
 

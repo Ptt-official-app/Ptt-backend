@@ -165,6 +165,11 @@ func (delivery *Delivery) postBoards(w http.ResponseWriter, r *http.Request) {
 	delivery.logger.Debugf("postBoards: %v", r)
 	boardID, item, filename, err := delivery.parseBoardPath(r.URL.Path)
 
+	if boardID == "" && item == "" && filename == "" {
+		delivery.createBoard(w, r)
+		return
+	}
+
 	action := r.PostFormValue("action")
 	if action == "" {
 		w.WriteHeader(http.StatusBadRequest)

@@ -89,7 +89,7 @@ func NewParameterShouldBeIntegerError(r *http.Request, parameter string) []byte 
 
 // NewBoardError generates a error payload when create board fail
 func NewNewBoardError(r *http.Request) []byte {
-	boardID := r.PostFormValue("title")
+	boardID := r.PostFormValue("board_id")
 
 	m := map[string]string{
 		"error":             "new_board_error",
