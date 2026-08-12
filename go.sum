@@ -1,5 +1,5 @@
-github.com/Ptt-official-app/go-bbs v0.12.1-0.20260812061751-f31cb0e106d5 h1:tLuLIkh1mv8OxwMvEhVoatz3pCktI9lZckoFAdhwoW4=
-github.com/Ptt-official-app/go-bbs v0.12.1-0.20260812061751-f31cb0e106d5/go.mod h1:CEXTXOTO0jPZTlF1sdiav7mvMFm7gNc0umLL/2wfcz8=
+github.com/Ptt-official-app/go-bbs v0.12.1-0.20260812070954-f9d854b6f29a h1:C3d2gzhRut7mUA88COwaBo+X9wpKpb0XHl5/RVx4OPs=
+github.com/Ptt-official-app/go-bbs v0.12.1-0.20260812070954-f9d854b6f29a/go.mod h1:CEXTXOTO0jPZTlF1sdiav7mvMFm7gNc0umLL/2wfcz8=
 github.com/golang-jwt/jwt/v4 v4.5.2 h1:YtQM7lnr8iZ+j5q71MGKkNw9Mn7AjHM68uc9g5fXeUI=
 github.com/golang-jwt/jwt/v4 v4.5.2/go.mod h1:m21LjoU+eqJr34lmDMbreY2eSTRJ1cv77w39/MY0Ch0=
 github.com/pelletier/go-toml v1.9.5 h1:4yBQzkHv+7BHq2PQUZF3Mx0IYxG7LsP222s7Agd3ve8=
@@ -29,4 +29,4 @@ golang.org/x/text v0.3.8/go.mod h1:E6s5w1FMmriuDzIBO73fBruAKo1PCIq6d2Q6DHfQ8WQ=
 golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 golang.org/x/tools v0.0.0-20191119224855-298f0cb1881e/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
 golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc=
-golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
+golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauOQqLJ2OPfmY0=
