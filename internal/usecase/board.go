@@ -29,7 +29,7 @@ type BoardPostLimitation struct {
 
 func (usecase *usecase) GetBoardByID(ctx context.Context, boardID string) (bbs.BoardRecord, error) {
 	for _, it := range usecase.repo.GetBoards(ctx) {
-		if strings.ToLower(boardID) == strings.ToLower(it.BoardID()) {
+		if strings.EqualFold(boardID, it.BoardID()) {
 			return it, nil
 		}
 	}
@@ -40,7 +40,6 @@ func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.Boar
 	boards := make([]bbs.BoardRecord, 0)
 	slog.Info("GetBoards", "boardRecords a", len(boards))
 	for _, board := range usecase.repo.GetBoards(ctx) {
-		// TODO: Show Board by user level
 		if board.IsClass() {
 			continue
 		}
@@ -53,9 +52,11 @@ func (usecase *usecase) GetBoards(ctx context.Context, userID string) []bbs.Boar
 	return boards
 }
 
+func (usecase *usecase) CreateBoard(ctx context.Context, boardID, title string) (bbs.BoardRecord, error) {
+	return usecase.repo.CreateBoard(ctx, strings.TrimSpace(boardID), strings.TrimSpace(title))
+}
+
 func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord, error) {
-	// Use GetBoards to obtain data and use conditions to filter
-	// TODO:GetBoards need add return error
 	allBoards := usecase.repo.GetBoards(ctx)
 	if len(allBoards) == 0 {
 		usecase.logger.Warningf("GetPopularBoards : GetBoards did not obtain data")
@@ -67,26 +68,14 @@ func (usecase *usecase) GetPopularBoards(ctx context.Context) ([]bbs.BoardRecord
 			filtedBoards = append(filtedBoards, allBoards[index])
 		}
 	}
-
-	// TODO:Add condition to sort
-	// sort.Slice(filtedBoards, func(i, j int) bool {
-	// 	return (filtedBoards)[i].UserEntered > (filtedBoards)[j].UserEntered
-	// })
-
 	if len(filtedBoards) < 100 {
 		return filtedBoards, nil
 	}
-
-	return (filtedBoards)[:100], nil
+	return filtedBoards[:100], nil
 }
 
 func shouldBeDisplayOnPouplarList(board bbs.BoardRecord) bool {
-	// Initially filter boards by board status or other values
-	// TODO:Need to add filter conditions,here is an example
-	// if classID := board.ClassID(); classID != "" && !board.IsClass() {
 	return true
-	// }
-	// return false
 }
 
 func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID string) (*BoardPostLimitation, error) {
@@ -105,17 +94,12 @@ func (usecase *usecase) GetBoardPostsLimitation(ctx context.Context, boardID str
 func (usecase *usecase) GetClasses(ctx context.Context, userID, classID string) ([]bbs.BoardRecord, error) {
 	boards := make([]bbs.BoardRecord, 0)
 	for _, board := range usecase.repo.GetBoards(ctx) {
-		// TODO: Show Board by user level
 		if !usecase.shouldShowOnUserLevel(board, userID) {
 			continue
 		}
 		if board.ClassID() != classID {
 			continue
 		}
-		// m := marshalBoardHeader(board)
-		// if board.IsClass() {
-		// 	m["id"] = fmt.Sprintf("%v", bid+1)
-		// }
 		boards = append(boards, board)
 	}
 	if len(boards) == 0 {
@@ -129,7 +113,6 @@ func (usecase *usecase) GetBoardArticles(ctx context.Context, boardID string, of
 	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID, offset, length)
 	if err != nil {
 		usecase.logger.Warningf("open directory file error: %v", err)
-		// The board may not contain any article
 	}
 
 	if cond != nil &&
@@ -153,27 +136,23 @@ func (usecase *usecase) GetBoardArticle(ctx context.Context, boardID, filename s
 	return buf, nil
 }
 
-// TODO: return ArticleRecord, build payload on repository layer
 func (usecase *usecase) GetBoardTreasures(ctx context.Context, boardID string, treasuresID []string) []interface{} {
 	fileHeaders, err := usecase.repo.GetBoardTreasureRecords(ctx, boardID, treasuresID)
 	if err != nil {
 		usecase.logger.Warningf("open directory file error: %v", err)
-		// The board may not contain any article
 	}
 
 	items := []interface{}{}
 	for _, f := range fileHeaders {
 		m := map[string]interface{}{
-			"filename": f.Filename(),
-			// Bug(pichu): f.Modified time will be 0 when file is vote
+			"filename":        f.Filename(),
 			"modified_time":   f.Modified(),
 			"recommend_count": f.Recommend(),
 			"post_date":       f.Date(),
 			"title":           f.Title(),
 			"money":           fmt.Sprintf("%v", f.Money()),
 			"owner":           f.Owner(),
-			// "aid": ""
-			"url": getArticleURL(boardID, f.Filename()),
+			"url":             getArticleURL(boardID, f.Filename()),
 		}
 		items = append(items, m)
 	}
@@ -181,35 +160,28 @@ func (usecase *usecase) GetBoardTreasures(ctx context.Context, boardID string, t
 }
 
 func (usecase *usecase) shouldShowOnUserLevel(board bbs.BoardRecord, userID string) bool {
-	// TODO: Get user Level
 	return true
 }
 
 func getArticleURL(boardID string, filename string) string {
-	// TODO: generate article url by config file
 	return fmt.Sprintf("https://pttapp.cc/bbs/%s/%s.html", boardID, filename)
 }
 
 func searchArticles(fileHeaders []bbs.ArticleRecord, cond *ArticleSearchCond) []bbs.ArticleRecord {
 	var targetArticles []bbs.ArticleRecord
-
 	for _, f := range fileHeaders {
 		if !strings.Contains(strings.ToLower(f.Title()), strings.ToLower(cond.Title)) {
 			continue
 		}
-
 		if !strings.Contains(strings.ToLower(f.Owner()), strings.ToLower(cond.Author)) {
 			continue
 		}
-
 		if cond.RecommendCountGreaterEqualIsSet && f.Recommend() < cond.RecommendCountGreaterEqual {
 			continue
 		}
-
 		if cond.RecommendCountLessEqualIsSet && f.Recommend() > cond.RecommendCountLessEqual {
 			continue
 		}
-
 		targetArticles = append(targetArticles, f)
 	}
 	return targetArticles
