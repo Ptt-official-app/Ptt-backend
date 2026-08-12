@@ -159,7 +159,9 @@ func (l *logger) Logf(f string, setting LogSetting, v ...interface{}) {
 		outStr += "\n"
 		_, err = l.output.WriteString(outStr)
 		if err != nil {
-			os.Stderr.WriteString(err.Error())
+			if _, stderrErr := os.Stderr.WriteString(err.Error()); stderrErr != nil {
+				return
+			}
 		}
 	}
 }
