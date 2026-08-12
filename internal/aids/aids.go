@@ -32,7 +32,7 @@ func Fn2Aidu(fn string) Aidu {
 		return 0
 	}
 
-	v, err := strconv.ParseInt(parts[1], 10, 64)
+	v, err := strconv.ParseUint(parts[1], 10, 64)
 	if err != nil {
 		return 0
 	}
@@ -47,7 +47,7 @@ func Fn2Aidu(fn string) Aidu {
 	if len(parts) < 4 || parts[3] == "" {
 		randomPart = 0
 	} else {
-		v, err = strconv.ParseInt(parts[3], 16, 64)
+		v, err = strconv.ParseUint(parts[3], 16, 64)
 		if err != nil {
 			return 0
 		}
