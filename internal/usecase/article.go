@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/Ptt-official-app/go-bbs"
 
@@ -20,22 +19,103 @@ func (usecase *usecase) GetPopularArticles(ctx context.Context) ([]repository.Po
 	return articles, nil
 }
 
-func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
-	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID, 0, ^uint(0))
+func isANSIStyleToken(token string) bool {
+	token = strings.TrimPrefix(token, "\x1b")
+	if len(token) < 2 || token[0] != '[' || token[len(token)-1] != 'm' {
+		return false
+	}
+	for i := 1; i < len(token)-1; i++ {
+		if (token[i] < '0' || token[i] > '9') && token[i] != ';' {
+			return false
+		}
+	}
+	return true
+}
 
+func stripANSISequences(line string) string {
+	var result strings.Builder
+	result.Grow(len(line))
+
+	for i := 0; i < len(line); {
+		if line[i] == '\x1b' && i+1 < len(line) && line[i+1] == '[' {
+			j := i + 2
+			for j < len(line) && ((line[j] >= '0' && line[j] <= '9') || line[j] == ';') {
+				j++
+			}
+			if j < len(line) && line[j] == 'm' {
+				i = j + 1
+				continue
+			}
+		}
+		result.WriteByte(line[i])
+		i++
+	}
+
+	return result.String()
+}
+
+func parseUsefulnessComment(line string) (appendType, userID string, ok bool) {
+	fields := strings.Fields(stripANSISequences(line))
+	first := 0
+	for first < len(fields) && isANSIStyleToken(fields[first]) {
+		first++
+	}
+	if len(fields)-first < 2 {
+		return "", "", false
+	}
+	if fields[first] != "↑" && fields[first] != "↓" {
+		return "", "", false
+	}
+	return fields[first], fields[first+1], true
+}
+
+func userUsefulnessScore(article, userID string) int {
+	score := 0
+	for _, line := range strings.Split(article, "\n") {
+		appendType, commentUserID, ok := parseUsefulnessComment(line)
+		if !ok || !strings.EqualFold(commentUserID, userID) {
+			continue
+		}
+
+		switch appendType {
+		case "↑":
+			if score < 1 {
+				score++
+			}
+		case "↓":
+			if score > -1 {
+				score--
+			}
+		}
+	}
+	return score
+}
+
+func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, filename, appendType string) (repository.PushRecord, error) {
+	if appendType != "↑" && appendType != "↓" {
+		return nil, fmt.Errorf("UpdateUsefulness error: unsupported usefulness type %q", appendType)
+	}
+
+	articleRecords, err := usecase.repo.GetBoardArticleRecords(ctx, boardID, 0, ^uint(0))
 	if err != nil {
 		return nil, fmt.Errorf("UpdateUsefulness error: %w", err)
 	}
 
 	var owner string
+	found := false
 	for _, record := range articleRecords {
 		if record.Filename() == filename {
 			owner = record.Owner()
+			found = true
+			break
 		}
 	}
+	if !found {
+		return nil, fmt.Errorf("UpdateUsefulness error: article %s not found", filename)
+	}
 
-	if owner == userID {
-		return nil, fmt.Errorf("UpdateUsefuleness error: Owners cannot push their own article")
+	if strings.EqualFold(owner, userID) {
+		return nil, fmt.Errorf("UpdateUsefulness error: owners cannot rate their own article")
 	}
 
 	article, err := usecase.GetBoardArticle(ctx, boardID, filename)
@@ -43,31 +123,9 @@ func (usecase *usecase) UpdateUsefulness(ctx context.Context, userID, boardID, f
 		return nil, fmt.Errorf("UpdateUsefulness error: %w", err)
 	}
 
-	articleStr := string(article)
-
-	cur := 0
-	numRecommend := 0
-	for {
-		cur = strings.Index(articleStr[cur:], userID)
-		if cur < 0 {
-			break
-		}
-
-		r, _ := utf8.DecodeLastRuneInString(articleStr[:cur])
-		if r == utf8.RuneError {
-			return nil, fmt.Errorf("UpdateUsefulness error: DecodeLastRuneError")
-		}
-		if numRecommend < 1 && string(r) == "\u2191" {
-			numRecommend++
-		}
-
-		if numRecommend > -1 && string(r) == "\u2193" {
-			numRecommend--
-		}
-	}
-
-	if (appendType == "\u2191" && numRecommend == 1) || (appendType == "\u2193" && numRecommend == -1) {
-		return nil, fmt.Errorf("User with userID:%s has already pushed", userID)
+	currentScore := userUsefulnessScore(bbs.Big5ToUtf8(article), userID)
+	if (appendType == "↑" && currentScore >= 1) || (appendType == "↓" && currentScore <= -1) {
+		return nil, fmt.Errorf("UpdateUsefulness error: user %s already reached usefulness limit %d", userID, currentScore)
 	}
 
 	p, err := usecase.repo.AppendComment(ctx, userID, boardID, filename, appendType, "")
