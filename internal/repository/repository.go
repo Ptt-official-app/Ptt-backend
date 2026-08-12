@@ -33,6 +33,8 @@ type Repository interface {
 	GetUsers(ctx context.Context) ([]bbs.UserRecord, error)
 	// GetUserFavoriteRecords returns favorite records of a user
 	GetUserFavoriteRecords(ctx context.Context, userID string) ([]bbs.FavoriteRecord, error)
+	// AddUserFavorite persists a new favorite item for a user.
+	AddUserFavorite(ctx context.Context, userID string, options bbs.FavoriteCreateOptions) (bbs.FavoriteRecord, error)
 	// GetUserArticles returns user's articles
 	GetUserArticles(ctx context.Context, boardID string) ([]bbs.ArticleRecord, error)
 	// GetUserPreferences returns user's preferences
