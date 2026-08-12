@@ -41,6 +41,8 @@ func (delivery *Delivery) getUsers(w http.ResponseWriter, r *http.Request) {
 func (delivery *Delivery) postUsers(w http.ResponseWriter, r *http.Request) {
 	userID, item, itemID, err := parseUserPath(r.URL.Path)
 	switch item {
+	case "favorites":
+		delivery.postUserFavorites(w, r, userID)
 	case "drafts":
 		delivery.postUserDrafts(w, r, userID, itemID)
 	default:
