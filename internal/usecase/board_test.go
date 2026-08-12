@@ -10,7 +10,7 @@ import (
 
 func TestSearchArticles(t *testing.T) {
 	repository := &MockRepository{}
-	articleRecords, _ := repository.GetBoardArticleRecords(context.Background(), "")
+	articleRecords, _ := repository.GetBoardArticleRecords(context.Background(), "", 0, ^uint(0))
 
 	type TestCase struct {
 		input         *ArticleSearchCond
