@@ -40,6 +40,13 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 	}
 	user := userrec.(repository.BBSUserRecord)
 
+	lastLoginTime := user.LastLogin()
+	lastLoginIP := user.LastHost()
+	if login, ok := usecase.getLoginRecord(userID); ok {
+		lastLoginTime = login.at
+		lastLoginIP = login.ip
+	}
+
 	// TODO: Check Etag or Not-Modified for cache
 
 	result := map[string]interface{}{
@@ -51,9 +58,9 @@ func (usecase *usecase) GetUserInformation(ctx context.Context, userID string) (
 		"number_of_badposts":   strconv.FormatInt(int64(user.NumBadPosts()), 10),
 		"money":                strconv.FormatInt(int64(user.Money()), 10),
 		"money_description":    getMoneyDiscription(user.Money()),
-		"last_login_time":      user.LastLogin().Format(time.RFC3339),
-		"last_login_ipv4":      user.LastHost(),
-		"last_login_ip":        user.LastHost(),
+		"last_login_time":      lastLoginTime.Format(time.RFC3339),
+		"last_login_ipv4":      lastLoginIP,
+		"last_login_ip":        lastLoginIP,
 		"last_login_country":   user.LastCountry(),
 		"mailbox_description":  user.MailboxDescription(),
 		"chess_status":         user.ChessStatus(),
@@ -91,7 +98,6 @@ func (usecase *usecase) GetUserArticles(ctx context.Context, userID string) ([]i
 				})
 			}
 		}
-	}
 
 	return dataItems, nil
 }
