@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	ErrArticleNotFound            = errors.New("article not found")
+	ErrArticleNotFound           = errors.New("article not found")
 	ErrDeleteArticleUnauthorized = errors.New("article deletion unauthorized")
 	ErrDeleteArticleForbidden    = errors.New("article deletion forbidden")
 )
