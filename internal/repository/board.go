@@ -30,7 +30,26 @@ func (repo *repository) GetBoardArticle(_ context.Context, boardID, filename str
 }
 
 func (repo *repository) GetBoardArticleRecords(_ context.Context, boardID string, offset, length uint) ([]bbs.ArticleRecord, error) {
-	return repo.db.ReadBoardArticleRecordsFile(boardID, offset, length)
+	records, err := repo.db.ReadBoardArticleRecordsFile(boardID)
+	if err != nil {
+		return nil, err
+	}
+	return paginateArticleRecords(records, offset, length), nil
+}
+
+func paginateArticleRecords(records []bbs.ArticleRecord, offset, length uint) []bbs.ArticleRecord {
+	if offset >= uint(len(records)) || length == 0 {
+		return []bbs.ArticleRecord{}
+	}
+
+	start := int(offset)
+	end := len(records)
+	remaining := uint(end - start)
+	if length < remaining {
+		end = start + int(length)
+	}
+
+	return records[start:end]
 }
 
 func (repo *repository) GetBoardTreasureRecords(_ context.Context, boardID string, treasureIDs []string) ([]bbs.ArticleRecord, error) {

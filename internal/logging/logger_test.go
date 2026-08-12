@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -13,7 +12,7 @@ import (
 
 // newFile returns a temporally file
 func newFile(testName string, t *testing.T) (f *os.File) {
-	f, err := ioutil.TempFile(t.TempDir(), "_Ptt-backend_"+testName)
+	f, err := os.CreateTemp(t.TempDir(), "_Ptt-backend_"+testName)
 	if err != nil {
 		t.Fatalf("TempFile %s: %s", testName, err)
 	}
@@ -34,14 +33,15 @@ var settingList []LogSetting = []LogSetting{
 func testLoggerLevel(t *testing.T, targetLevel uint) {
 	testName := fmt.Sprintf("testing level %v", targetLevel)
 	tempFile := newFile(testName, t)
+	t.Cleanup(func() {
+		if err := tempFile.Close(); err != nil {
+			t.Errorf("close temp log file: %v", err)
+		}
+	})
 	testLogger := &logger{
 		output: tempFile,
 		level:  targetLevel,
 	}
-	defer func() {
-		tempFile.Close()
-		os.Remove(tempFile.Name())
-	}()
 	testLogger.Emergencyf("")
 	testLogger.Alertf("")
 	testLogger.Criticalf("")
@@ -89,12 +89,12 @@ func TestLogger(t *testing.T) {
 	testLoggerLevel(t, 2)
 	testLoggerLevel(t, 1)
 	testLoggerLevel(t, 0)
-	os.Setenv("LOG_LEVEL", "4")
+	t.Setenv("LOG_LEVEL", "4")
 	testLogger := NewLogger()
 	if testLogger.(*logger).level != 4 {
 		t.Fatalf("Expect logger level is 4, get %d", testLogger.(*logger).level)
 	}
-	os.Setenv("LOG_LEVEL", "")
+	t.Setenv("LOG_LEVEL", "")
 	testLogger = NewLogger()
 	if testLogger.(*logger).level != 7 {
 		t.Fatalf("Expect logger level is 7, get %d", testLogger.(*logger).level)

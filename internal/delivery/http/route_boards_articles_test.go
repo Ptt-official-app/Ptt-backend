@@ -91,7 +91,7 @@ type MockArticleUsecase struct {
 	getBoardArticles func(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord
 }
 
-func (mockUsecase *MockArticleUsecase) GetBoardArticles(ctx context.Context, boardID string, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
+func (mockUsecase *MockArticleUsecase) GetBoardArticles(ctx context.Context, boardID string, offset, length uint, cond *usecase.ArticleSearchCond) []bbs.ArticleRecord {
 	if mockUsecase.getBoardArticles != nil {
 		return mockUsecase.getBoardArticles(ctx, boardID, cond)
 	}
