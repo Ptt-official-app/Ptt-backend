@@ -86,9 +86,9 @@ func TestCheckBoardReadPermission(t *testing.T) {
 					&permissionTestUser{MockUser: &MockUser{userID: "pichu"}, level: testCase.userLevel},
 				},
 			}
-			usecase := NewUsecase(&config.Config{}, repo).(*usecase)
+			uc := NewUsecase(&config.Config{}, repo)
 
-			err := usecase.checkBoardReadPermission(context.Background(), "pichu", "SECURITY")
+			err := uc.checkBoardReadPermission(context.Background(), "pichu", "SECURITY")
 			if testCase.wantErr && err == nil {
 				t.Fatal("expected permission error, got nil")
 			}
