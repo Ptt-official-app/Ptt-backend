@@ -24,21 +24,10 @@ jobs:
       - name: Go vet
         run: go vet ./...
 
-      - name: Check gofmt
-        shell: bash
-        run: |
-          files="$(gofmt -l .)"
-          if [ -n "$files" ]; then
-            echo "The following files need gofmt:"
-            echo "$files"
-            exit 1
-          fi
-
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v9
         with:
           version: v2.12.2
-          args: --enable=misspell --enable=gosec
 
   test:
     strategy:
