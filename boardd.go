@@ -283,7 +283,7 @@ func markToMode(mark string) int32 {
 }
 
 func (s *server) Content(ctx context.Context, req *apipb.ContentRequest) (*apipb.ContentReply, error) {
-	slog.Info("boardd::Content", "boardref", req.BoardRef, "filename", req.Filename, "token", req.ConsistencyToken, "options", req.PartialOptions)
+	slog.Debug("boardd::Content", "boardref", req.BoardRef, "filename", req.Filename, "options", req.PartialOptions)
 	initCacheBoards(s.usecase)
 	var boardName string // eg. "Gossiping"
 	if req.BoardRef.GetName() != "" {

@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"log/slog"
 	"os"
 	"strconv"
 
@@ -16,6 +17,32 @@ import (
 	_ "github.com/Ptt-official-app/go-bbs/pttbbs"
 )
 
+func slogLevelForLogLevel(level uint64) slog.Level {
+	switch {
+	case level <= 3:
+		return slog.LevelError
+	case level <= 5:
+		return slog.LevelWarn
+	case level == 6:
+		return slog.LevelInfo
+	default:
+		return slog.LevelDebug
+	}
+}
+
+func configureSlog() {
+	level, err := strconv.ParseUint(os.Getenv("LOG_LEVEL"), 10, 64)
+	if err != nil {
+		level = 7
+	}
+	if level > 7 {
+		level = 7
+	}
+
+	handler := slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slogLevelForLogLevel(level)})
+	slog.SetDefault(slog.New(handler))
+}
+
 func main() {
 	var logLevel = flag.Uint("logLevel", 4, `log level: 0: Emergency; 1: Alert; 2: Critical; 3: Error; 4: Warning; 5: Notice; 6: Info; 7: Debug`)
 	flag.Usage = func() {
@@ -29,8 +56,10 @@ func main() {
 		if *logLevel > 7 {
 			*logLevel = 7
 		}
-	_ = os.Setenv("LOG_LEVEL", strconv.Itoa(int(*logLevel)))
+		_ = os.Setenv("LOG_LEVEL", strconv.Itoa(int(*logLevel)))
 	}
+
+	configureSlog()
 
 	logger := logging.NewLogger()
 	logger.Informationalf("server start")
