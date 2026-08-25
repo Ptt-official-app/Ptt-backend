@@ -11,6 +11,7 @@ import (
 )
 
 func (delivery *Delivery) buildRoute(mux *http.ServeMux) {
+	mux.Handle("/mcp", delivery.mcpHandler())
 	mux.HandleFunc("/v1/token", delivery.routeToken)
 	mux.HandleFunc("/v1/boards", delivery.routeBoards)
 	mux.HandleFunc("/v1/boards/", delivery.routeBoards)
